@@ -1,11 +1,9 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-
-namespace SolaERP.Server.Controllers
+﻿namespace SolaERP.Server.Controllers
 {
     [Authorize]
     [ApiController]
     [Route("[controller]")]
+
     public class AppUserController : ControllerBase
     {
         AppUserService _appUserService;
