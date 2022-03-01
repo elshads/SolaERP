@@ -9,8 +9,13 @@
 @using Microsoft.JSInterop
 @using SolaERP.Client
 @using SolaERP.Client.Shared
+@using SolaERP.Client.Data
 @using SolaERP.Shared
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @using Telerik.Blazor
 @using Telerik.Blazor.Components
+
+@inject HttpClient Http
+@inject SessionData SessionData
+@inject NavigationManager NavigationManager

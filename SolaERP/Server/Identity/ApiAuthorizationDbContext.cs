@@ -5,7 +5,7 @@ using Microsoft.Extensions.Options;
 
 
 public class ApiAuthorizationDbContext<TUser> : KeyApiAuthorizationDbContext<TUser, IdentityRole, string>
-    where TUser : IdentityUser
+        where TUser : IdentityUser
 {
     public ApiAuthorizationDbContext(
         DbContextOptions options,

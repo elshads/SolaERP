@@ -9,9 +9,9 @@ using Microsoft.Extensions.Options;
 
 
 public class KeyApiAuthorizationDbContext<TUser, TRole, TKey> : IdentityDbContext<TUser, TRole, TKey>, IPersistedGrantDbContext
-    where TUser : IdentityUser<TKey>
-    where TRole : IdentityRole<TKey>
-    where TKey : IEquatable<TKey>
+        where TUser : IdentityUser<TKey>
+        where TRole : IdentityRole<TKey>
+        where TKey : IEquatable<TKey>
 {
     private readonly IOptions<OperationalStoreOptions> _operationalStoreOptions;
 

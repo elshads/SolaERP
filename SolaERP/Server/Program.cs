@@ -7,6 +7,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+var sqlConfiguration = new SqlConfiguration(connectionString);
+builder.Services.AddSingleton(sqlConfiguration);
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(connectionString));
 
@@ -34,7 +36,7 @@ builder.Services.AddAuthentication()
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
-builder.Services.AddSingleton<WeatherForecastService>();
+builder.Services.AddScoped<AppUserService>();
 
 var app = builder.Build();
 

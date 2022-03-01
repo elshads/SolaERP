@@ -8,6 +8,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="Dapper" Version="2.0.123" />
 		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="6.0.2" />
 		<PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.2" />
 	</ItemGroup>
@@ -29,10 +30,9 @@
 	<ItemGroup>
 		<Using Include="SolaERP.Shared.Model" />
 		<Using Include="SolaERP.Server.ModelService" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="Data\" />
+		<Using Include="SolaERP.Server.Data" />
+		<Using Include="Dapper" />
+		<Using Include="Microsoft.Data.SqlClient" />
 	</ItemGroup>
 
 </Project>

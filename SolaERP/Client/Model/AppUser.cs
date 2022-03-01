@@ -1,7 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
-
-
-public class AppUser : IdentityUser<int>
+﻿
+public class AppUser
 {
     public AppUser()
     {
@@ -34,33 +32,24 @@ public class AppUser : IdentityUser<int>
 
         Id = instance.Id;
         UserName = instance.UserName;
-        NormalizedUserName = instance.NormalizedUserName;
         Email = instance.Email;
-        NormalizedEmail = instance.NormalizedEmail;
-        EmailConfirmed = instance.EmailConfirmed;
-        PasswordHash = instance.PasswordHash;
-        SecurityStamp = instance.SecurityStamp;
-        ConcurrencyStamp = instance.ConcurrencyStamp;
-        PhoneNumber = instance.PhoneNumber;
-        PhoneNumberConfirmed = instance.PhoneNumberConfirmed;
-        TwoFactorEnabled = instance.TwoFactorEnabled;
-        LockoutEnd = instance.LockoutEnd;
-        LockoutEnabled = instance.LockoutEnabled;
-        AccessFailedCount = instance.AccessFailedCount;
     }
 
 
+    public int Id { get; set; }
+    public string UserName { get; set; }
+    public string Email { get; set; }
     public int RowIndex { get; set; }
-    public string? FullName { get; set; }
-    public string? NotificationEmail { get; set; }
+    public string FullName { get; set; }
+    public string NotificationEmail { get; set; }
     public bool ChangePassword { get; set; }
     public int StatusId { get; set; }
-    public string? Theme { get; set; }
+    public string Theme { get; set; }
     public DateTime ExpirationDate { get; set; }
     public int Sessions { get; set; }
     public DateTime LastActivity { get; set; }
-    public byte[]? Photo { get; set; }
-    public string? ReturnMessage { get; set; }
+    public byte[] Photo { get; set; }
+    public string ReturnMessage { get; set; }
     public DateTime CreatedOn { get; set; }
     public int CreatedBy { get; set; }
     public DateTime UpdatedOn { get; set; }

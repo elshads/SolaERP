@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.ApiAuthorization.IdentityServer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
+
 public class AppDbContext : KeyApiAuthorizationDbContext<AppUser, AppRole, int>
 {
     public AppDbContext(

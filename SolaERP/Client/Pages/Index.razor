@@ -5,6 +5,13 @@
 <h1>Hello, world!</h1>
 <TelerikButton>Click me</TelerikButton>
 
-Welcome to your new app.
+<div>@name</div>
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+
+@code{
+    string name = "";
+    protected override void OnInitialized()
+    {
+        name = SessionData.CurrentUser.UserName;
+    }
+}

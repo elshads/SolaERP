@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace SolaERP.Server.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20220228202719_Initial_20220301")]
-    partial class Initial_20220301
+    [Migration("20220301163646_AppUser_changed")]
+    partial class AppUser_changed
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -65,11 +65,8 @@ namespace SolaERP.Server.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
 
-                    b.Property<bool>("Administrator")
+                    b.Property<bool>("ChangePassword")
                         .HasColumnType("bit");
-
-                    b.Property<int>("ChangePassword")
-                        .HasColumnType("int");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
@@ -80,10 +77,6 @@ namespace SolaERP.Server.Migrations
 
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
@@ -96,11 +89,7 @@ namespace SolaERP.Server.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("FullName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("IsActive")
-                        .HasColumnType("int");
 
                     b.Property<DateTime>("LastActivity")
                         .HasColumnType("datetime2");
@@ -120,15 +109,6 @@ namespace SolaERP.Server.Migrations
                         .HasColumnType("nvarchar(256)");
 
                     b.Property<string>("NotificationEmail")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PasswordConfirmation")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PasswordHash")
@@ -141,11 +121,9 @@ namespace SolaERP.Server.Migrations
                         .HasColumnType("bit");
 
                     b.Property<byte[]>("Photo")
-                        .IsRequired()
                         .HasColumnType("varbinary(max)");
 
                     b.Property<string>("ReturnMessage")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("RowIndex")
@@ -154,11 +132,14 @@ namespace SolaERP.Server.Migrations
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("Sessions")
+                        .HasColumnType("int");
+
                     b.Property<int>("StatusId")
                         .HasColumnType("int");
 
-                    b.Property<int>("ThemeId")
-                        .HasColumnType("int");
+                    b.Property<string>("Theme")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");

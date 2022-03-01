@@ -1,7 +1,14 @@
 ﻿@inherits LayoutComponentBase
 
-<link rel="stylesheet" href="@($"/css/kendo/dark.css")">
+<link rel="stylesheet" href="@($"/css/kendo/{SessionData.CurrentUser?.Theme}.css")">
 
 <TelerikRootComponent>
     @Body
 </TelerikRootComponent>
+
+@code{
+    protected override async Task OnInitializedAsync()
+    {
+        SessionData.CurrentUser = await Http.GetFromJsonAsync<AppUser>("AppUser");
+    }
+}
