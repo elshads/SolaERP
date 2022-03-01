@@ -37,6 +37,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
 builder.Services.AddScoped<AppUserService>();
+builder.Services.AddSingleton<MenuService>();
 
 var app = builder.Build();
 
