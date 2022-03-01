@@ -1,0 +1,15 @@
+﻿@import url('fonts/JetBrainsMono-Regular.woff2');
+@import url('fonts/DINPro.woff2');
+
+html, body {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+.dev-font {
+    font-family: 'JetBrainsMono', monospace;
+}
+
+.din-font {
+    font-family: 'DINPro', sans-serif;
+}
+
