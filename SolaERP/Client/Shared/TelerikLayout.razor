@@ -8,16 +8,25 @@
 
 
 <MudThemeProvider IsDarkMode="@(SessionData.CurrentUser?.Theme == "dark")" />
+<MudSnackbarProvider />
+<MudDialogProvider FullWidth="false"
+                   MaxWidth="MaxWidth.Large"
+                   CloseButton="true"
+                   DisableBackdropClick="true"
+                   NoHeader="false"
+                   Position="DialogPosition.Center" />
+
+
 <TelerikRootComponent>
     <CascadingValue Value="appState">
-    <AuthorizeView>
-        <Authorized>
-            @Body
-        </Authorized>
-        <NotAuthorized>
-            <div>Loading...</div>
-        </NotAuthorized>
-    </AuthorizeView>
+        <AuthorizeView>
+            <Authorized>
+                @Body
+            </Authorized>
+            <NotAuthorized>
+                <div>Loading...</div>
+            </NotAuthorized>
+        </AuthorizeView>
     </CascadingValue>
 </TelerikRootComponent>
 
@@ -26,7 +35,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        appState = new AppState();
+        appState = new AppState(Snackbar);
         appState.OnRefreshClick += Refresh;
         SessionData.CurrentUser = await Http.GetFromJsonAsync<AppUser>("AppUser");
     }

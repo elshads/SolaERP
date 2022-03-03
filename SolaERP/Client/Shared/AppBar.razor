@@ -25,6 +25,8 @@
         //var currentUser = SessionData.CurrentUser;
         SessionData.CurrentUser.Theme = SessionData.CurrentUser?.Theme == "light" ? "dark" : "light";
         var result = await Http.PutAsJsonAsync<AppUser>("Theme", SessionData.CurrentUser);
+        var content = await result.Content.ReadFromJsonAsync<SqlResult>();
+        AppState.ShowAlert(content.UpdatedResultMessage, Severity.Success);
         AppState.Refresh();
     }
 }

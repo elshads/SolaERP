@@ -6,21 +6,21 @@
 public class ThemeController : Controller
 {
     [HttpPut]
-    public async Task<string> UpdateUserTheme([FromBody]AppUser user)
+    public async Task<SqlResult> UpdateUserTheme([FromBody]AppUser user)
     {
-        string result = "User theme saved";
+        var result = new SqlResult();
         try
         {
             using (var cn = new SqlConnection(SqlConfiguration.StaticConnectionString))
             {
-                var sql = $"UPDATE Config.AppUser SET Theme = {user.Theme} WHERE Id = {user.Id}";
-                var _result = await cn.ExecuteAsync(sql);
-                result = _result.ToString();
+                var sql = $"UPDATE Config.AppUser SET Theme = '{user.Theme}' WHERE Id = {user.Id}";
+                result.UpdatedResult = await cn.ExecuteAsync(sql);
+                result.UpdatedResultMessage = "Done";
             }
         }
         catch (Exception ex)
         {
-            result = ex.Message;
+            result.UpdatedResultMessage = ex.Message;
         }
         return result;
     }

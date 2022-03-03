@@ -29,6 +29,7 @@
 
 	<ItemGroup>
 		<Using Include="SolaERP.Shared.Model" />
+		<Using Include="SolaERP.Shared.Data" />
 		<Using Include="SolaERP.Server.ModelService" />
 		<Using Include="SolaERP.Server.Data" />
 		<Using Include="Dapper" />
