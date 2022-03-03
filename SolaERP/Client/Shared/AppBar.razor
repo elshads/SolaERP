@@ -1,6 +1,9 @@
 ﻿<MudAppBar Color="Color.Primary" Fixed="false">
     <MudIconButton OnClick="@OpenHandler" Icon="@Icons.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" />
-    <a class="brand-wrapper" href="/"><span class="brand-name1">Sola</span><span class="brand-name2">ERP</span></a>
+    <a class="brand-wrapper" href="/">
+        <span class="brand-name1">Sola</span>
+        <span class="brand-name2">ERP</span>
+        </a>
     <MudSpacer />
     <MudToggleIconButton Icon="@Icons.Filled.DarkMode" Color="@Color.Inherit" 
     ToggledIcon="@Icons.Filled.LightMode" ToggledColor="@Color.Inherit" Toggled="@(SessionData.CurrentUser?.Theme == "dark")" ToggledChanged="@ChangeTheme"/>
@@ -32,6 +35,7 @@
         padding-left: 10px;
         padding-right: 10px;
         text-decoration: none;
+        color: inherit;
     }
 
     .brand-wrapper:hover {
