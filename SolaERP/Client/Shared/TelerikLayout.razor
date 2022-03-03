@@ -1,14 +1,53 @@
 ﻿@inherits LayoutComponentBase
+@implements IDisposable
+@inject AuthenticationStateProvider AuthenticationStateProvider
 
-<link rel="stylesheet" href="@($"/css/kendo/{SessionData.CurrentUser?.Theme}.css")">
+<HeadContent>
+    <link rel="stylesheet" href="@($"/css/kendo/{SessionData.CurrentUser?.Theme}.css")">
+</HeadContent>
 
+
+<MudThemeProvider IsDarkMode="@(SessionData.CurrentUser?.Theme == "dark")" />
 <TelerikRootComponent>
-    @Body
+    <CascadingValue Value="appState">
+    <AuthorizeView>
+        <Authorized>
+            @Body
+        </Authorized>
+        <NotAuthorized>
+            <div>Loading...</div>
+        </NotAuthorized>
+    </AuthorizeView>
+    </CascadingValue>
 </TelerikRootComponent>
 
-@code{
+@code {
+    AppState appState;
+
     protected override async Task OnInitializedAsync()
     {
+        appState = new AppState();
+        appState.OnRefreshClick += Refresh;
         SessionData.CurrentUser = await Http.GetFromJsonAsync<AppUser>("AppUser");
+    }
+
+    async void Refresh()
+    {
+        await InvokeAsync(StateHasChanged);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        var _isAuthenticated = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var isAuthenticated = _isAuthenticated.User.Identity.IsAuthenticated;
+        if (firstRender && !isAuthenticated)
+        {
+            NavigationManager.NavigateTo("Identity/Account/Login", true);
+        }
+    }
+
+    void IDisposable.Dispose()
+    {
+        appState.OnRefreshClick -= Refresh;
     }
 }

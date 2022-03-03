@@ -1,0 +1,27 @@
+﻿
+<TelerikToolBar>
+    <ToolBarButton Icon="undo">Undo</ToolBarButton>
+    <ToolBarButton Icon="redo">Redo</ToolBarButton>
+    <ToolBarSeparator></ToolBarSeparator>
+    <ToolBarToggleButton Icon="apply-format"></ToolBarToggleButton>
+    <ToolBarSeparator></ToolBarSeparator>
+    <ToolBarButtonGroup SelectionMode="@ButtonGroupSelectionMode.Multiple">
+        <ToolBarToggleButton Selected="true" Icon="bold"></ToolBarToggleButton>
+        <ToolBarToggleButton Icon="italic"></ToolBarToggleButton>
+        <ToolBarToggleButton Icon="underline"></ToolBarToggleButton>
+    </ToolBarButtonGroup>
+    <ToolBarSeparator></ToolBarSeparator>
+    <ToolBarSpacer></ToolBarSpacer>
+    <ToolBarTemplateItem>
+        <span class="k-textbox k-input k-input-solid k-rounded-md k-input-md">
+            <input type="text" class="k-input-inner" placeholder="Search...">
+            <span class="k-input-suffix">
+                <span class="k-icon k-i-search"></span>
+            </span>
+        </span>
+    </ToolBarTemplateItem>
+</TelerikToolBar>
+
+@code {
+
+}

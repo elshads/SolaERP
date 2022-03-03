@@ -2,6 +2,12 @@
 {
     public class SessionData
     {
-        public AppUser? CurrentUser { get; set; }
+        public SessionData()
+        {
+            CurrentUser = new AppUser();
+            Loading = true;
+        }
+        internal AppUser? CurrentUser { get; set; }
+        public bool Loading { get; set; }
     }
 }

@@ -1,3 +1,8 @@
+:root {
+    --mud-palette-text-primary: #424242 !important;
+    --mud-palette-background: #ffffff !important;
+}
+
 .k-theme-test-class,
 .k-common-test-class {
     opacity: 0;

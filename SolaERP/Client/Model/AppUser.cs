@@ -1,5 +1,5 @@
 ﻿
-public class AppUser
+internal class AppUser
 {
     public AppUser()
     {
