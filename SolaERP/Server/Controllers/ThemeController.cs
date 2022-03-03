@@ -13,8 +13,9 @@ public class ThemeController : Controller
         {
             using (var cn = new SqlConnection(SqlConfiguration.StaticConnectionString))
             {
-                var sql = $"UPDATE AppUser SET Theme = {user.Theme} WHERE Id = {user.Id}";
+                var sql = $"UPDATE Config.AppUser SET Theme = {user.Theme} WHERE Id = {user.Id}";
                 var _result = await cn.ExecuteAsync(sql);
+                result = _result.ToString();
             }
         }
         catch (Exception ex)
