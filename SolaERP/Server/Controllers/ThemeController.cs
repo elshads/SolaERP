@@ -1,5 +1,4 @@
-﻿
-namespace SolaERP.Server.Controllers;
+﻿namespace SolaERP.Server.Controllers;
 
 [Authorize]
 [ApiController]
