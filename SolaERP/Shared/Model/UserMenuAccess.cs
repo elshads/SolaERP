@@ -1,0 +1,20 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace SolaERP.Shared.Model
+{
+    public class UserMenuAccess : BaseModel
+    {
+        public int UserId { get; set; }
+        public int MenuId { get; set; }
+        public string? MenuName { get; set; }
+        public bool ReadAccess { get; set; }
+        public bool ExportAccess { get; set; }
+        public bool CreateAccess { get; set; }
+        public bool UpdateAccess { get; set; }
+        public bool DeleteAccess { get; set; }
+    }
+}

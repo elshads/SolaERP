@@ -1,4 +1,5 @@
-﻿namespace SolaERP.Server.Controllers;
+﻿
+namespace SolaERP.Server.Controllers;
 
 [Authorize]
 [ApiController]
@@ -13,9 +14,8 @@ public class ThemeController : Controller
         {
             using (var cn = new SqlConnection(SqlConfiguration.StaticConnectionString))
             {
-                var sql = $"UPDATE Config.AppUser SET Theme = '{user.Theme}' WHERE Id = {user.Id}";
-                result.UpdatedResult = await cn.ExecuteAsync(sql);
-                result.UpdatedResultMessage = "Done";
+                var sql = "UPDATE Config.AppUser SET Theme = @Theme WHERE Id = @Id";
+                result.UpdatedResult = await cn.ExecuteAsync(sql, user);
             }
         }
         catch (Exception ex)

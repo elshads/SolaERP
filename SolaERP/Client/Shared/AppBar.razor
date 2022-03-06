@@ -22,11 +22,21 @@
 
     async Task ChangeTheme(bool toggle)
     {
-        //var currentUser = SessionData.CurrentUser;
         SessionData.CurrentUser.Theme = SessionData.CurrentUser?.Theme == "light" ? "dark" : "light";
         var result = await Http.PutAsJsonAsync<AppUser>("Theme", SessionData.CurrentUser);
         var content = await result.Content.ReadFromJsonAsync<SqlResult>();
-        AppState.ShowAlert(content.UpdatedResultMessage, Severity.Success);
+        if (content.UpdatedResult > 0)
+        {
+            AppState.ShowAlert($"{SessionData.CurrentUser.Theme} theme is on", Severity.Success);
+        }
+        else if (content.UpdatedResultMessage != null)
+        {
+            AppState.ShowAlert(content.UpdatedResultMessage, Severity.Error);
+        }
+        else
+        {
+            AppState.ShowAlert($"Missing data: {content.UpdatedResult}", Severity.Warning);
+        }
         AppState.Refresh();
     }
 }
