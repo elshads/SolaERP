@@ -38,6 +38,11 @@
         appState = new AppState(Snackbar);
         appState.OnRefreshClick += Refresh;
         SessionData.CurrentUser = await Http.GetFromJsonAsync<AppUser>("AppUser");
+        //SessionData.CurrentUserMenuAccessList = await Http.GetFromJsonAsync<List<UserMenuAccess>>("UserMenuAccess");
+        SessionData.CurrentUserMenuAccessList = new List<UserMenuAccess>()
+        {
+            new UserMenuAccess { UserId = SessionData.CurrentUser.Id, MenuId = 1, ReadAccess = true}
+        };
     }
 
     async void Refresh()

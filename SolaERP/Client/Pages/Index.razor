@@ -18,6 +18,13 @@ General grid with its most common features
 
 
 @code{
+    readonly int pageId = 1;
+
+    protected override void OnInitialized()
+    {
+        SessionData.PageId = pageId;
+    }
+
     public IEnumerable<SampleData> MyData = Enumerable.Range(1, 30).Select(x => new SampleData
     {
         Id = x,

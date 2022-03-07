@@ -1,4 +1,4 @@
-﻿@if (MenuName != null && userMenuAccess.ReadAccess)
+﻿@if (readAccess)
 {
     <div>
         @ChildContent
@@ -14,11 +14,20 @@ else
 
 @code {
     [Parameter] public RenderFragment ChildContent { get; set; }
-    [Parameter] public string? MenuName { get; set; }
+    [CascadingParameter] public AppState AppState { get; set; }
 
-    UserMenuAccess userMenuAccess { get; set; }
+    bool readAccess = false;
+
+    protected override void OnParametersSet()
+    {
+        if (SessionData.CurrentUserMenuAccessList != null && SessionData.CurrentUserMenuAccessList.Count > 0)
+        {
+            var _readAccess = SessionData.CurrentUserMenuAccessList.Where(e => e.MenuId == SessionData?.PageId);
+            if (_readAccess != null) { readAccess = _readAccess.FirstOrDefault().ReadAccess; }
+        }
+        else
+        {
+            readAccess = false;
+        }
+    }
 }
-
-<style>
-
-</style>
