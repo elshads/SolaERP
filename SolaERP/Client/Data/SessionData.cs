@@ -5,8 +5,7 @@
         public SessionData()
         {
             CurrentUser = new AppUser();
-            CurrentUserMenuAccessList = new List<UserMenuAccess>();
-            Loading = true;
+            Loading = false;
         }
         internal AppUser? CurrentUser { get; set; }
         public List<UserMenuAccess>? CurrentUserMenuAccessList { get; set; }

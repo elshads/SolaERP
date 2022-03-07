@@ -1,4 +1,5 @@
-﻿@if (readAccess)
+﻿
+@if (readAccess)
 {
     <div>
         @ChildContent
@@ -14,20 +15,22 @@ else
 
 @code {
     [Parameter] public RenderFragment ChildContent { get; set; }
-    [CascadingParameter] public AppState AppState { get; set; }
 
-    bool readAccess = false;
+    bool readAccess = true;
 
-    protected override void OnParametersSet()
+    protected override async Task OnParametersSetAsync()
     {
-        if (SessionData.CurrentUserMenuAccessList != null && SessionData.CurrentUserMenuAccessList.Count > 0)
+        await SetReadAccess();
+    }
+
+    async Task SetReadAccess()
+    {
+        var pageCode = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
+        if (SessionData.CurrentUserMenuAccessList != null)
         {
-            var _readAccess = SessionData.CurrentUserMenuAccessList.Where(e => e.MenuId == SessionData?.PageId);
-            if (_readAccess != null) { readAccess = _readAccess.FirstOrDefault().ReadAccess; }
+            var _readAccess = SessionData.CurrentUserMenuAccessList.First(e => e.MenuCode == pageCode);
+            if (_readAccess != null) { readAccess = _readAccess.ReadAccess; } else { readAccess = true; }
         }
-        else
-        {
-            readAccess = false;
-        }
+        await InvokeAsync(StateHasChanged);
     }
 }

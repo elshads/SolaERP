@@ -3,16 +3,24 @@
     <a class="brand-wrapper" href="/">
         <span class="brand-name1">Sola</span>
         <span class="brand-name2">ERP</span>
-        </a>
+    </a>
     <MudSpacer />
-    <MudToggleIconButton Icon="@Icons.Filled.DarkMode" Color="@Color.Inherit" 
-    ToggledIcon="@Icons.Filled.LightMode" ToggledColor="@Color.Inherit" Toggled="@(SessionData.CurrentUser?.Theme == "dark")" ToggledChanged="@ChangeTheme"/>
+    <MudTooltip Text="Change theme" Duration="500">
+        <MudToggleIconButton Icon="@Icons.Filled.DarkMode" Color="@Color.Inherit"
+                             ToggledIcon="@Icons.Filled.LightMode" ToggledColor="@Color.Inherit" Toggled="@(SessionData.CurrentUser?.Theme == "dark")" ToggledChanged="@ChangeTheme" />
+    </MudTooltip>
+    <form method="post" action="Identity/Account/Logout">
+        <MudTooltip Text="Log out" Duration="500">
+            <MudIconButton Icon="@Icons.Filled.Logout" Color="Color.Inherit" ButtonType="MudBlazor.ButtonType.Submit"></MudIconButton>
+        </MudTooltip>
+    </form>
 </MudAppBar>
 
 @code {
     [CascadingParameter] public AppState AppState { get; set; }
     [Parameter] public bool Open { get; set; }
     [Parameter] public EventCallback<bool> OpenChanged { get; set; }
+
 
     async Task OpenHandler()
     {
@@ -42,7 +50,7 @@
 }
 
 <style>
-    .brand-wrapper{
+    .brand-wrapper {
         font-size: 1rem;
         padding-left: 10px;
         padding-right: 10px;
@@ -50,17 +58,17 @@
         color: inherit;
     }
 
-    .brand-wrapper:hover {
-        color: inherit;
-    }
+        .brand-wrapper:hover {
+            color: inherit;
+        }
 
-    .brand-wrapper:hover .brand-name1{
-        margin-left: -2px;
-        transition: all .2s ease;
-    }
+            .brand-wrapper:hover .brand-name1 {
+                margin-left: -2px;
+                transition: all .2s ease;
+            }
 
-    .brand-wrapper:hover .brand-name2{
-        margin-left: 4px;
-        transition: all .2s ease;
-    }
+            .brand-wrapper:hover .brand-name2 {
+                margin-left: 4px;
+                transition: all .2s ease;
+            }
 </style>

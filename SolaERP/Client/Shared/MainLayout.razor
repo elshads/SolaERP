@@ -4,11 +4,13 @@
 
 <AppBar @bind-Open="@openDrawer" />
 <NavMenu Open="@openDrawer" />
-<MenuBar />
-<div class="body-content">
-    @Body
-</div>
-<TelerikLoader Type="LoaderType.Pulsing" Size="LoaderSize.Large" Visible="@SessionData.Loading" />
+<ReadAccess>
+    <MenuBar />
+    <div class="body-content">
+        @Body
+    </div>
+</ReadAccess>
+
 
 @code {
     bool openDrawer = false;

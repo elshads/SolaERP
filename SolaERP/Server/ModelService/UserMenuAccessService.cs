@@ -1,6 +1,6 @@
 ﻿namespace SolaERP.Server.ModelService;
 
-public class UserAccessService
+public class UserMenuAccessService
 {
     public async Task<List<UserMenuAccess>> GetByIdAsync(int _userId)
     {

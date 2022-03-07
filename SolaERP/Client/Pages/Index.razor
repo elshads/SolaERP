@@ -2,8 +2,6 @@
 
 <PageTitle>Index</PageTitle>
 
-General grid with its most common features
-
 <TelerikGrid Data="@MyData" Height="400px"
              Pageable="true" Sortable="true" Groupable="true"
              FilterMode="Telerik.Blazor.GridFilterMode.FilterRow"
@@ -16,13 +14,18 @@ General grid with its most common features
     </GridColumns>
 </TelerikGrid>
 
+<TelerikButton OnClick="@(() => AppState.ShowAlert("Call another action", Severity.Warning, () => AppState.ShowAlert("Second action", Severity.Success)))">
+    Click me
+</TelerikButton>
+
 
 @code{
-    readonly int pageId = 1;
+    readonly string pageCode = "home";
+    [CascadingParameter] public AppState AppState { get; set; }
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        SessionData.PageId = pageId;
+        //
     }
 
     public IEnumerable<SampleData> MyData = Enumerable.Range(1, 30).Select(x => new SampleData

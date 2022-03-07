@@ -29,6 +29,7 @@ builder.Services.AddMudServices(config =>
     config.SnackbarConfiguration.SnackbarVariant = Variant.Text;
     config.SnackbarConfiguration.ClearAfterNavigation = false;
 });
-builder.Services.AddSingleton<SessionData>();
+builder.Services.AddScoped<SessionData>();
+builder.Services.AddTransient<PageData>();
 
 await builder.Build().RunAsync();

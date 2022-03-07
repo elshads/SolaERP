@@ -4,10 +4,14 @@ namespace SolaERP.Client.Data
 {
     public class AppState
     {
-        private ISnackbar Snackbar { get; set; }
-        public AppState(ISnackbar snackbar)
+        ISnackbar Snackbar { get; set; }
+        SessionData _sessionData;
+        PageData _pageData;
+        public AppState(ISnackbar snackbar, SessionData sessionData, PageData pageData)
         {
             Snackbar = snackbar;
+            _sessionData = sessionData;
+            _pageData = pageData;
         }
 
         public void ShowAlert(string message, Severity severity, Action onClick = null)
@@ -29,5 +33,6 @@ namespace SolaERP.Client.Data
         {
             OnRefreshClick?.Invoke();
         }
+
     }
 }
