@@ -13,9 +13,9 @@ public class MenuController : ControllerBase
         _menuService = menuService;
     }
 
-    [HttpGet]
-    public async Task<IEnumerable<Menu>> GetAllAsync()
+    [HttpPost]
+    public async Task<IEnumerable<Menu>> GetUserMenuAsync([FromBody] AppUser user)
     {
-        return await _menuService.GetAllAsync();
+        return await _menuService.GetUserItemsAsync(user.Id);
     }
 }
