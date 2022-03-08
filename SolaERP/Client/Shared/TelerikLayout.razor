@@ -29,7 +29,7 @@
                 <div>Loading...</div>
             </NotAuthorized>
         </AuthorizeView>
-        <TelerikLoaderContainer Visible="@SessionData.Loading" />
+        <TelerikLoaderContainer Visible="@(appState != null ? appState.Loading : false)" />
     </CascadingValue>
 </TelerikRootComponent>
 
@@ -38,12 +38,12 @@
 
     protected override async Task OnInitializedAsync()
     {
-        SessionData.Loading = true;
         appState = new AppState(Snackbar, SessionData, PageData);
+        appState.Loading = true;
         appState.OnRefreshClick += Refresh;
         SessionData.CurrentUser = await Http.GetFromJsonAsync<AppUser>("AppUser");
         //SessionData.CurrentUserMenuAccessList = await Http.GetFromJsonAsync<List<UserMenuAccess>>("UserMenuAccess");
-        SessionData.Loading = false;
+        appState.Loading = false;
     }
 
     async void Refresh()

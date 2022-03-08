@@ -27,6 +27,9 @@ namespace SolaERP.Client.Data
             });
         }
 
+        bool loading = false;
+        public bool Loading { get { return loading; } set { loading = value; OnRefreshClick?.Invoke(); } }
+
         public event Action OnRefreshClick;
 
         public void Refresh()
