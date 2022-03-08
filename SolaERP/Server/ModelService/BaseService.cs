@@ -74,7 +74,7 @@ public class BaseService<T> where T : BaseModel, new()
         return result;
     }
 
-    public async Task<SqlResult> InsertAsync(List<T> itemList, string sql, DynamicParameters dynamicParameters)
+    public async Task<SqlResult> InsertAsync(List<T> itemList, string sql)
     {
         SqlResult? result = new();
 
@@ -84,7 +84,7 @@ public class BaseService<T> where T : BaseModel, new()
             {
                 using (var cn = new SqlConnection(SqlConfiguration.StaticConnectionString))
                 {
-                    int _result = await cn.ExecuteAsync(sql, dynamicParameters, commandType: CommandType.StoredProcedure);
+                    int _result = await cn.ExecuteAsync(sql, item, commandType: CommandType.StoredProcedure);
                     result.InsertedResult += _result > 0 ? _result : 0;
                 }
             }

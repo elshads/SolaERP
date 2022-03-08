@@ -43,9 +43,9 @@ public class AttachmentController : Controller
     }
 
     [HttpPost]
-    public async Task<SqlResult> InsertAsync([FromBody] List<int> deleteList)
+    public async Task<SqlResult> InsertAsync([FromBody] List<Attachment> attachments)
     {
         var sql = $"dbo.SP_Attachments_IUD";
-        return await _attachmentService.DeleteAsync(deleteList, sql, "AttachmentId");
+        return await _attachmentService.InsertAsync(attachments, sql);
     }
 }
