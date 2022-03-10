@@ -1,32 +1,36 @@
-﻿@page "/"
+﻿@page "/pagetemplate"
 @implements IDisposable
 @using Model = BaseModel
 
-<PageTitle>Index</PageTitle>
+<PageTitle>Page Template</PageTitle>
 
 
-@code{
+@code {
+    int activeTabIndex = 0;
+    bool isMobileView = false;
 
     [CascadingParameter] public AppState AppState { get; set; }
     [CascadingParameter] public DialogFactory Dialogs { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
-        OnAppStateInitialized();
         SetQueryVariables();
+        OnAppStateInitialized();
         await LoadData();
     }
+
     void OnAppStateInitialized()
     {
         AppState.SetDefaults();
-        AppState.AddButtonVisible = true;
-        AppState.DeleteButtonVisible = true;
-        AppState.SaveButtonVisible = true;
-        AppState.ReportButtonVisible = true;
+        AppState.Report = new() { ReportId = 1, ReportName = NavigationManager.ToBaseRelativePath(NavigationManager.Uri) };
         AppState.OnReloadClick += ReloadClick;
     }
-    void IDisposable.Dispose(){
+
+    void IDisposable.Dispose()
+    {
         AppState.OnAddClick -= ReloadClick;
     }
+
     void SetQueryVariables()
     {
         var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
@@ -43,12 +47,14 @@
             _modelCode = _code;
         }
     }
+
     async Task LoadData()
     {
         AppState.Loading = true;
-        //
+        // do something
         AppState.Loading = false;
     }
+
     async void ReloadClick()
     {
         await LoadData();

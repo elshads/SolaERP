@@ -1,27 +1,51 @@
 ﻿
 <TelerikToolBar>
-    <ToolBarButton Icon="undo">Undo</ToolBarButton>
-    <ToolBarButton Icon="redo">Redo</ToolBarButton>
-    <ToolBarSeparator></ToolBarSeparator>
-    <ToolBarToggleButton Icon="apply-format"></ToolBarToggleButton>
-    <ToolBarSeparator></ToolBarSeparator>
-    <ToolBarButtonGroup SelectionMode="@ButtonGroupSelectionMode.Multiple">
-        <ToolBarToggleButton Selected="true" Icon="bold"></ToolBarToggleButton>
-        <ToolBarToggleButton Icon="italic"></ToolBarToggleButton>
-        <ToolBarToggleButton Icon="underline"></ToolBarToggleButton>
-    </ToolBarButtonGroup>
-    <ToolBarSeparator></ToolBarSeparator>
-    <ToolBarSpacer></ToolBarSpacer>
-    <ToolBarTemplateItem>
-        <span class="k-textbox k-input k-input-solid k-rounded-md k-input-md">
-            <input type="text" class="k-input-inner" placeholder="Search...">
-            <span class="k-input-suffix">
-                <span class="k-icon k-i-search"></span>
-            </span>
-        </span>
-    </ToolBarTemplateItem>
+    <ToolBarButton Icon="add" Enabled="@AppState.AddButtonEnabled" Visible="@AppState.AddButtonVisible" OnClick="@AddClick">Add</ToolBarButton>
+    <ToolBarButton Icon="delete" Enabled="@AppState.DeleteButtonEnabled" Visible="@AppState.DeleteButtonVisible" OnClick="@DeleteClick">Delete</ToolBarButton>
+    <ToolBarButton Icon="save" Enabled="@AppState.SaveButtonEnabled" Visible="@AppState.SaveButtonVisible" OnClick="@SaveClick">Save</ToolBarButton>
+    <ToolBarSeparator Visible="@(AppState.AddButtonVisible || AppState.DeleteButtonVisible || AppState.SaveButtonVisible)"/>
+    <ToolBarButton Icon="reload" Enabled="@AppState.ReloadButtonEnabled" Visible="@AppState.ReloadButtonVisible" OnClick="@ReloadClick">Reload</ToolBarButton>
+    <ToolBarSeparator Visible="@(AppState.ReloadButtonVisible)"/>
+    <ToolBarButton Icon="printer" Enabled="@AppState.ReportButtonEnabled" Visible="@AppState.ReportButtonVisible" OnClick="@ReportClick">Report</ToolBarButton>
+    <ToolBarSeparator Visible="@(AppState.ReportButtonVisible)"/>
+    <ToolBarSpacer/>
 </TelerikToolBar>
 
 @code {
+    [CascadingParameter] public AppState AppState { get; set; }
 
+
+    void AddClick(MouseEventArgs args)
+    {
+        AppState.AddClick();
+    }
+
+    void DeleteClick(MouseEventArgs args)
+    {
+        AppState.DeleteClick();
+    }
+
+    void SaveClick(MouseEventArgs args)
+    {
+        AppState.SaveClick();
+    }
+
+    void ReloadClick(MouseEventArgs args)
+    {
+        AppState.ReloadClick();
+    }
+
+    void ReportClick(MouseEventArgs args)
+    {
+        var report = AppState.Report;
+        if (report != null)
+        {
+            AppState.ShowAlert($"Print supplied report - {report.ReportName}. (Replace this function)", Severity.Success);
+        }
+        else
+        {
+            AppState.ShowAlert("No report data", Severity.Info);
+        }
+        AppState.ReportClick();
+    }
 }

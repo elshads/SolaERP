@@ -57,7 +57,7 @@
         var isAuthenticated = _isAuthenticated.User.Identity.IsAuthenticated;
         if (firstRender && !isAuthenticated)
         {
-            NavigationManager.NavigateTo("Identity/Account/Login", true);
+            NavigationManager.NavigateTo("/authentication/login");
         }
     }
 
@@ -66,3 +66,13 @@
         appState.OnRefreshClick -= Refresh;
     }
 }
+
+<style>
+    .k-pager-sizes .k-dropdown-list, .k-pager-sizes .k-dropdown, .k-pager-sizes .k-dropdownlist, .k-pager-sizes > select {
+        width: 6em;
+    }
+
+    .k-toolbar .k-button{
+        min-height: 30px;
+    }
+</style>

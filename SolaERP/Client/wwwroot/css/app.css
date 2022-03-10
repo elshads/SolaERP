@@ -30,7 +30,7 @@ html, body {
         margin-left: 64px;
     }
 
-@media(max-width:599px) {
+@media(max-width:768px) {
     .mud-drawer.mud-drawer-mini.mud-drawer--closed {
         display: none !important;
     }

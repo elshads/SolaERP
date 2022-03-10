@@ -2,5 +2,9 @@
 {
     public class PageData
     {
+        public PageData()
+        {
+
+        }
     }
 }
