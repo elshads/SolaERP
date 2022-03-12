@@ -26,7 +26,7 @@
         <GridCommandButton Command="ExportToExcel" Icon="excel">@(!isMobileView ? "Export to Excel" : "")</GridCommandButton>
         <GridCommandButton Command="ShowRowButtons" Icon="button" OnClick="@(() => showRowButtons = !showRowButtons)">@(!isMobileView ? "Row buttons" : "")</GridCommandButton>
         <GridCommandButton Command="ShowGroup" Icon="layout" OnClick="@(() => showGroup = !showGroup)">@(!isMobileView ? "Group" : "")</GridCommandButton>
-        <GridSearchBox />
+        <GridSearchBox DebounceDelay="0" />
     </GridToolBar>
     <GridColumns>
         <GridCommandColumn ShowColumnMenu="false" Reorderable="false" Width="90px" Visible="@(showRowButtons && !gridReadOnly)">

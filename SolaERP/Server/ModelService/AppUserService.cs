@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.Data.SqlClient;
+using System.Security.Claims;
 
 namespace SolaERP.Server.ModelService
 {
@@ -25,6 +25,22 @@ namespace SolaERP.Server.ModelService
             catch (Exception e)
             {
                 result.ReturnMessage = e.Message;
+            }
+            return result;
+        }
+
+        public int GetCurrentUserId()
+        {
+            var result = 0;
+            try
+            {
+                var httpUser = _httpContextAccessor.HttpContext.User;
+                var userId = _userManager.GetUserId(httpUser);
+                if (userId != null) { result = int.Parse(userId); }
+            }
+            catch (Exception e)
+            {
+                var message = e.Message;
             }
             return result;
         }

@@ -31,7 +31,7 @@
     async Task ChangeTheme(bool toggle)
     {
         SessionData.CurrentUser.Theme = SessionData.CurrentUser?.Theme == "light" ? "dark" : "light";
-        var response = await Http.PutAsJsonAsync<AppUser>("Theme", SessionData.CurrentUser);
+        var response = await Http.PutAsJsonAsync<string>("Theme", SessionData.CurrentUser.Theme);
         var content = await response.Content.ReadFromJsonAsync<SqlResult>();
         if (content.UpdatedResult > 0)
         {
