@@ -3,7 +3,7 @@
 [Authorize]
 [ApiController]
 [Route("[controller]")]
-public class ThemeController : Controller
+public class ThemeController : ControllerBase
 {
     int _currentUserId;
     public ThemeController(AppUserService appUserService)

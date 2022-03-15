@@ -3,7 +3,7 @@
 [Authorize]
 [ApiController]
 [Route("[controller]")]
-public class UserMenuAccessController : Controller
+public class UserMenuAccessController : ControllerBase
 {
     UserMenuAccessService _userMenuAccessService;
 

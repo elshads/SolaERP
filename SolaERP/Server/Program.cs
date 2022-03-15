@@ -40,6 +40,7 @@ builder.Services.AddRazorPages();
 builder.Services.AddScoped<AppUserService>();
 builder.Services.AddSingleton<MenuService>();
 builder.Services.AddSingleton<UserMenuAccessService>();
+builder.Services.AddSingleton<GroupService>();
 
 var app = builder.Build();
 

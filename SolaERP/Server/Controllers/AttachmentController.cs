@@ -3,7 +3,7 @@
 [Authorize]
 [ApiController]
 [Route("[controller]")]
-public class AttachmentController : Controller
+public class AttachmentController : ControllerBase
 {
     AttachmentService _attachmentService;
 

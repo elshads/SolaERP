@@ -5,84 +5,99 @@
 
 <PageTitle>User Groups</PageTitle>
 
-<TelerikGrid @ref="@gridRef" @key="@gridKey" Data="@modelList" Height="calc(100vh - 160px)"
-             Pageable="true" Sortable="true" Navigable="true" Groupable="@showGroup"
-             FilterMode="@GridFilterMode.FilterMenu" ShowColumnMenu="true"
-             Resizable="true" Reorderable="true" @bind-PageSize="@gridPageSize"
-             SelectionMode="@(editMode ? GridSelectionMode.None : GridSelectionMode.Multiple)" SelectedItems="@selectedModelList"
-             SelectedItemsChanged="@((IEnumerable<Model> itemList) => OnGridItemSelect(itemList))"
-             OnRowClick="@OnRowClickHandler" OnRowDoubleClick="@OnRowDoubleClickHandler"
-             ConfirmDelete="true" OnDelete="@(e => DeleteHandler(e, 1))">
+@*<TelerikGrid @ref="@gridRef" @key="@gridKey" Data="@modelList" Height="calc(100vh - 160px)"
+    Pageable="true" Sortable="true" Navigable="true" Groupable="@showGroup"
+    FilterMode="@GridFilterMode.FilterMenu" ShowColumnMenu="true"
+    Resizable="true" Reorderable="true" @bind-PageSize="@gridPageSize"
+    SelectionMode="@(editMode ? GridSelectionMode.None : GridSelectionMode.Multiple)" SelectedItems="@selectedModelList"
+    SelectedItemsChanged="@((IEnumerable<Model> itemList) => OnGridItemSelect(itemList))"
+    OnRowClick="@OnRowClickHandler" OnRowDoubleClick="@OnRowDoubleClickHandler"
+    ConfirmDelete="true" OnDelete="@(e => DeleteHandler(e, 1))">
     <GridSettings>
-        <GridPagerSettings PageSizes="@(new List<int?> { 10, 20, 50, 100, 1000, null })" />
+    <GridPagerSettings PageSizes="@(new List<int?> { 10, 20, 50, 100, 1000, null })" />
     </GridSettings>
     <GridToolBar>
-        @if (!gridReadOnly && false)
-        {
-            <GridCommandButton Icon="add" Enabled="@(!editMode)" OnClick="CreateHandler">Add Row</GridCommandButton>
-            <GridCommandButton Command="Delete" Icon="delete" Enabled="@(!editMode && selectedModelList.Count() > 0)" OnClick="@(e => DeleteHandler(e, 2))">Delete</GridCommandButton>
-        }
-        <span class="k-toolbar-spacer" />
-        <GridCommandButton Command="ExportToExcel" Icon="excel">@(!isMobileView ? "Export to Excel" : "")</GridCommandButton>
-        <GridCommandButton Command="ShowRowButtons" Icon="button" OnClick="@(() => showRowButtons = !showRowButtons)">@(!isMobileView ? "Row buttons" : "")</GridCommandButton>
-        <GridCommandButton Command="ShowGroup" Icon="layout" OnClick="@(() => showGroup = !showGroup)">@(!isMobileView ? "Group" : "")</GridCommandButton>
-        <GridSearchBox DebounceDelay="0" />
+    @if (!gridReadOnly && false)
+    {
+    <GridCommandButton Icon="add" Enabled="@(!editMode)" OnClick="CreateHandler">Add Row</GridCommandButton>
+    <GridCommandButton Command="Delete" Icon="delete" Enabled="@(!editMode && selectedModelList.Count() > 0)" OnClick="@(e => DeleteHandler(e, 2))">Delete</GridCommandButton>
+    }
+    <span class="k-toolbar-spacer" />
+    <GridCommandButton Command="ExportToExcel" Icon="excel">@(!isMobileView ? "Export to Excel" : "")</GridCommandButton>
+    <GridCommandButton Command="ShowRowButtons" Icon="button" OnClick="@(() => showRowButtons = !showRowButtons)">@(!isMobileView ? "Row buttons" : "")</GridCommandButton>
+    <GridCommandButton Command="ShowGroup" Icon="layout" OnClick="@(() => showGroup = !showGroup)">@(!isMobileView ? "Group" : "")</GridCommandButton>
+    <GridSearchBox DebounceDelay="0" />
     </GridToolBar>
     <GridColumns>
-        <GridCommandColumn ShowColumnMenu="false" Reorderable="false" Width="90px" Visible="@(showRowButtons && !gridReadOnly)">
-            <GridCommandButton Icon="edit" ShowInEdit="false" Enabled="(!editMode)" OnClick="EditHandler" />
-            <GridCommandButton Command="Delete" Icon="delete" ShowInEdit="false" Enabled="(!editMode)" />
-        </GridCommandColumn>
-        <GridCheckboxColumn ShowColumnMenu="false" VisibleInColumnChooser="false" Reorderable="false" Locked="true" Width="42px" Visible="@(!editMode)" />
-        <GridColumn Field="@(nameof(Model.GroupId))" Title="Id" Width="70px" Editable="false" TextAlign="ColumnTextAlign.Right" Visible="false" />
-        <GridColumn Field="@(nameof(Model.GroupName))" Title="Name">
-            <Template>
-                @{
-                    var rowContext = context as Model;
-                }
-                @if (isMobileView)
-                {
-                    <TelerikCard>
-                        <CardHeader>
-                            <CardTitle>
-                                @rowContext.GroupName
-                            </CardTitle>
-                            <CardSubTitle>
-                                @rowContext.Description
-                            </CardSubTitle>
-                        </CardHeader>
-                        <CardSeparator></CardSeparator>
-                        <CardBody>
-                            <div>
-                                IsMobileView: @isMobileView
-                            </div>
-                            <div>
-                                EditMode: @editMode
-                            </div>
-                            <div>
-                                Name: @rowContext.GroupName
-                            </div>
-                            <div>
-                                Description: @rowContext.Description
-                            </div>
-                        </CardBody>
-                        <CardFooter>
-                            <CardSubTitle>
-                                Storage count: 23 PCS
-                            </CardSubTitle>
-                        </CardFooter>
-                    </TelerikCard>
-                }
-                else
-                {
-                    <text>@rowContext.GroupName</text>
-                }
-            </Template>
-        </GridColumn>
-        <GridColumn Field="@(nameof(Model.Description))" Title="Description" Visible="@(!isMobileView)" />
+    <GridCommandColumn ShowColumnMenu="false" Reorderable="false" Width="90px" Visible="@(showRowButtons && !gridReadOnly)">
+    <GridCommandButton Icon="edit" ShowInEdit="false" Enabled="(!editMode)" OnClick="EditHandler" />
+    <GridCommandButton Command="Delete" Icon="delete" ShowInEdit="false" Enabled="(!editMode)" />
+    </GridCommandColumn>
+    <GridCheckboxColumn ShowColumnMenu="false" VisibleInColumnChooser="false" Reorderable="false" Locked="true" Width="42px" Visible="@(!editMode && showCheckBox)" />
+    <GridColumn Field="@(nameof(Model.GroupId))" Title="Id" Width="70px" Editable="false" TextAlign="ColumnTextAlign.Right" Visible="false" />
+    <GridColumn Field="@(nameof(Model.GroupName))" Title="Name">
+    <Template>
+    @{
+    var rowContext = context as Model;
+    }
+    @if (isMobileView)
+    {
+    <TelerikCard>
+    <CardHeader>
+    <CardTitle>
+    @(rowContext.GroupName)
+    </CardTitle>
+    <CardSubTitle>
+    @(rowContext.Description)
+    </CardSubTitle>
+    </CardHeader>
+    <CardActions>
+    <TelerikButton>Details</TelerikButton>
+    </CardActions>
+    </TelerikCard>
+    }
+    else
+    {
+    <text>@rowContext.GroupName</text>
+    }
+    </Template>
+    </GridColumn>
+    <GridColumn Field="@(nameof(Model.Description))" Title="Description" Width="@(isMobileView ? "0" : "auto")" />
     </GridColumns>
-</TelerikGrid>
-<TelerikMediaQuery Media="(max-width: 768px)" OnChange="@( (mobileView) => isMobileView = mobileView )"></TelerikMediaQuery>
+    </TelerikGrid>
+    <TelerikMediaQuery Media="(max-width: 768px)" OnChange="@( (mobileView) => isMobileView = mobileView )"></TelerikMediaQuery>*@
+
+<DataGrid Data="@modelList">
+    <GridColumn Field="@(nameof(Model.GroupId))" Title="Id" Width="70px" Editable="false" TextAlign="ColumnTextAlign.Right" Visible="false" />
+    <GridColumn Field="@(nameof(Model.GroupName))" Title="Name">
+        <Template>
+            @{
+                var rowContext = context as Model;
+            }
+            @if (isMobileView)
+            {
+                <TelerikCard>
+                    <CardHeader>
+                        <CardTitle>
+                            @(rowContext.GroupName)
+                        </CardTitle>
+                        <CardSubTitle>
+                            @(rowContext.Description)
+                        </CardSubTitle>
+                    </CardHeader>
+                    <CardActions>
+                        <TelerikButton>Details</TelerikButton>
+                    </CardActions>
+                </TelerikCard>
+            }
+            else
+            {
+                <text>@rowContext.GroupName</text>
+            }
+        </Template>
+    </GridColumn>
+    <GridColumn Field="@(nameof(Model.Description))" Title="Description" Width="@(isMobileView ? "0" : "auto")" />
+</DataGrid>
 
 
 @code {
@@ -93,9 +108,10 @@
     IEnumerable<Model> selectedModelList = new List<Model>();
     List<Model> deletedModelList = new List<Model>();
     Model selectedModel;
-    bool showRowButtons { get; set; } = false;
-    bool showDecimals { get; set; } = false;
-    bool showGroup { get; set; } = false;
+    bool showRowButtons = false;
+    bool showDecimals = false;
+    bool showGroup = false;
+    bool showCheckBox = false;
     int gridPageSize = 20;
     bool gridReadOnly = false;
     bool editMode = false;
@@ -104,6 +120,7 @@
     // Page specific variables - start
     // Page specific variables - end
 
+    string modelName = "Group";
     bool isMobileView = false;
     int activeTabIndex = 0;
 
@@ -132,8 +149,8 @@
     async Task LoadData()
     {
         AppState.Loading = true;
-        //var _modelList = await Http.GetFromJsonAsync<IEnumerable<Model>>("Model");
-        var _modelList = new List<Model>() { new Model { GroupId = 1, GroupName = "Group 1", Description = "GroupA" }, new Model { GroupId = 2, GroupName = "Group 2", Description = "GroupB" }, new Model { GroupId = 3, GroupName = "Group 3", Description = "GroupA" } };
+        var _modelList = await Http.GetFromJsonAsync<IEnumerable<Model>>("Group/GetAll");
+        //var _modelList = new List<Model>() { new Model { GroupId = 1, GroupName = "Group 1", Description = "GroupA" }, new Model { GroupId = 2, GroupName = "Group 2", Description = "GroupB" }, new Model { GroupId = 3, GroupName = "Group 3", Description = "GroupA" } };
         modelList = _modelList.ToList();
         AppState.Loading = false;
     }

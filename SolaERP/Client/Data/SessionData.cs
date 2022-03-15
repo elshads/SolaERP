@@ -1,4 +1,7 @@
-﻿namespace SolaERP.Client.Data
+﻿using Microsoft.AspNetCore.Components.Authorization;
+using System.Security.Claims;
+
+namespace SolaERP.Client.Data
 {
     public class SessionData
     {
@@ -8,5 +11,7 @@
         }
         internal AppUser? CurrentUser { get; set; }
         public List<UserMenuAccess>? CurrentUserMenuAccessList { get; set; }
+
+        public AuthenticationState AuthenticationState { get; set; }
     }
 }

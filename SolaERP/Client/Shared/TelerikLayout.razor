@@ -40,8 +40,8 @@
     {
         appState = new AppState(Snackbar, SessionData, PageData);
         appState.Loading = true;
-        appState.OnRefreshClick += Refresh;
         SessionData.CurrentUser = await Http.GetFromJsonAsync<AppUser>("AppUser");
+        appState.OnRefreshClick += Refresh;
         //SessionData.CurrentUserMenuAccessList = await Http.GetFromJsonAsync<List<UserMenuAccess>>("UserMenuAccess");
         appState.Loading = false;
     }
@@ -53,8 +53,8 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        var _isAuthenticated = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        var isAuthenticated = _isAuthenticated.User.Identity.IsAuthenticated;
+        SessionData.AuthenticationState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var isAuthenticated = SessionData.AuthenticationState.User.Identity.IsAuthenticated;
         if (firstRender && !isAuthenticated)
         {
             NavigationManager.NavigateTo("/authentication/login");

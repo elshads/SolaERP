@@ -1,0 +1,235 @@
+﻿@typeparam TItem where TItem : BaseModel, new()
+
+<TelerikGrid @ref="@Ref"
+             @key="@Key"
+             Data="@Data"
+             Height="@Height"
+             Pageable="true"
+             Sortable="true"
+             Navigable="true"
+             Groupable="@showGroup"
+             Resizable="true"
+             Reorderable="true"
+             ShowColumnMenu="true"
+             ConfirmDelete="true"
+             @bind-PageSize="@PageSize"
+             FilterMode="@GridFilterMode.FilterMenu"
+             SelectionMode="@GridSelectionMode.Multiple"
+             EditMode="GridEditMode.Inline"
+             SelectedItems="@SelectedItems"
+             SelectedItemsChanged="@((IEnumerable<TItem> selectedItems) => SelectedItemsChangedHandler(selectedItems))"
+             OnRowClick="@OnRowClickHandler"
+             OnRowDoubleClick="@OnRowDoubleClickHandler"
+             OnCreate="@OnCreateHandler"
+             OnEdit="@OnEditHandler"
+             OnUpdate="@OnUpdateHandler"
+             OnCancel="@OnCancelHandler"
+             OnDelete="@OnDeleteHandler">
+    <GridSettings>
+        <GridPagerSettings PageSizes="@(new List<int?> { 10, 20, 50, 100, 1000, null })" />
+    </GridSettings>
+    <GridToolBar>
+        @if (!ReadOnly)
+        {
+            <GridCommandButton Command="Add" Icon="add" Enabled="@(!InEditMode)">Add Row</GridCommandButton>
+            <GridCommandButton Command="Delete" Icon="delete" Enabled="@(!InEditMode && SelectedItems.Count() > 0)">Delete</GridCommandButton>
+        }
+        <span class="k-toolbar-spacer" />
+        <GridCommandButton Command="ExportToExcel" Icon="excel">@(!isMobileView ? "Export to Excel" : "")</GridCommandButton>
+        <GridCommandButton Command="ShowRowButtons" Icon="button" OnClick="@(() => showRowButtons = !showRowButtons)">@(!isMobileView ? "Row buttons" : "")</GridCommandButton>
+        <GridCommandButton Command="ShowGroup" Icon="layout" OnClick="@(() => showGroup = !showGroup)">@(!isMobileView ? "Group" : "")</GridCommandButton>
+        <GridSearchBox DebounceDelay="0" />
+    </GridToolBar>
+    <GridColumns>
+        <GridCommandColumn ShowColumnMenu="false" Reorderable="false" Width="90px" Visible="@(showRowButtons && !ReadOnly)">
+            <GridCommandButton Command="Edit" Icon="edit" ShowInEdit="false" Enabled="(!InEditMode)" />
+            <GridCommandButton Command="Delete" Icon="delete" ShowInEdit="false" Enabled="(!InEditMode)" />
+        </GridCommandColumn>
+        <GridCheckboxColumn ShowColumnMenu="false" VisibleInColumnChooser="false" Reorderable="false" Locked="true" Width="42px" Visible="@(!InEditMode && showCheckBox)" />
+        @ChildContent
+    </GridColumns>
+</TelerikGrid>
+<TelerikMediaQuery Media="(max-width: 768px)" OnChange="@( (mobileView) => isMobileView = mobileView )"></TelerikMediaQuery>
+
+
+@code {
+    // parameters - start
+
+    [Parameter] public RenderFragment ChildContent { get; set; }
+
+    [Parameter] public Guid Key { get; set; }
+    [Parameter] public TelerikGrid<TItem> Ref { get; set; }
+
+    [Parameter] public List<TItem> Data { get; set; } = new();
+    [Parameter] public IEnumerable<TItem> SelectedItems { get; set; } = new List<TItem>();
+    [Parameter] public EventCallback<IEnumerable<TItem>> SelectedItemsChanged { get; set; }
+    [Parameter] public TItem SelectedItem { get; set; }
+    [Parameter] public EventCallback<TItem> SelectedItemChanged { get; set; }
+
+    [Parameter] public string Height { get; set; } = "calc(100vh - 160px)";
+    [Parameter] public string Media { get; set; } = "(max-width: 768px)";
+    [Parameter] public bool EditOnDoubleClick { get; set; } = false;
+
+    [Parameter] public EventCallback<GridRowClickEventArgs> OnRowClick { get; set; }
+    [Parameter] public EventCallback<GridRowClickEventArgs> OnRowDoubleClick { get; set; }
+
+    [Parameter] public EventCallback<GridCommandEventArgs> OnCreate { get; set; }
+    [Parameter] public EventCallback<GridCommandEventArgs> OnEdit { get; set; }
+    [Parameter] public EventCallback<GridCommandEventArgs> OnUpdate { get; set; }
+    [Parameter] public EventCallback<GridCommandEventArgs> OnCancel { get; set; }
+    [Parameter] public EventCallback<GridCommandEventArgs> OnDelete { get; set; }
+
+    // parameters - end
+
+    // -----------------------
+
+    // local variables - start
+
+
+    bool showRowButtons = false;
+    bool showDecimals = false;
+    bool showGroup = false;
+    bool showCheckBox = false;
+    int PageSize = 20;
+    bool ReadOnly = false;
+    bool InEditMode = false;
+    bool isMobileView = false;
+
+    // local variables - end
+
+    // -----------------------
+
+    // grid events - start
+
+    async Task SelectedItemsChangedHandler(IEnumerable<TItem> selectedItems)
+    {
+        SelectedItems = selectedItems;
+        await SelectedItemsChanged.InvokeAsync(SelectedItems);
+    }
+
+    async Task SelectedItemChangedHandler(TItem selectedItem)
+    {
+        SelectedItem = selectedItem;
+        await SelectedItemChanged.InvokeAsync(SelectedItem);
+    }
+
+    // grid events - end
+
+    // -----------------------
+
+    // row clicks - start
+
+    async Task OnRowClickHandler(GridRowClickEventArgs args)
+    {
+        if (!InEditMode)
+        {
+            await SelectedItemChangedHandler(args.Item as TItem);
+        }
+        await OnRowClick.InvokeAsync(args);
+    }
+
+    async Task OnRowDoubleClickHandler(GridRowClickEventArgs args)
+    {
+        if (EditOnDoubleClick)
+        {
+            await SetEditMode(args.Item as TItem);
+        }
+        await OnRowDoubleClick.InvokeAsync(args);
+    }
+
+    // row clicks - end
+
+    // -----------------------
+
+    // CRUD event handlers - start
+
+    async Task OnCreateHandler(GridCommandEventArgs args)
+    {
+        await Create();
+        await OnCreate.InvokeAsync(args);
+    }
+
+    async Task OnEditHandler(GridCommandEventArgs args)
+    {
+        await Edit();
+        await OnEdit.InvokeAsync(args);
+    }
+
+    async Task OnUpdateHandler(GridCommandEventArgs args)
+    {
+        await Update();
+        await OnUpdate.InvokeAsync(args);
+    }
+
+    async Task OnCancelHandler(GridCommandEventArgs args)
+    {
+        await Cancel();
+        await OnCancel.InvokeAsync(args);
+    }
+
+    async Task OnDeleteHandler(GridCommandEventArgs args)
+    {
+        await Delete();
+        await OnDelete.InvokeAsync(args);
+    }
+
+    // CRUD event handlers - end
+
+    // -----------------------
+
+    // default CRUD functions - start
+
+    async Task Create()
+    {
+        // create action
+    }
+
+    async Task Edit()
+    {
+        // edit action
+    }
+
+    async Task Update()
+    {
+        // update action
+    }
+
+    async Task Cancel()
+    {
+        // cancel action
+    }
+
+    async Task Delete()
+    {
+        // delete action
+    }
+
+    // default CRUD functions - end
+
+    // -----------------------
+
+    // component functions - start
+
+    async Task SetEditMode(TItem selectedItem)
+    {
+        var currState = Ref.GetState();
+        currState.InsertedItem = null;
+        TItem itemToEdit = GetInstanceClone(selectedItem);
+        currState.OriginalEditItem = selectedItem;
+        currState.EditItem = itemToEdit;
+        await Ref.SetState(currState);
+    }
+
+    TItem GetInstanceClone(TItem originalItem)
+    {
+        TItem newItem = new();
+        var properties = typeof(TItem).GetProperties();
+        foreach (var property in properties)
+        {
+            property.SetValue(newItem, property.GetValue(originalItem));
+        }
+        return newItem;
+    }
+
+    // component functions - start
+}
