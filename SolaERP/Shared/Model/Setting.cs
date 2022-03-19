@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SolaERP.Shared.Model
 {
-    internal class Setting : BaseModel
+    public class Setting : BaseModel
     {
         public int MaxFileSize { get; set; }
         public int MaxImageSize { get; set; }

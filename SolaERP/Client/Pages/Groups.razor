@@ -5,76 +5,22 @@
 
 <PageTitle>User Groups</PageTitle>
 
-@*<TelerikGrid @ref="@gridRef" @key="@gridKey" Data="@modelList" Height="calc(100vh - 160px)"
-    Pageable="true" Sortable="true" Navigable="true" Groupable="@showGroup"
-    FilterMode="@GridFilterMode.FilterMenu" ShowColumnMenu="true"
-    Resizable="true" Reorderable="true" @bind-PageSize="@gridPageSize"
-    SelectionMode="@(editMode ? GridSelectionMode.None : GridSelectionMode.Multiple)" SelectedItems="@selectedModelList"
-    SelectedItemsChanged="@((IEnumerable<Model> itemList) => OnGridItemSelect(itemList))"
-    OnRowClick="@OnRowClickHandler" OnRowDoubleClick="@OnRowDoubleClickHandler"
-    ConfirmDelete="true" OnDelete="@(e => DeleteHandler(e, 1))">
-    <GridSettings>
-    <GridPagerSettings PageSizes="@(new List<int?> { 10, 20, 50, 100, 1000, null })" />
-    </GridSettings>
-    <GridToolBar>
-    @if (!gridReadOnly && false)
-    {
-    <GridCommandButton Icon="add" Enabled="@(!editMode)" OnClick="CreateHandler">Add Row</GridCommandButton>
-    <GridCommandButton Command="Delete" Icon="delete" Enabled="@(!editMode && selectedModelList.Count() > 0)" OnClick="@(e => DeleteHandler(e, 2))">Delete</GridCommandButton>
-    }
-    <span class="k-toolbar-spacer" />
-    <GridCommandButton Command="ExportToExcel" Icon="excel">@(!isMobileView ? "Export to Excel" : "")</GridCommandButton>
-    <GridCommandButton Command="ShowRowButtons" Icon="button" OnClick="@(() => showRowButtons = !showRowButtons)">@(!isMobileView ? "Row buttons" : "")</GridCommandButton>
-    <GridCommandButton Command="ShowGroup" Icon="layout" OnClick="@(() => showGroup = !showGroup)">@(!isMobileView ? "Group" : "")</GridCommandButton>
-    <GridSearchBox DebounceDelay="0" />
-    </GridToolBar>
-    <GridColumns>
-    <GridCommandColumn ShowColumnMenu="false" Reorderable="false" Width="90px" Visible="@(showRowButtons && !gridReadOnly)">
-    <GridCommandButton Icon="edit" ShowInEdit="false" Enabled="(!editMode)" OnClick="EditHandler" />
-    <GridCommandButton Command="Delete" Icon="delete" ShowInEdit="false" Enabled="(!editMode)" />
-    </GridCommandColumn>
-    <GridCheckboxColumn ShowColumnMenu="false" VisibleInColumnChooser="false" Reorderable="false" Locked="true" Width="42px" Visible="@(!editMode && showCheckBox)" />
-    <GridColumn Field="@(nameof(Model.GroupId))" Title="Id" Width="70px" Editable="false" TextAlign="ColumnTextAlign.Right" Visible="false" />
-    <GridColumn Field="@(nameof(Model.GroupName))" Title="Name">
-    <Template>
-    @{
-    var rowContext = context as Model;
-    }
-    @if (isMobileView)
-    {
-    <TelerikCard>
-    <CardHeader>
-    <CardTitle>
-    @(rowContext.GroupName)
-    </CardTitle>
-    <CardSubTitle>
-    @(rowContext.Description)
-    </CardSubTitle>
-    </CardHeader>
-    <CardActions>
-    <TelerikButton>Details</TelerikButton>
-    </CardActions>
-    </TelerikCard>
-    }
-    else
-    {
-    <text>@rowContext.GroupName</text>
-    }
-    </Template>
-    </GridColumn>
-    <GridColumn Field="@(nameof(Model.Description))" Title="Description" Width="@(isMobileView ? "0" : "auto")" />
-    </GridColumns>
-    </TelerikGrid>
-    <TelerikMediaQuery Media="(max-width: 768px)" OnChange="@( (mobileView) => isMobileView = mobileView )"></TelerikMediaQuery>*@
 
-<DataGrid Data="@modelList">
+<DataGrid Data="@modelList"
+          CanDelete="true"
+          CanAdd="true"
+          CanExport="true"
+          CanEdit="true"
+          SearchFields="@(new List<string> { "GroupId", "GroupName", "Description" })"
+          OnDelete="@((IEnumerable<Model> items) => DeleteHandler(items))"
+          @bind-SelectedItems="@selectedItems">
     <GridColumn Field="@(nameof(Model.GroupId))" Title="Id" Width="70px" Editable="false" TextAlign="ColumnTextAlign.Right" Visible="false" />
-    <GridColumn Field="@(nameof(Model.GroupName))" Title="Name">
+    <GridColumn Field="@(nameof(Model.GroupName))" Title="@(!AppState.MobileView ? "Name" : "Groups")" ShowColumnMenu="@(!AppState.MobileView ? true : false)" Filterable="@(!AppState.MobileView ? true : false)">
         <Template>
             @{
                 var rowContext = context as Model;
             }
-            @if (isMobileView)
+            @if (AppState.MobileView)
             {
                 <TelerikCard>
                     <CardHeader>
@@ -86,7 +32,7 @@
                         </CardSubTitle>
                     </CardHeader>
                     <CardActions>
-                        <TelerikButton>Details</TelerikButton>
+                        <TelerikButton OnClick="@(() => NavigationManager.NavigateTo($"/groups/card?id={rowContext.GroupId}"))">Details</TelerikButton>
                     </CardActions>
                 </TelerikCard>
             }
@@ -96,7 +42,7 @@
             }
         </Template>
     </GridColumn>
-    <GridColumn Field="@(nameof(Model.Description))" Title="Description" Width="@(isMobileView ? "0" : "auto")" />
+    <GridColumn Field="@(nameof(Model.Description))" Title="Description" Visible="!AppState.MobileView" />
 </DataGrid>
 
 
@@ -121,11 +67,17 @@
     // Page specific variables - end
 
     string modelName = "Group";
-    bool isMobileView = false;
     int activeTabIndex = 0;
 
     [CascadingParameter] public AppState AppState { get; set; }
     [CascadingParameter] public DialogFactory Dialogs { get; set; }
+
+    List<Model> deletedItems = new List<Model>();
+    IEnumerable<Model> selectedItems = new List<Model>();
+    void DeleteHandler(IEnumerable<Model> items)
+    {
+        deletedItems = items.ToList();
+    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -162,7 +114,7 @@
 
     void OnRowClickHandler(GridRowClickEventArgs args)
     {
-        //
+    //
     }
 
     void OnRowDoubleClickHandler(GridRowClickEventArgs args)
@@ -179,7 +131,8 @@
         currState.EditItem = null;
         currState.OriginalEditItem = null;
 
-        Model itemToEdit = new(argsItem);
+        var baseService = new BaseService<Model>();
+        Model itemToEdit = baseService.GetInstanceClone(argsItem);
 
         currState.EditItem = itemToEdit;
         currState.OriginalEditItem = argsItem;

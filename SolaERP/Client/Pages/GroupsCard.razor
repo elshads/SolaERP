@@ -1,0 +1,29 @@
+﻿@page "/groups/card"
+
+@using Model = Group
+
+
+<TelerikForm Model="@currentModel" OnValidSubmit="@OnFormSubmit" ValidationMessageType="FormValidationMessageType.Inline">
+    <FormValidation>
+        <DataAnnotationsValidator></DataAnnotationsValidator>
+    </FormValidation>
+    <FormItems>
+        <FormItem Field="@nameof(Model.GroupName)" LabelText="Name"></FormItem>
+        <FormItem Field="@nameof(Model.Description)" LabelText="Description"></FormItem>
+    </FormItems>
+</TelerikForm>
+
+@code {
+    [CascadingParameter] public AppState AppState { get; set; }
+    [CascadingParameter] public DialogFactory Dialogs { get; set; }
+
+    Model currentModel = new();
+
+    int activeTabIndex = 0;
+
+    void OnFormSubmit()
+    {
+        
+    }
+
+}

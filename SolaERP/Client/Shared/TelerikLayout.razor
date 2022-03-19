@@ -30,6 +30,7 @@
             </NotAuthorized>
         </AuthorizeView>
         <TelerikLoaderContainer Visible="@(appState != null ? appState.Loading : false)" />
+        <TelerikMediaQuery Media="(max-width: 768px)" OnChange="@( (bool mobileView) => OnMobileViewChanged(mobileView) )"></TelerikMediaQuery>
     </CascadingValue>
 </TelerikRootComponent>
 
@@ -49,6 +50,11 @@
     async void Refresh()
     {
         await InvokeAsync(StateHasChanged);
+    }
+
+    void OnMobileViewChanged(bool mobileView)
+    {
+        appState.MobileView = mobileView;
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

@@ -14,41 +14,6 @@ public class AppUser : IdentityUser<int>
         UpdatedOn = DateTime.Now;
     }
 
-    public AppUser(AppUser instance)
-    {
-        ReturnMessage = instance.ReturnMessage;
-        RowIndex = instance.RowIndex;
-        FullName = instance.FullName;
-        ChangePassword = instance.ChangePassword;
-        NotificationEmail = instance.NotificationEmail;
-        StatusId = instance.StatusId;
-        Theme = instance.Theme;
-        ExpirationDate = instance.ExpirationDate;
-        LastActivity = instance.LastActivity;
-        Sessions = instance.Sessions;
-        Photo = instance.Photo;
-        CreatedOn = instance.CreatedOn;
-        CreatedBy = instance.CreatedBy;
-        UpdatedOn = instance.UpdatedOn;
-        UpdatedBy = instance.UpdatedBy;
-
-        Id = instance.Id;
-        UserName = instance.UserName;
-        NormalizedUserName = instance.NormalizedUserName;
-        Email = instance.Email;
-        NormalizedEmail = instance.NormalizedEmail;
-        EmailConfirmed = instance.EmailConfirmed;
-        PasswordHash = instance.PasswordHash;
-        SecurityStamp = instance.SecurityStamp;
-        ConcurrencyStamp = instance.ConcurrencyStamp;
-        PhoneNumber = instance.PhoneNumber;
-        PhoneNumberConfirmed = instance.PhoneNumberConfirmed;
-        TwoFactorEnabled = instance.TwoFactorEnabled;
-        LockoutEnd = instance.LockoutEnd;
-        LockoutEnabled = instance.LockoutEnabled;
-        AccessFailedCount = instance.AccessFailedCount;
-    }
-
 
     public int RowIndex { get; set; }
     public string? FullName { get; set; }

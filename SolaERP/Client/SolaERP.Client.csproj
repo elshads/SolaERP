@@ -28,7 +28,7 @@
 	<ItemGroup>
 		<Using Include="SolaERP.Client" />
 		<Using Include="SolaERP.Client.Data" />
-		<Using Include="SolaERP.Client.Model" />
+		<Using Include="SolaERP.Client.ModelService" />
 		<Using Include="SolaERP.Shared.Data" />
 		<Using Include="SolaERP.Shared.Model" />
 	</ItemGroup>

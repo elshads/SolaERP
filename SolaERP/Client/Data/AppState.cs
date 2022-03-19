@@ -28,6 +28,7 @@ namespace SolaERP.Client.Data
             ReportButtonVisible = false;
             ReportButtonEnabled = true;
 
+            MobileView = false;
             Report = null;
         }
 
@@ -45,29 +46,20 @@ namespace SolaERP.Client.Data
         }
 
         bool loading;
-        bool addButtonVisible;
-        bool addButtonEnabled;
-        bool deleteButtonVisible;
-        bool deleteButtonEnabled;
-        bool saveButtonVisible;
-        bool saveButtonEnabled;
-        bool reloadButtonVisible;
-        bool reloadButtonEnabled;
-        bool reportButtonVisible;
-        bool reportButtonEnabled;
 
         public ReportDefinition Report { get; set; }
+        public bool MobileView { get; set; }
         public bool Loading { get { return loading; } set { loading = value; Refresh(); } }
-        public bool AddButtonVisible { get { return addButtonVisible; } set { addButtonVisible = value; } }
-        public bool AddButtonEnabled { get { return addButtonEnabled; } set { addButtonEnabled = value; } }
-        public bool DeleteButtonVisible { get { return deleteButtonVisible; } set { deleteButtonVisible = value; } }
-        public bool DeleteButtonEnabled { get { return deleteButtonEnabled; } set { deleteButtonEnabled = value; } }
-        public bool SaveButtonVisible { get { return saveButtonVisible; } set { saveButtonVisible = value; } }
-        public bool SaveButtonEnabled { get { return saveButtonEnabled; } set { saveButtonEnabled = value; } }
-        public bool ReloadButtonVisible { get { return reloadButtonVisible; } set { reloadButtonVisible = value; } }
-        public bool ReloadButtonEnabled { get { return reloadButtonEnabled; } set { reloadButtonEnabled = value; } }
-        public bool ReportButtonVisible { get { return reportButtonVisible; } set { reportButtonVisible = value; } }
-        public bool ReportButtonEnabled { get { return reportButtonEnabled; } set { reportButtonEnabled = value; } }
+        public bool AddButtonVisible { get; set; }
+        public bool AddButtonEnabled { get; set; }
+        public bool DeleteButtonVisible { get; set; }
+        public bool DeleteButtonEnabled { get; set; }
+        public bool SaveButtonVisible { get; set; }
+        public bool SaveButtonEnabled { get; set; }
+        public bool ReloadButtonVisible { get; set; }
+        public bool ReloadButtonEnabled { get; set; }
+        public bool ReportButtonVisible { get; set; }
+        public bool ReportButtonEnabled { get; set; }
 
 
         public event Action OnRefreshClick;

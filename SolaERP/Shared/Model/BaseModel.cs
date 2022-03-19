@@ -1,12 +1,11 @@
 ﻿namespace SolaERP.Shared.Model;
 public class BaseModel
 {
-    public BaseModel() { }
-
-    public BaseModel(BaseModel instance) 
+    public BaseModel() 
     {
-        ReturnMessage = instance.ReturnMessage;
+        RowIndex = -1;
     }
 
+    public int RowIndex { get; set; }
     public string? ReturnMessage { get; set; }
 }
