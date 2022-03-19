@@ -15,20 +15,20 @@
                                 <MudNavGroup Class="text-nowrap" Icon="@child.Icon" Title="@child.MenuName">
                                     @foreach (var grandchild in child.Children)
                                     {
-                                        <MudNavLink Class="text-nowrap" Match="NavLinkMatch.All" Icon="@grandchild.Icon" Href="@grandchild.URL">@grandchild.MenuName</MudNavLink>
+                                        <MudNavLink Class="text-nowrap" Match="NavLinkMatch.Prefix" Icon="@grandchild.Icon" Href="@grandchild.URL">@grandchild.MenuName</MudNavLink>
                                     }
                                 </MudNavGroup>
                             }
                             else if (child.Children == null || child.Children.Count() == 0)
                             {
-                                <MudNavLink Class="text-nowrap" Match="NavLinkMatch.All" Icon="@child.Icon" Href="@child.URL">@child.MenuName</MudNavLink>
+                                <MudNavLink Class="text-nowrap" Match="NavLinkMatch.Prefix" Icon="@child.Icon" Href="@child.URL">@child.MenuName</MudNavLink>
                             }
                         }
                     </MudNavGroup>
                 }
                 else if (menu.ParentId == null || menu.ParentId == 0)
                 {
-                    <MudNavLink Class="text-nowrap" Match="NavLinkMatch.All" Icon="@menu.Icon" Href="@menu.URL">@menu.MenuName</MudNavLink>
+                    <MudNavLink Class="text-nowrap" Match="NavLinkMatch.Prefix" Icon="@menu.Icon" Href="@menu.URL">@menu.MenuName</MudNavLink>
                 }
             }
         }

@@ -1,7 +1,7 @@
 ﻿
 namespace SolaERP.Shared.Model
 {
-    public class Role : BaseModel
+    public class ApproveRole : BaseModel
     {
     }
 }

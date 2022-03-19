@@ -3,7 +3,12 @@
 @using Model = Group
 
 
-<TelerikForm Model="@currentModel" OnValidSubmit="@OnFormSubmit" ValidationMessageType="FormValidationMessageType.Inline">
+<TelerikForm EditContext="@editContext"
+             OnValidSubmit="@OnValidSubmit"
+             OnInvalidSubmit="@OnInvalidSubmit"
+             ValidationMessageType="FormValidationMessageType.Inline"
+             Columns="@(AppState.MobileView ? 1 : 2)"
+             ColumnSpacing="1rem">
     <FormValidation>
         <DataAnnotationsValidator></DataAnnotationsValidator>
     </FormValidation>
@@ -11,19 +16,164 @@
         <FormItem Field="@nameof(Model.GroupName)" LabelText="Name"></FormItem>
         <FormItem Field="@nameof(Model.Description)" LabelText="Description"></FormItem>
     </FormItems>
+    <FormButtons/>
 </TelerikForm>
+
+<TelerikTabStrip @bind-ActiveTabIndex="@activeTabIndex">
+    <TabStripTab Title="Users">
+        <HeaderTemplate>
+            <MudIcon Icon="@Icons.Filled.AccountCircle" />
+            <span class="k-pl-2">
+                @if (AppState.MobileView)
+                {
+                    <MudIcon Icon="@Icons.Filled.Circle" Style="font-size: 0.5rem;" Color="@(activeTabIndex == 0 ? Color.Success : Color.Transparent)" />
+                }
+                else
+                {
+                    <div>Users</div>
+                }
+            </span>
+        </HeaderTemplate>
+        <Content>
+            content goes here
+        </Content>
+    </TabStripTab>
+
+    <TabStripTab Title="BusinessUnits">
+        <HeaderTemplate>
+            <MudIcon Icon="@Icons.Filled.Business" />
+            <span class="k-pl-2">
+                @if (AppState.MobileView)
+                {
+                    <MudIcon Icon="@Icons.Filled.Circle" Style="font-size: 0.5rem;" Color="@(activeTabIndex == 1 ? Color.Success : Color.Transparent)" />
+                }
+                else
+                {
+                    <div>Business Units</div>
+                }
+            </span>
+        </HeaderTemplate>
+        <Content>
+            content goes here
+        </Content>
+    </TabStripTab>
+
+    <TabStripTab Title="Units">
+        <HeaderTemplate>
+            <MudIcon Icon="@Icons.Filled.Category" />
+            <span class="k-pl-2">
+                @if (AppState.MobileView)
+                {
+                    <MudIcon Icon="@Icons.Filled.Circle" Style="font-size: 0.5rem;" Color="@(activeTabIndex == 2 ? Color.Success : Color.Transparent)" />
+                }
+                else
+                {
+                    <div>Units</div>
+                }
+            </span>
+        </HeaderTemplate>
+        <Content>
+            content goes here
+        </Content>
+    </TabStripTab>
+
+    <TabStripTab Title="Approve Roles">
+        <HeaderTemplate>
+            <MudIcon Icon="@Icons.Filled.Groups" />
+            <span class="k-pl-2">
+                @if (AppState.MobileView)
+                {
+                    <MudIcon Icon="@Icons.Filled.Circle" Style="font-size: 0.5rem;" Color="@(activeTabIndex == 3 ? Color.Success : Color.Transparent)" />
+                }
+                else
+                {
+                    <div>Approve Roles</div>
+                }
+            </span>
+        </HeaderTemplate>
+        <Content>
+            content goes here
+        </Content>
+    </TabStripTab>
+
+    <TabStripTab Title="Menus">
+        <HeaderTemplate>
+            <MudIcon Icon="@Icons.Filled.Menu" />
+            <span class="k-pl-2">
+                @if (AppState.MobileView)
+                {
+                    <MudIcon Icon="@Icons.Filled.Circle" Style="font-size: 0.5rem;" Color="@(activeTabIndex == 4 ? Color.Success : Color.Transparent)" />
+                }
+                else
+                {
+                    <div>Menus</div>
+                }
+            </span>
+        </HeaderTemplate>
+        <Content>
+            content goes here
+        </Content>
+    </TabStripTab>
+</TelerikTabStrip>
 
 @code {
     [CascadingParameter] public AppState AppState { get; set; }
     [CascadingParameter] public DialogFactory Dialogs { get; set; }
 
     Model currentModel = new();
+    EditContext editContext;
 
     int activeTabIndex = 0;
 
-    void OnFormSubmit()
+    protected override async Task OnInitializedAsync()
     {
-        
+        editContext = new EditContext(currentModel);
     }
+
+    void OnValidSubmit()
+    {
+        //
+    }
+
+    void OnInvalidSubmit()
+    {
+        //
+    }
+
+    //void RemoveOnRowDrop(GridRowDropEventArgs<TItem> args)
+    //{
+    //    foreach (var item in args.Items)
+    //    {
+    //        //SourceList.Remove(item);
+    //    }
+    //    InsertOnRowDrop(args);
+    //}
+
+    //void InsertOnRowDrop(GridRowDropEventArgs<TItem> args)
+    //{
+    //    TelerikGrid<TItem> SourceGrid = new();
+    //    TelerikGrid<TItem> DestinationGrid = new();
+    //    List<TItem> SourceData = new();
+    //    List<TItem> DestinationData = new();
+    //    var destinationData = args.DestinationGrid == DestinationGrid ? DestinationData : SourceData;
+
+    //    var destinationIndex = 0;
+
+    //    if (args.DestinationItem != null)
+    //    {
+    //        destinationIndex = destinationData.IndexOf(args.DestinationItem);
+    //        if (args.DropPosition == GridRowDropPosition.After)
+    //        {
+    //            destinationIndex += 1;
+    //        }
+    //    }
+
+    //    if (destinationIndex < 0)
+    //    {
+    //        destinationIndex = 0;
+    //    }
+
+    //    destinationData.InsertRange(destinationIndex, args.Items);
+    //}
 
 }

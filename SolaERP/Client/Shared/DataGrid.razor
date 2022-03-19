@@ -19,6 +19,8 @@
              EditMode="GridEditMode.Inline"
              SelectedItems="@SelectedItems"
              SelectedItemsChanged="@((IEnumerable<TItem> selectedItems) => SelectedItemsChangedHandler(selectedItems))"
+             RowDraggable="@(RowDraggable && !ReadOnly && !MobileView)"
+             OnRowDrop="@((GridRowDropEventArgs<TItem> args) => OnRowDropHandler(args))"
              OnRowClick="@OnRowClickHandler"
              OnRowDoubleClick="@OnRowDoubleClickHandler"
              OnRowContextMenu="@OnRowContextMenu"
@@ -33,7 +35,7 @@
     <GridToolBar>
         @if (!ReadOnly)
         {
-            <GridCommandButton Icon="checkbox-checked" OnClick="@(() => showCheckBox = !showCheckBox)"/>
+            <GridCommandButton Icon="checkbox-checked" OnClick="@(() => showCheckBox = !showCheckBox)" />
             @if (CanAdd)
             {
                 <GridCommandButton Command="Add" Icon="add" Enabled="@(!inEditMode)" OnClick="OnAddHandler">Add</GridCommandButton>
@@ -110,12 +112,16 @@
     [Parameter] public EventCallback<GridRowClickEventArgs> OnRowClick { get; set; }
     [Parameter] public EventCallback<GridRowClickEventArgs> OnRowDoubleClick { get; set; }
 
+    [Parameter] public EventCallback<GridRowClickEventArgs> OnRowDrop { get; set; }
+
     [Parameter] public EventCallback<GridCommandEventArgs> OnAdd { get; set; }
     [Parameter] public EventCallback<GridCommandEventArgs> OnCreate { get; set; }
     [Parameter] public EventCallback<GridCommandEventArgs> OnEdit { get; set; }
     [Parameter] public EventCallback<GridCommandEventArgs> OnUpdate { get; set; }
     [Parameter] public EventCallback<GridCommandEventArgs> OnCancel { get; set; }
     [Parameter] public EventCallback<IEnumerable<TItem>> OnDelete { get; set; }
+
+    [Parameter] public bool RowDraggable { get; set; } = true;
 
     [Parameter] public bool ReadOnly { get; set; } = false;
     [Parameter] public bool CanAdd { get; set; } = false;
@@ -205,6 +211,11 @@
     async Task OnRowDoubleClickHandler(GridRowClickEventArgs args)
     {
         await OnRowDoubleClick.InvokeAsync(args);
+    }
+
+    async Task OnRowDropHandler(GridRowDropEventArgs<TItem> args)
+    {
+        await OnRowDrop.InvokeAsync();
     }
 
     // row clicks - end
