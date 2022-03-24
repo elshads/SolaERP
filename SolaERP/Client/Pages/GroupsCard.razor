@@ -35,7 +35,10 @@
             </span>
         </HeaderTemplate>
         <Content>
-            content goes here
+            <DoubleDataGrid @bind-LeftGridData="groupUsers" @bind-RightGridData="allUsers" LeftGridTitle="Group Users" RightGridTitle="All Users" SearchFields="@(new List<string> {"FullName", "UserName"})">
+                <GridColumn Field="@(nameof(AppUser.FullName))" Title="Name"/>
+                <GridColumn Field="@(nameof(AppUser.UserName))" Title="UserName"/>
+            </DoubleDataGrid>
         </Content>
     </TabStripTab>
 
@@ -123,6 +126,9 @@
     Model currentModel = new();
     EditContext editContext;
 
+    List<AppUser> groupUsers = new() { new AppUser { FullName="Samir", UserName="samir@example.com" }, new AppUser { FullName="Tural", UserName="tural@example.com" } };
+    List<AppUser> allUsers = new() { new AppUser { FullName="Arif", UserName="arif@example.com" }, new AppUser { FullName="Pasha", UserName="pasha@example.com" } };
+
     int activeTabIndex = 0;
 
     protected override async Task OnInitializedAsync()
@@ -140,40 +146,5 @@
         //
     }
 
-    //void RemoveOnRowDrop(GridRowDropEventArgs<TItem> args)
-    //{
-    //    foreach (var item in args.Items)
-    //    {
-    //        //SourceList.Remove(item);
-    //    }
-    //    InsertOnRowDrop(args);
-    //}
-
-    //void InsertOnRowDrop(GridRowDropEventArgs<TItem> args)
-    //{
-    //    TelerikGrid<TItem> SourceGrid = new();
-    //    TelerikGrid<TItem> DestinationGrid = new();
-    //    List<TItem> SourceData = new();
-    //    List<TItem> DestinationData = new();
-    //    var destinationData = args.DestinationGrid == DestinationGrid ? DestinationData : SourceData;
-
-    //    var destinationIndex = 0;
-
-    //    if (args.DestinationItem != null)
-    //    {
-    //        destinationIndex = destinationData.IndexOf(args.DestinationItem);
-    //        if (args.DropPosition == GridRowDropPosition.After)
-    //        {
-    //            destinationIndex += 1;
-    //        }
-    //    }
-
-    //    if (destinationIndex < 0)
-    //    {
-    //        destinationIndex = 0;
-    //    }
-
-    //    destinationData.InsertRange(destinationIndex, args.Items);
-    //}
-
+    
 }

@@ -10,7 +10,6 @@
           CanDelete="true"
           CanAdd="true"
           CanExport="true"
-          CanEdit="true"
           SearchFields="@(new List<string> { "GroupId", "GroupName", "Description" })"
           OnDelete="@((IEnumerable<Model> items) => DeleteHandler(items))"
           @bind-SelectedItems="@selectedItems"
@@ -33,13 +32,15 @@
                         </CardSubTitle>
                     </CardHeader>
                     <CardActions>
-                        <TelerikButton OnClick="@(() => NavigationManager.NavigateTo($"/groups/card?id={rowContext.GroupId}"))">Details</TelerikButton>
+                        <TelerikButton OnClick="@(() => GoToDetails(rowContext.GroupId))">Details</TelerikButton>
                     </CardActions>
                 </TelerikCard>
             }
             else
             {
-                <text>@rowContext.GroupName</text>
+                <LinkText OnClick="@(() => GoToDetails(rowContext.GroupId))">
+                    @rowContext.GroupName
+                </LinkText>
             }
         </Template>
     </GridColumn>
@@ -68,7 +69,6 @@
     // Page specific variables - start
     // Page specific variables - end
 
-    string modelName = "Group";
     int activeTabIndex = 0;
 
     [CascadingParameter] public AppState AppState { get; set; }
@@ -114,100 +114,26 @@
         await LoadData();
     }
 
+    void GoToDetails(int id)
+    {
+        NavigationManager.NavigateTo($"/groups/card?{id}");
+    }
+
     void OnRowClickHandler(GridRowClickEventArgs args)
     {
-        //
+    //
     }
 
     void OnRowDoubleClickHandler(GridRowClickEventArgs args)
     {
         var argsItem = args.Item as Model;
-        NavigationManager.NavigateTo($"/groupcard?id={argsItem.GroupId}");
+        GoToDetails(argsItem.GroupId);
     }
-
-    void SetEditMode(Model argsItem)
-    {
-        editMode = true;
-        var currState = gridRef.GetState();
-        currState.InsertedItem = null;
-        currState.EditItem = null;
-        currState.OriginalEditItem = null;
-
-        var baseService = new BaseService<Model>();
-        Model itemToEdit = baseService.GetInstanceClone(argsItem);
-
-        currState.EditItem = itemToEdit;
-        currState.OriginalEditItem = argsItem;
-        gridRef.SetState(currState);
-    }
-
-
-    void OnGridItemSelect(IEnumerable<Model> itemList)
-    {
-        selectedModelList = itemList;
-    }
-
-    // Grid CRUD events - start
 
     void CreateHandler(GridCommandEventArgs args)
     {
-        NavigationManager.NavigateTo("/usergroupcard");
+        GoToDetails(0);
     }
-
-    void EditHandler(GridCommandEventArgs args)
-    {
-        var argsItem = (Model)args.Item;
-        NavigationManager.NavigateTo($"/groupcard?id={argsItem.GroupId}");
-    }
-
-    async Task DeleteHandler(GridCommandEventArgs args, int sourceButton)
-    {
-        var argsItem = (Model)args?.Item;
-
-        if (sourceButton == 1 && argsItem != null)
-        {
-            // Row button - has built-in confirmation dialog
-            var deletedId = argsItem.GroupId;
-            var response = await Http.PostAsJsonAsync<int>("Group", deletedId);
-            var content = await response.Content.ReadFromJsonAsync<SqlResult>();
-            if (content.DeletedResult > 0)
-            {
-                await LoadData();
-                AppState.ShowAlert($"A record with Id {deletedId} successfully deleted", Severity.Success);
-            }
-            else
-            {
-                AppState.ShowAlert(content.DeletedResultMessage, Severity.Error);
-            }
-        }
-        else if (sourceButton == 2 && selectedModelList.Count() > 0)
-        {
-            // Checkbox selection
-            var count = selectedModelList.Count();
-            var isConfirmed = await Dialogs.ConfirmAsync($"Are you sure you want to delete {count} record(s)?", "Delete!");
-
-            if (isConfirmed)
-            {
-                var response = await Http.PostAsJsonAsync<IEnumerable<int>>("Group", selectedModelList.Select(e => e.GroupId));
-                var content = await response.Content.ReadFromJsonAsync<SqlResult>();
-                if (content.DeletedResult > 0)
-                {
-                    await LoadData();
-                    AppState.ShowAlert($"{count} record(s) were successfully deleted", Severity.Success);
-                }
-                else
-                {
-                    AppState.ShowAlert(content.DeletedResultMessage, Severity.Error);
-                }
-            }
-        }
-        else
-        {
-            AppState.ShowAlert("Item is not selected", Severity.Warning);
-        }
-    }
-
-    // Grid CRUD events - end
 
 }
 

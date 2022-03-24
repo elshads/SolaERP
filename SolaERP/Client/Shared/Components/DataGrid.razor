@@ -1,11 +1,11 @@
-﻿@typeparam TItem where TItem : BaseModel, new()
+﻿@typeparam TItem where TItem : IBaseModel, new()
 
 
 <TelerikGrid @ref="@Ref"
              @key="@Key"
              Data="@Data"
              Height="@Height"
-             Pageable="true"
+             Pageable="@Pageable"
              Sortable="true"
              Navigable="true"
              Groupable="@showGroup"
@@ -33,9 +33,16 @@
         <GridPagerSettings PageSizes="@(new List<int?> { 1, 10, 20, 50, 100, 1000, null })" />
     </GridSettings>
     <GridToolBar>
+        @if (Title != null)
+        {
+            <text>@Title</text>
+        }
         @if (!ReadOnly)
         {
-            <GridCommandButton Icon="checkbox-checked" OnClick="@(() => showCheckBox = !showCheckBox)" />
+            @if (ShowToolbar)
+            {
+                <GridCommandButton Icon="checkbox-checked" OnClick="@(() => showCheckBox = !showCheckBox)" />
+            }
             @if (CanAdd)
             {
                 <GridCommandButton Command="Add" Icon="add" Enabled="@(!inEditMode)" OnClick="OnAddHandler">Add</GridCommandButton>
@@ -44,37 +51,83 @@
             {
                 <GridCommandButton Icon="delete" Enabled="@(!inEditMode && SelectedItems.Count() > 0)" OnClick="@OnDeleteSelectedItemsHandler">Delete</GridCommandButton>
             }
+
         }
         <span class="k-toolbar-spacer" />
-        @if (CanExport)
+        @if (CanMoveLeft)
         {
-            <GridCommandButton Command="CsvExport" Icon="csv" Enabled="@(!inEditMode)">@(!MobileView ? "Export to CSV" : "")</GridCommandButton>
+            <GridCommandButton Icon="chevron-left" Enabled="@(!inEditMode && SelectedItems.Count() > 0)" OnClick="@(() => MoveAllLeftHandler(SelectedItems))">Move Left</GridCommandButton>
         }
-        @if (!MobileView)
+        @if (CanMoveRight)
         {
-            <GridCommandButton Icon="button" OnClick="@(() => showRowButtons = !showRowButtons)" Enabled="@(!inEditMode)">Row buttons</GridCommandButton>
+            <GridCommandButton Icon="chevron-right" Enabled="@(!inEditMode && SelectedItems.Count() > 0)" OnClick="@(() => MoveAllRightHandler(SelectedItems))">Move Right</GridCommandButton>
         }
-        <GridCommandButton Icon="layout" OnClick="@(() => showGroup = !showGroup)" Enabled="@(!inEditMode)">@(!MobileView ? "Group" : "")</GridCommandButton>
-        <span class="k-textbox k-input k-input-solid k-rounded-md k-input-md customsearch">
-            <span class="k-icon k-input-icon k-i-search" />
-            <input class="k-input-inner" placeholder="Search..." value="@searchString" @oninput="@OnSearchInput" @onkeydown="@OnKeyPressed" disabled="@(inEditMode)" />
-            @if (!string.IsNullOrEmpty(searchString) && !inEditMode)
+        @if (CanMoveUp)
+        {
+            <GridCommandButton Icon="chevron-up" Enabled="@(!inEditMode && SelectedItems.Count() > 0)" OnClick="@(() => MoveAllUpHandler(SelectedItems))">Move Up</GridCommandButton>
+        }
+        @if (CanMoveDown)
+        {
+            <GridCommandButton Icon="chevron-down" Enabled="@(!inEditMode && SelectedItems.Count() > 0)" OnClick="@(() => MoveAllDownHandler(SelectedItems))">Move Down</GridCommandButton>
+        }
+        @if (ShowToolbar)
+        {
+            @if (CanExport)
             {
-                <span class="k-clear-value" @onclick="@OnSearchClear">
-                    <span class="k-icon k-i-x"></span>
-                </span>
+                <GridCommandButton Command="CsvExport" Icon="csv" Enabled="@(!inEditMode)">@(!MobileView ? "Export to CSV" : "")</GridCommandButton>
             }
-        </span>
-
+            @if (!MobileView && (CanEdit || CanDelete || CanMoveLeft || CanMoveRight || CanMoveUp || CanMoveDown))
+            {
+                <GridCommandButton Icon="button" OnClick="@(() => showRowButtons = !showRowButtons)" Enabled="@(!inEditMode)">Row buttons</GridCommandButton>
+            }
+            <GridCommandButton Icon="layout" OnClick="@(() => showGroup = !showGroup)" Enabled="@(!inEditMode)">@(!MobileView ? "Group" : "")</GridCommandButton>
+        }
+        @if (ShowSearchBar)
+        {
+            <span class="k-textbox k-input k-input-solid k-rounded-md k-input-md customsearch">
+                <span class="k-icon k-input-icon k-i-search" />
+                <input class="k-input-inner" placeholder="Search..." value="@searchString" @oninput="@OnSearchInput" @onkeydown="@OnKeyPressed" disabled="@(inEditMode)" />
+                @if (!string.IsNullOrEmpty(searchString) && !inEditMode)
+                {
+                    <span class="k-clear-value" @onclick="@OnSearchClear">
+                        <span class="k-icon k-i-x"></span>
+                    </span>
+                }
+            </span>
+        }
     </GridToolBar>
     <GridColumns>
-        <GridCommandColumn ShowColumnMenu="false" Reorderable="false" Width="90px" Visible="@(showRowButtons && !ReadOnly && !MobileView)">
-            <GridCommandButton Command="Edit" Icon="edit" ShowInEdit="false" Enabled="(!inEditMode && CanEdit)" />
-            <GridCommandButton Command="Save" Icon="save" ShowInEdit="true" />
-            <GridCommandButton Command="Cancel" Icon="cancel" ShowInEdit="true" />
-            <GridCommandButton Command="Delete" Icon="delete" ShowInEdit="false" Enabled="(!inEditMode && CanDelete)" />
+        <GridCommandColumn Width="@(Convert.ToInt32(CanEdit) + Convert.ToInt32(CanDelete) + Convert.ToInt32(CanMoveLeft) + Convert.ToInt32(CanMoveRight) + Convert.ToInt32(CanMoveUp)  + Convert.ToInt32(CanMoveDown) > 1 ? "90px" : "55px")"
+                           ShowColumnMenu="false" Reorderable="false"
+                           Visible="@(showRowButtons && !ReadOnly && !MobileView && (CanEdit || CanDelete || CanMoveLeft || CanMoveRight || CanMoveUp || CanMoveDown))">
+            @if (CanEdit)
+            {
+                <GridCommandButton Command="Edit" Icon="edit" ShowInEdit="false" Enabled="(!inEditMode)" />
+                <GridCommandButton Command="Save" Icon="save" ShowInEdit="true" />
+                <GridCommandButton Command="Cancel" Icon="cancel" ShowInEdit="true" />
+            }
+            @if (CanDelete)
+            {
+                <GridCommandButton Command="Delete" Icon="delete" ShowInEdit="false" Enabled="(!inEditMode)" />
+            }
+            @if (CanMoveLeft)
+            {
+                <GridCommandButton Icon="chevron-left" ShowInEdit="false" Enabled="(!inEditMode)" OnClick="@((e) => MoveLeftHandler(e))" />
+            }
+            @if (CanMoveRight)
+            {
+                <GridCommandButton Icon="chevron-right" ShowInEdit="false" Enabled="(!inEditMode)" OnClick="@((e) => MoveRightHandler(e))" />
+            }
+            @if (CanMoveUp)
+            {
+                <GridCommandButton Icon="chevron-up" ShowInEdit="false" Enabled="(!inEditMode)" OnClick="@((e) => MoveUpHandler(e))" />
+            }
+            @if (CanMoveDown)
+            {
+                <GridCommandButton Icon="chevron-down" ShowInEdit="false" Enabled="(!inEditMode)" OnClick="@((e) => MoveDownHandler(e))" />
+            }
         </GridCommandColumn>
-        <GridCheckboxColumn ShowColumnMenu="false" VisibleInColumnChooser="false" Reorderable="false" Locked="true" Width="42px" Visible="@(!inEditMode && !ReadOnly && showCheckBox)" />
+        <GridCheckboxColumn ShowColumnMenu="false" VisibleInColumnChooser="false" Reorderable="false" Locked="true" Width="42px" Visible="@(!inEditMode && !ReadOnly && ShowCheckBoxColumn && showCheckBox)" />
         @ChildContent
     </GridColumns>
 </TelerikGrid>
@@ -95,8 +148,13 @@
     [Parameter] public Guid Key { get; set; }
     [Parameter] public TelerikGrid<TItem> Ref { get; set; }
 
+    [Parameter] public Guid DestinationGridKey { get; set; }
+    [Parameter] public EventCallback<Guid> DestinationGridKeyChanged { get; set; }
+
     [Parameter] public List<TItem> Data { get; set; } = new();
     [Parameter] public EventCallback<List<TItem>> DataChanged { get; set; }
+    [Parameter] public List<TItem> DestinationGridData { get; set; } = new();
+    [Parameter] public EventCallback<List<TItem>> DestinationGridDataChanged { get; set; }
     [Parameter] public IEnumerable<TItem> SelectedItems { get; set; } = new List<TItem>();
     [Parameter] public EventCallback<IEnumerable<TItem>> SelectedItemsChanged { get; set; }
     [Parameter] public TItem SelectedItem { get; set; }
@@ -112,7 +170,7 @@
     [Parameter] public EventCallback<GridRowClickEventArgs> OnRowClick { get; set; }
     [Parameter] public EventCallback<GridRowClickEventArgs> OnRowDoubleClick { get; set; }
 
-    [Parameter] public EventCallback<GridRowClickEventArgs> OnRowDrop { get; set; }
+    [Parameter] public EventCallback<GridRowDropEventArgs<TItem>> OnRowDrop { get; set; }
 
     [Parameter] public EventCallback<GridCommandEventArgs> OnAdd { get; set; }
     [Parameter] public EventCallback<GridCommandEventArgs> OnCreate { get; set; }
@@ -121,19 +179,39 @@
     [Parameter] public EventCallback<GridCommandEventArgs> OnCancel { get; set; }
     [Parameter] public EventCallback<IEnumerable<TItem>> OnDelete { get; set; }
 
-    [Parameter] public bool RowDraggable { get; set; } = true;
+    [Parameter] public EventCallback<IEnumerable<TItem>> OnMoveAllLeft { get; set; }
+    [Parameter] public EventCallback<IEnumerable<TItem>> OnMoveAllRight { get; set; }
+    [Parameter] public EventCallback<IEnumerable<TItem>> OnMoveAllUp { get; set; }
+    [Parameter] public EventCallback<IEnumerable<TItem>> OnMoveAllDown { get; set; }
+
+    [Parameter] public EventCallback<GridCommandEventArgs> OnMoveLeft { get; set; }
+    [Parameter] public EventCallback<GridCommandEventArgs> OnMoveRight { get; set; }
+    [Parameter] public EventCallback<GridCommandEventArgs> OnMoveUp { get; set; }
+    [Parameter] public EventCallback<GridCommandEventArgs> OnMoveDown { get; set; }
+
+    [Parameter] public string Title { get; set; }
+    [Parameter] public bool RowDraggable { get; set; } = false;
+    [Parameter] public bool ShowToolbar { get; set; } = true;
+    [Parameter] public bool ShowCheckBoxColumn { get; set; } = true;
+    [Parameter] public bool ShowSearchBar { get; set; } = true;
+    [Parameter] public bool Pageable { get; set; } = true;
 
     [Parameter] public bool ReadOnly { get; set; } = false;
     [Parameter] public bool CanAdd { get; set; } = false;
     [Parameter] public bool CanEdit { get; set; } = false;
     [Parameter] public bool CanDelete { get; set; } = false;
     [Parameter] public bool CanExport { get; set; } = false;
+    [Parameter] public bool CanMoveLeft { get; set; } = false;
+    [Parameter] public bool CanMoveRight { get; set; } = false;
+    [Parameter] public bool CanMoveUp { get; set; } = false;
+    [Parameter] public bool CanMoveDown { get; set; } = false;
 
     [Parameter] public bool CustomAdd { get; set; } = false;
     [Parameter] public bool CustomCreate { get; set; } = false;
     [Parameter] public bool CustomEdit { get; set; } = false;
     [Parameter] public bool CustomUpdate { get; set; } = false;
     [Parameter] public bool CustomCancel { get; set; } = false;
+    [Parameter] public bool CustomMoveItem { get; set; } = false;
 
     // parameters - end
 
@@ -215,7 +293,8 @@
 
     async Task OnRowDropHandler(GridRowDropEventArgs<TItem> args)
     {
-        await OnRowDrop.InvokeAsync();
+        await RowDrop(args);
+        await OnRowDrop.InvokeAsync(args);
     }
 
     // row clicks - end
@@ -293,7 +372,145 @@
 
     // -----------------------
 
+    // Move button handlers - start
+
+    async Task MoveAllLeftHandler(IEnumerable<TItem> selectedItems)
+    {
+        if (!CustomMoveItem)
+        {
+            await MoveAllItems(selectedItems.ToList());
+        }
+        await OnMoveAllLeft.InvokeAsync(selectedItems);
+    }
+
+    async Task MoveAllRightHandler(IEnumerable<TItem> selectedItems)
+    {
+        if (!CustomMoveItem)
+        {
+            await MoveAllItems(selectedItems.ToList());
+        }
+        await OnMoveAllRight.InvokeAsync(selectedItems);
+    }
+
+    async Task MoveAllUpHandler(IEnumerable<TItem> selectedItems)
+    {
+        if (!CustomMoveItem)
+        {
+            // default method
+        }
+        await OnMoveAllUp.InvokeAsync(selectedItems);
+    }
+
+    async Task MoveAllDownHandler(IEnumerable<TItem> selectedItems)
+    {
+        if (!CustomMoveItem)
+        {
+            // default method
+        }
+        await OnMoveAllDown.InvokeAsync(selectedItems);
+    }
+
+    async Task MoveLeftHandler(GridCommandEventArgs args)
+    {
+        if (!CustomMoveItem)
+        {
+            await MoveItem(args);
+        }
+        await OnMoveLeft.InvokeAsync(args);
+    }
+
+    async Task MoveRightHandler(GridCommandEventArgs args)
+    {
+        if (!CustomMoveItem)
+        {
+            await MoveItem(args);
+        }
+        await OnMoveRight.InvokeAsync(args);
+    }
+
+    async Task MoveUpHandler(GridCommandEventArgs args)
+    {
+        if (!CustomMoveItem)
+        {
+            // default method
+        }
+        await OnMoveUp.InvokeAsync(args);
+    }
+
+    async Task MoveDownHandler(GridCommandEventArgs args)
+    {
+        if (!CustomMoveItem)
+        {
+            // default method
+        }
+        await OnMoveDown.InvokeAsync(args);
+    }
+
+    // Move button handlers - end
+
+    // -----------------------
+
     // default CRUD functions - start
+
+    async Task MoveItem(GridCommandEventArgs args)
+    {
+        var argsItem = (TItem)args.Item;
+        Data.Remove(argsItem);
+        DestinationGridData.Add(argsItem);
+        await DataChanged.InvokeAsync(Data);
+        await DestinationGridDataChanged.InvokeAsync(DestinationGridData);
+        Key = Guid.NewGuid();
+        DestinationGridKey = Guid.NewGuid();
+        await DestinationGridKeyChanged.InvokeAsync(DestinationGridKey);
+    }
+
+    async Task MoveAllItems(List<TItem> selectedItems)
+    {
+        foreach (var item in selectedItems)
+        {
+            Data.Remove(item);
+            DestinationGridData.Add(item);
+
+        }
+        SelectedItems = new List<TItem>();
+        await DataChanged.InvokeAsync(Data);
+        await DestinationGridDataChanged.InvokeAsync(DestinationGridData);
+        Key = Guid.NewGuid();
+        DestinationGridKey = Guid.NewGuid();
+        await DestinationGridKeyChanged.InvokeAsync(DestinationGridKey);
+    }
+
+    async Task RowDrop(GridRowDropEventArgs<TItem> args)
+    {
+        var argsItems = args.Items;
+        var destinationGrid = args.DestinationGrid;
+        var destinationItem = args.DestinationItem;
+        var destinationIndex = 0;
+        var destinationData = destinationGrid == Ref ? Data : DestinationGridData;
+
+        foreach (var item in args.Items)
+        {
+            Data.Remove(item);
+        }
+
+        if (destinationItem != null)
+        {
+            destinationIndex = destinationData.IndexOf(destinationItem);
+            if (args.DropPosition == GridRowDropPosition.After)
+            {
+                destinationIndex += 1;
+            }
+        }
+
+        if (destinationIndex < 0)
+        {
+            destinationIndex = 0;
+        }
+
+        destinationData.InsertRange(destinationIndex, argsItems);
+        await DataChanged.InvokeAsync(Data);
+        await DestinationGridDataChanged.InvokeAsync(DestinationGridData);
+    }
 
     async Task Add(GridCommandEventArgs args)
     {
@@ -330,7 +547,7 @@
             await DataChanged.InvokeAsync(Data);
         }
 
-        SelectedItem = null;
+        SelectedItem = default(TItem);
         inEditMode = false;
     }
 
@@ -338,7 +555,7 @@
     void Cancel(GridCommandEventArgs args)
     {
         // on Cancel click for new and existing items
-        SelectedItem = null;
+        SelectedItem = default(TItem);
         inEditMode = false;
     }
 
@@ -390,7 +607,7 @@
         }
         else
         {
-            SelectedItem = null;
+            SelectedItem = default(TItem);
         }
     }
 
@@ -510,6 +727,7 @@
     void OnSearchInput(ChangeEventArgs args)
     {
         searchString = args.Value.ToString();
+
         if (!string.IsNullOrEmpty(searchString))
         {
             Data = originalData.Where(e => SearchFields.Any(p => e.GetType().GetProperty(p).GetValue(e).ToString().ToLower().Contains(searchString.ToLower()))).ToList();

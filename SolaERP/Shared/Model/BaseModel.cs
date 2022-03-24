@@ -1,5 +1,5 @@
 ﻿namespace SolaERP.Shared.Model;
-public class BaseModel
+public class BaseModel : IBaseModel
 {
     public BaseModel() 
     {

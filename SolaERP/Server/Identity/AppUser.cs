@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
 
-public class AppUser : IdentityUser<int>
+public class AppUser : IdentityUser<int>, IBaseModel
 {
     public AppUser()
     {

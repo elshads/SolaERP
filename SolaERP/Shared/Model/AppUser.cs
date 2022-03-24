@@ -1,7 +1,7 @@
 ﻿
 namespace SolaERP.Shared.Model
 {
-    public class AppUser
+    public class AppUser : IBaseModel
     {
         public AppUser()
         {

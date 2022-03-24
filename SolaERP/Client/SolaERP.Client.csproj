@@ -31,6 +31,7 @@
 		<Using Include="SolaERP.Client.ModelService" />
 		<Using Include="SolaERP.Shared.Data" />
 		<Using Include="SolaERP.Shared.Model" />
+		<Using Include="SolaERP.Shared.IModel" />
 	</ItemGroup>
 
 	<ItemGroup>
