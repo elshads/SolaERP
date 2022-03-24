@@ -7,7 +7,7 @@
              OnValidSubmit="@OnValidSubmit"
              OnInvalidSubmit="@OnInvalidSubmit"
              ValidationMessageType="FormValidationMessageType.Inline"
-             Columns="@(AppState.MobileView ? 1 : 2)"
+             Columns="@(MobileView ? 1 : 2)"
              ColumnSpacing="1rem">
     <FormValidation>
         <DataAnnotationsValidator></DataAnnotationsValidator>
@@ -24,7 +24,7 @@
         <HeaderTemplate>
             <MudIcon Icon="@Icons.Filled.AccountCircle" />
             <span class="k-pl-2">
-                @if (AppState.MobileView)
+                @if (MobileView)
                 {
                     <MudIcon Icon="@Icons.Filled.Circle" Style="font-size: 0.5rem;" Color="@(activeTabIndex == 0 ? Color.Success : Color.Transparent)" />
                 }
@@ -35,10 +35,10 @@
             </span>
         </HeaderTemplate>
         <Content>
-            <DoubleDataGrid @bind-LeftGridData="groupUsers" @bind-RightGridData="allUsers" LeftGridTitle="Group Users" RightGridTitle="All Users" SearchFields="@(new List<string> {"FullName", "UserName"})">
+            <DoubleGrid @bind-LeftGridData="groupUsers" @bind-RightGridData="allUsers" LeftGridTitle="Group Users" RightGridTitle="All Users" SearchFields="@(new List<string> {"FullName", "UserName"})">
                 <GridColumn Field="@(nameof(AppUser.FullName))" Title="Name"/>
                 <GridColumn Field="@(nameof(AppUser.UserName))" Title="UserName"/>
-            </DoubleDataGrid>
+            </DoubleGrid>
         </Content>
     </TabStripTab>
 
@@ -46,7 +46,7 @@
         <HeaderTemplate>
             <MudIcon Icon="@Icons.Filled.Business" />
             <span class="k-pl-2">
-                @if (AppState.MobileView)
+                @if (MobileView)
                 {
                     <MudIcon Icon="@Icons.Filled.Circle" Style="font-size: 0.5rem;" Color="@(activeTabIndex == 1 ? Color.Success : Color.Transparent)" />
                 }
@@ -57,7 +57,10 @@
             </span>
         </HeaderTemplate>
         <Content>
-            content goes here
+            @*<DoubleGrid @bind-LeftGridData="groupBusinessUnits" @bind-RightGridData="allBusinessUnits" LeftGridTitle="Group Business Units" RightGridTitle="All Business Units" SearchFields="@(new List<string> {"BusinessUnitCode", "BusinessUnitName"})">
+                <GridColumn Field="@(nameof(BusinessUnit.BusinessUnitCode))" Title="Code"/>
+                <GridColumn Field="@(nameof(BusinessUnit.BusinessUnitName))" Title="Name"/>
+            </DoubleGrid>*@
         </Content>
     </TabStripTab>
 
@@ -65,7 +68,7 @@
         <HeaderTemplate>
             <MudIcon Icon="@Icons.Filled.Category" />
             <span class="k-pl-2">
-                @if (AppState.MobileView)
+                @if (MobileView)
                 {
                     <MudIcon Icon="@Icons.Filled.Circle" Style="font-size: 0.5rem;" Color="@(activeTabIndex == 2 ? Color.Success : Color.Transparent)" />
                 }
@@ -76,7 +79,10 @@
             </span>
         </HeaderTemplate>
         <Content>
-            content goes here
+            @*<DoubleGrid @bind-LeftGridData="groupUnits" @bind-RightGridData="allUnits" LeftGridTitle="Group Units" RightGridTitle="All Units" SearchFields="@(new List<string> {"UnitCode", "UnitName"})">
+                <GridColumn Field="@(nameof(Unit.UnitCode))" Title="Code"/>
+                <GridColumn Field="@(nameof(Unit.UnitName))" Title="Name"/>
+            </DoubleGrid>*@
         </Content>
     </TabStripTab>
 
@@ -84,7 +90,7 @@
         <HeaderTemplate>
             <MudIcon Icon="@Icons.Filled.Groups" />
             <span class="k-pl-2">
-                @if (AppState.MobileView)
+                @if (MobileView)
                 {
                     <MudIcon Icon="@Icons.Filled.Circle" Style="font-size: 0.5rem;" Color="@(activeTabIndex == 3 ? Color.Success : Color.Transparent)" />
                 }
@@ -103,7 +109,7 @@
         <HeaderTemplate>
             <MudIcon Icon="@Icons.Filled.Menu" />
             <span class="k-pl-2">
-                @if (AppState.MobileView)
+                @if (MobileView)
                 {
                     <MudIcon Icon="@Icons.Filled.Circle" Style="font-size: 0.5rem;" Color="@(activeTabIndex == 4 ? Color.Success : Color.Transparent)" />
                 }
@@ -119,21 +125,30 @@
     </TabStripTab>
 </TelerikTabStrip>
 
+<TelerikMediaQuery Media="(max-width: 768px)" OnChange="@( (bool mobileView) => OnMobileViewChanged(mobileView) )"></TelerikMediaQuery>
+
 @code {
     [CascadingParameter] public AppState AppState { get; set; }
     [CascadingParameter] public DialogFactory Dialogs { get; set; }
 
+    bool MobileView = false;
+
     Model currentModel = new();
     EditContext editContext;
 
-    List<AppUser> groupUsers = new() { new AppUser { FullName="Samir", UserName="samir@example.com" }, new AppUser { FullName="Tural", UserName="tural@example.com" } };
-    List<AppUser> allUsers = new() { new AppUser { FullName="Arif", UserName="arif@example.com" }, new AppUser { FullName="Pasha", UserName="pasha@example.com" } };
+    List<AppUser> groupUsers = new() { new AppUser { FullName="Samir", UserName="samir@domain.com" }, new AppUser { FullName="Tural", UserName="tural@example.com" }, new AppUser { FullName="Elshad", UserName="elshad@somemail.com" } };
+    List<AppUser> allUsers = new() { new AppUser { FullName="Arif", UserName="arif@somemail.com" }, new AppUser { FullName="Pasha", UserName="pasha@domain.com" } };
 
     int activeTabIndex = 0;
 
     protected override async Task OnInitializedAsync()
     {
         editContext = new EditContext(currentModel);
+    }
+
+    void OnMobileViewChanged(bool mobileView)
+    {
+        MobileView = mobileView;
     }
 
     void OnValidSubmit()

@@ -28,7 +28,7 @@ namespace SolaERP.Client.Data
             ReportButtonVisible = false;
             ReportButtonEnabled = true;
 
-            MobileView = false;
+
             Report = null;
         }
 
@@ -48,7 +48,6 @@ namespace SolaERP.Client.Data
         bool loading;
 
         public ReportDefinition Report { get; set; }
-        public bool MobileView { get; set; }
         public bool Loading { get { return loading; } set { loading = value; Refresh(); } }
         public bool AddButtonVisible { get; set; }
         public bool AddButtonEnabled { get; set; }
