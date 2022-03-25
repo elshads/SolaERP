@@ -1,6 +1,7 @@
 :root {
     --mud-palette-text-primary: #424242 !important;
     --mud-palette-background: #ffffff !important;
+    --mud-palette-header-background: #f9fafa !important;
 }
 
 .k-theme-test-class,

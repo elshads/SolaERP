@@ -1,0 +1,124 @@
+﻿@typeparam TItem where TItem : IBaseModel, new()
+@typeparam TValue
+
+<div class="combo-wrapper">
+    <TelerikDropDownList Data="@Data"
+                     ValueField="@ValueField"
+                     TextField="@TextField"
+                     Value="@Value"
+                     ValueChanged="@ValueChangedHandler"
+                     ValueExpression="@( () => Value )"
+                     OnChange="@OnChangeHandler"
+                     Enabled="@Enabled"
+                     Width="@Width"
+                     Id="@Id"
+                     ScrollMode="@ScrollMode"
+                     PageSize="@PageSize"
+                     Filterable="false"
+                     TValue="TValue"
+                     TItem="TItem">
+        <HeaderTemplate>
+            @if (ShowHeader)
+            {
+                var headerFields = HeaderFields == null ? SearchFields : HeaderFields;
+                <table class="combo-table combo-header">
+                    <tr>
+                        @foreach (var item in headerFields)
+                        {
+                            <th class="combo-column">@(item)</th>
+                        }
+                    </tr>
+                </table>
+            }
+        </HeaderTemplate>
+        <ItemTemplate Context="context">
+            <table class="combo-table combo-items">
+                <tr>
+                    @foreach (var item in SearchFields)
+                    {
+                        <td class="combo-column">@(typeof(TItem).GetProperty(item).GetValue(context))</td>
+                    }
+                </tr>
+            </table>
+        </ItemTemplate>
+        <FooterTemplate>
+            @if (ShowFooter)
+            {
+                <div class="combo-footer">Count: @Data.Count()</div>
+            }
+        </FooterTemplate>
+    </TelerikDropDownList>
+</div>
+
+
+@code {
+    [Parameter] public IEnumerable<TItem> Data { get; set; } = new List<TItem>();
+    [Parameter] public IEnumerable<string> SearchFields { get; set; } = new List<string> { "RowIndex" };
+    [Parameter] public string ValueField { get; set; }
+    [Parameter] public string TextField { get; set; }
+
+    [Parameter] public TValue Value { get; set; }
+    [Parameter] public EventCallback<TValue> ValueChanged { get; set; }
+
+    [Parameter] public EventCallback<TValue> OnChange { get; set; }
+
+    [Parameter] public IEnumerable<string> HeaderFields { get; set; }
+    [Parameter] public string Width { get; set; } = "100%";
+    [Parameter] public bool Enabled { get; set; } = true;
+    [Parameter] public string Id { get; set; } = "";
+    [Parameter] public bool ShowHeader { get; set; } = true;
+    [Parameter] public bool ShowFooter { get; set; } = true;
+    [Parameter] public DropDownScrollMode ScrollMode { get; set; } = DropDownScrollMode.Scrollable;
+    [Parameter] public int PageSize { get; set; } = 50;
+
+
+    async Task ValueChangedHandler(TValue value)
+    {
+        Value = value;
+        await ValueChanged.InvokeAsync(value);
+    }
+
+    async Task OnChangeHandler(object value)
+    {
+        await OnChange.InvokeAsync((TValue)value);
+    }
+}
+
+<style>
+    .k-popup {
+        height:auto !important;
+        min-height: 150px !important;
+        max-height: 400px !important;
+    }
+
+    .combo-table {
+        width: 100%;
+    }
+
+    .combo-header {
+        background: var(--mud-palette-header-background);
+        padding: 2px 8px;
+    }
+
+    .combo-items {
+    }
+
+    .combo-column {
+        width: 33%;
+        padding: 8px;
+        border-left: 1px solid rgba(0,0,0,.08);
+    }
+
+    .combo-footer {
+        padding: 8px;
+        background: var(--mud-palette-header-background);
+    }
+
+    .combo-column:first-child {
+        border-left-width: 0;
+    }
+
+    .k-list-md .k-list-item, .k-list-md .k-list-optionlabel {
+        padding: 0;
+    }
+</style>
