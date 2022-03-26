@@ -24,7 +24,7 @@
         <HeaderTemplate>
             @if (ShowHeader)
             {
-                var headerFields = HeaderFields == null ? SearchFields : HeaderFields;
+                var headerFields = HeaderNames == null ? SearchFields : HeaderNames;
                 <table class="combo-table combo-header">
                     <tr>
                         @foreach (var item in headerFields)
@@ -66,7 +66,7 @@
 
     [Parameter] public EventCallback<TValue> OnChange { get; set; }
 
-    [Parameter] public IEnumerable<string> HeaderFields { get; set; }
+    [Parameter] public IEnumerable<string> HeaderNames { get; set; }
     [Parameter] public string Width { get; set; } = "100%";
     [Parameter] public bool ClearButton { get; set; } = false;
     [Parameter] public bool Enabled { get; set; } = true;

@@ -2,60 +2,31 @@
 
 @using Model = AppUser
 
-<MudGrid>
-    <MudItem xs="12" sm="6">
-        <ItemDropDownList Data="allUsers" @bind-Item="@Item" UniqueField="FullName" TextField="FullName" SearchFields="@SearchFields" TValue="string" TItem="Model" />
-        <ItemComboBox Data="allUsers" @bind-Item="@Item" UniqueField="FullName" TextField="FullName" SearchFields="@SearchFields" TValue="string" TItem="Model" />
-        <TelerikRadioGroup Data="@paymentTypeList"
-                           @bind-Value="@SelectedPaymentTypeId"
-                           ValueField="PaymentTypeId"
-                           TextField="PaymentTypeName" 
-                           Layout="RadioGroupLayout.Horizontal">
-        </TelerikRadioGroup>
+<div class="k-my-4">
+    <ItemDropDownList Data="allUsers" @bind-Item="@Item" UniqueField="FullName" TextField="FullName" SearchFields="@(new List<string> { "FullName", "UserName" })" TValue="string" TItem="Model" />
+</div>
+<div class="k-my-4">
+    <ItemComboBox Data="allUsers" @bind-Item="@Item" UniqueField="FullName" TextField="FullName" SearchFields="@(new List<string> { "FullName", "UserName" })" TValue="string" TItem="Model" />
+</div>
+<div class="k-my-4">
+    <ItemRadioGroup Data="@paymentTypeList"
+                @bind-Item="@SelectedPaymentType"
+                UniqueField="PaymentTypeId"
+                TextField="PaymentTypeName"
+                TItem="PaymentType"
+                TValue="int">
+</ItemRadioGroup>
+</div>
 
-    </MudItem>
-</MudGrid>
 
-<div>Value: @(Value)</div>
-<div>Item{ FullName: @(Item.FullName), UserName: @(Item.UserName) }</div>
 
 @code {
     List<Model> allUsers = new() { new Model { FullName = "Arif", UserName = "arif@somemail.com" }, new Model { FullName = "Pasha", UserName = "pasha@domain.com" }, new Model { FullName = "Aaa", UserName = "aaa@domain.com" }, new Model { FullName = "Bbb", UserName = "bbb@domain.com" }, new Model { FullName = "Ccc", UserName = "ccc@domain.com" }, new Model { FullName = "Ddd", UserName = "ddd@domain.com" }, new Model { FullName = "Eee", UserName = "eee@domain.com" }, new Model { FullName = "Fff", UserName = "fff@domain.com" } };
-    //List<Model> allUsers = new();
-    IEnumerable<string> SearchFields { get; set; } = new List<string> { "FullName", "UserName" };
-    IEnumerable<string> HeaderFields { get; set; } = new List<string> { "Name", "UserName" };
+    
     string Value = "Arif";
     Model Item = new() { FullName = "Arif", UserName = "arif@somemail.com" };
-    int SelectedPaymentTypeId = 1;
+
     PaymentType SelectedPaymentType = new() { PaymentTypeId = 1, PaymentTypeName = "Order" };
     IEnumerable<PaymentType> paymentTypeList = new List<PaymentType> { new PaymentType() { PaymentTypeId = 1, PaymentTypeName = "Order" }, new PaymentType() { PaymentTypeId = 2, PaymentTypeName = "Advance" } };
 
 }
-
-<style>
-    .combo-table {
-        width: 100%;
-    }
-
-    .combo-header {
-        background: var(--mud-palette-header-background);
-        padding: 2px 8px;
-    }
-
-    .combo-items {
-    }
-
-    .combo-column {
-        width: 33%;
-        padding: 8px 8px;
-        border-left: 1px solid rgba(0,0,0,.08);
-    }
-
-        .combo-column:first-child {
-            border-left-width: 0;
-        }
-
-    .k-list-md .k-list-item, .k-list-md .k-list-optionlabel {
-        padding: 0;
-    }
-</style>
