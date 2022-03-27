@@ -2,31 +2,99 @@
 
 @using Model = AppUser
 
-<div class="k-my-4">
-    <ItemDropDownList Data="allUsers" @bind-Item="@Item" UniqueField="FullName" TextField="FullName" SearchFields="@(new List<string> { "FullName", "UserName" })" TValue="string" TItem="Model" />
-</div>
-<div class="k-my-4">
-    <ItemComboBox Data="allUsers" @bind-Item="@Item" UniqueField="FullName" TextField="FullName" SearchFields="@(new List<string> { "FullName", "UserName" })" TValue="string" TItem="Model" />
-</div>
-<div class="k-my-4">
-    <ItemRadioGroup Data="@paymentTypeList"
-                @bind-Item="@SelectedPaymentType"
-                UniqueField="PaymentTypeId"
-                TextField="PaymentTypeName"
-                TItem="PaymentType"
-                TValue="int">
-</ItemRadioGroup>
-</div>
+
+<TelerikGridLayout RowSpacing="8px" ColumnSpacing="8px" VerticalAlign="GridLayoutVerticalAlign.Center">
+    <GridLayoutColumns>
+        <GridLayoutColumn Width="115px" />
+        <GridLayoutColumn Width="325px" />
+        <GridLayoutColumn />
+    </GridLayoutColumns>
+    <GridLayoutItems>
+        <GridLayoutItem Row="1" Column="1">
+            <label for="bu_list">Business Unit:</label>
+        </GridLayoutItem>
+        <GridLayoutItem Row="1" Column="2">
+            <ItemDropDownList Id="bu_list" Data="allUsers" @bind-Item="@Item" UniqueField="FullName" TextField="FullName" SearchFields="@(new List<string> { "FullName", "UserName", "UserName" })" TValue="string" TItem="Model" Width="100%" PopupWidth="100%" PopupMaxWidth="600px"/>
+        </GridLayoutItem>
+        <GridLayoutItem Row="@(!MobileView ? 1 : 2)" Column="@(!MobileView ? 3 : 2)">
+            <div class="font-italic">Apertech Ltd. Company</div>
+        </GridLayoutItem>
+        <GridLayoutItem Row="@(!MobileView ? 2 : 3)" Column="1">
+            <label for="vendor_list">Vendor:</label>
+        </GridLayoutItem>
+        <GridLayoutItem Row="@(!MobileView ? 2 : 3)" Column="2">
+            <ItemComboBox Id="vendor_list" Data="allUsers" @bind-Item="@Item" UniqueField="FullName" TextField="FullName" SearchFields="@(new List<string> { "FullName", "UserName" })" TValue="string" TItem="Model" Width="100%" PopupWidth="100%" PopupMaxWidth="600px"/>
+        </GridLayoutItem>
+        <GridLayoutItem Row="@(!MobileView ? 2 : 4)" Column="@(!MobileView ? 3 : 2)">
+            <div class="font-italic">Vendor Name Filankes oglu</div>
+        </GridLayoutItem>
+        <GridLayoutItem Row="@(!MobileView ? 3 : 5)" Column="1">
+            <label for="type_radio">Document Type:</label>
+        </GridLayoutItem>
+        <GridLayoutItem Row="@(!MobileView ? 3 : 5)" Column="2">
+            <ItemRadioGroup Id="type_radio"
+                            Data="@paymentTypeList"
+                            @bind-Item="@SelectedPaymentType"
+                            UniqueField="PaymentDocumentType"
+                            TextField="PaymentDocumentTypeName"
+                            TItem="PaymentType"
+                            TValue="int"
+                            Class="k-pl-1">
+            </ItemRadioGroup>
+        </GridLayoutItem>
+    </GridLayoutItems>
+</TelerikGridLayout>
 
 
+<div class="k-mt-4">
+    <TelerikGridLayout RowSpacing="8px" ColumnSpacing="8px">
+        <GridLayoutItems>
+            <GridLayoutItem Row="1" Column="1">
+                <DataGrid @bind-Data="allUsers" Title="Vendor Balance" ShowContextMenu="false" ShowToolbar="false" Pageable="false" ShowCheckBoxColumn="false" SearchFields="@(new List<string> {"FullName", "UserName"})" Height="@(!MobileView ? "calc((100vh - 310px) / 2)" : "auto")">
+                    <GridColumn Field="@(nameof(Model.FullName))" Title="Name" />
+                    <GridColumn Field="@(nameof(Model.UserName))" Title="Name" />
+                </DataGrid>
+            </GridLayoutItem>
+            <GridLayoutItem Row="@(!MobileView? 1 : 3)" Column="@(!MobileView? 2 : 1)">
+                <DataGrid @bind-Data="allUsers" Title="Order Balance" ShowContextMenu="false" ShowToolbar="false" Pageable="false" SearchFields="@(new List<string> {"FullName", "UserName"})" Height="@(!MobileView ? "calc((100vh - 310px) / 2)" : "auto")">
+                    <GridColumn Field="@(nameof(Model.FullName))" Title="Name" />
+                    <GridColumn Field="@(nameof(Model.UserName))" Title="Name" />
+                </DataGrid>
+            </GridLayoutItem>
+            <GridLayoutItem Row="2" Column="1" ColumnSpan="@(!MobileView? 2 : 1)">
+                <DataGrid @bind-Data="allUsers" Title="Vendor's' Order/Advance" ShowContextMenu="false" ShowToolbar="false" Pageable="false" SearchFields="@(new List<string> {"FullName", "UserName"})" Height="@(!MobileView ? "calc((100vh - 310px) / 2)" : "auto")">
+                    <GridColumn Field="@(nameof(Model.FullName))" Title="Name" />
+                    <GridColumn Field="@(nameof(Model.UserName))" Title="Name" />
+                </DataGrid>
+            </GridLayoutItem>
+        </GridLayoutItems>
+    </TelerikGridLayout>
+</div>
+
+<TelerikMediaQuery Media="(max-width: 768px)" OnChange="@( (bool mobileView) => OnMobileViewChanged(mobileView) )"></TelerikMediaQuery>
 
 @code {
-    List<Model> allUsers = new() { new Model { FullName = "Arif", UserName = "arif@somemail.com" }, new Model { FullName = "Pasha", UserName = "pasha@domain.com" }, new Model { FullName = "Aaa", UserName = "aaa@domain.com" }, new Model { FullName = "Bbb", UserName = "bbb@domain.com" }, new Model { FullName = "Ccc", UserName = "ccc@domain.com" }, new Model { FullName = "Ddd", UserName = "ddd@domain.com" }, new Model { FullName = "Eee", UserName = "eee@domain.com" }, new Model { FullName = "Fff", UserName = "fff@domain.com" } };
-    
+    List<Model> allUsers = new() { new Model { FullName = "Arif", UserName = "arifyobaniysukafortestpurposes@somemail.com" }, new Model { FullName = "Pasha", UserName = "pasha@domain.com" }, new Model { FullName = "Aaa", UserName = "aaa@domain.com" }, new Model { FullName = "Bbb", UserName = "bbb@domain.com" }, new Model { FullName = "Ccc", UserName = "ccc@domain.com" }, new Model { FullName = "Ddd", UserName = "ddd@domain.com" }, new Model { FullName = "Eee", UserName = "eee@domain.com" }, new Model { FullName = "Fff", UserName = "fff@domain.com" } };
+
     string Value = "Arif";
     Model Item = new() { FullName = "Arif", UserName = "arif@somemail.com" };
 
-    PaymentType SelectedPaymentType = new() { PaymentTypeId = 1, PaymentTypeName = "Order" };
-    IEnumerable<PaymentType> paymentTypeList = new List<PaymentType> { new PaymentType() { PaymentTypeId = 1, PaymentTypeName = "Order" }, new PaymentType() { PaymentTypeId = 2, PaymentTypeName = "Advance" } };
+    bool MobileView = false;
 
+
+    IEnumerable<PaymentType> paymentTypeList = PaymentType.PaymentTypeList;
+    PaymentType SelectedPaymentType = PaymentType.PaymentTypeList.FirstOrDefault();
+
+    void OnMobileViewChanged(bool mobileView)
+    {
+        MobileView = mobileView;
+    }
 }
+
+
+<style>
+    .paymentcard--top-label {
+        width: 110px;
+    }
+
+</style>

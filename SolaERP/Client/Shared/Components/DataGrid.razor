@@ -23,7 +23,7 @@
              OnRowDrop="@((GridRowDropEventArgs<TItem> args) => OnRowDropHandler(args))"
              OnRowClick="@OnRowClickHandler"
              OnRowDoubleClick="@OnRowDoubleClickHandler"
-             OnRowContextMenu="@OnRowContextMenu"
+             OnRowContextMenu="@(ShowContextMenu ? OnRowContextMenu : null)"
              OnCreate="@OnCreateHandler"
              OnEdit="@OnEditHandler"
              OnCancel="@OnCancelHandler"
@@ -132,9 +132,12 @@
     </GridColumns>
 </TelerikGrid>
 
-<TelerikContextMenu @ref="@contextMenuRef" Data="@contextMenuItemList"
+@if (ShowContextMenu)
+{
+    <TelerikContextMenu @ref="@contextMenuRef" Data="@contextMenuItemList"
                     OnClick="@((ContextMenuItem argsItem) => ContextMenuClickHandler(argsItem))">
-</TelerikContextMenu>
+    </TelerikContextMenu>
+}
 
 <TelerikMediaQuery Media="@Media" OnChange="@( (bool mobileView) => OnMobileViewChanged(mobileView) )"></TelerikMediaQuery>
 
@@ -196,6 +199,9 @@
     [Parameter] public bool ShowSearchBar { get; set; } = true;
     [Parameter] public bool Pageable { get; set; } = true;
 
+    [Parameter] public bool ShowContextMenu { get; set; } = true;
+    [Parameter] public bool ShowContextMenuDetails { get; set; } = true;
+
     [Parameter] public bool ReadOnly { get; set; } = false;
     [Parameter] public bool CanAdd { get; set; } = false;
     [Parameter] public bool CanEdit { get; set; } = false;
@@ -220,7 +226,7 @@
     // local variables - start
 
     TelerikContextMenu<ContextMenuItem> contextMenuRef;
-    IEnumerable<ContextMenuItem> contextMenuItemList;
+    List<ContextMenuItem> contextMenuItemList;
     IEnumerable<TItem> originalData = new List<TItem>();
     List<TItem> deletedItems = new();
     bool showCheckBox = true;
@@ -237,12 +243,16 @@
 
     protected override void OnParametersSet()
     {
-        contextMenuItemList = new List<ContextMenuItem>()
-        {
-                new ContextMenuItem { Text="Go to Details", Icon="hyperlink", CommandName="GoToDetails" },
-                new ContextMenuItem { Text = "Edit", Icon = "edit", CommandName = "BeginEdit", Disabled = !CanEdit },
-                new ContextMenuItem { Text = "Delete", Icon = "delete", CommandName = "BeginDelete", Disabled = !CanDelete },
-                new ContextMenuItem { Text="Rows per page", Icon="rows", Items = new List<ContextMenuItem>()
+        contextMenuItemList = new ();
+
+        if (ShowContextMenuDetails) contextMenuItemList.Add(new ContextMenuItem { Text = "Go to Details", Icon = "hyperlink", CommandName = "GoToDetails" });
+        if (CanEdit) contextMenuItemList.Add(new ContextMenuItem { Text = "Edit", Icon = "edit", CommandName = "BeginEdit" });
+        if (CanDelete) contextMenuItemList.Add(new ContextMenuItem { Text = "Delete", Icon = "delete", CommandName = "BeginDelete" });
+        if (Pageable) contextMenuItemList.Add(new ContextMenuItem
+            {
+                Text = "Rows per page",
+                Icon = "rows",
+                Items = new List<ContextMenuItem>()
                 {
                     new ContextMenuItem { Text="All", CommandName="All" },
                     new ContextMenuItem { Text="1", CommandName="1" },
@@ -251,10 +261,10 @@
                     new ContextMenuItem { Text="50", CommandName="50" },
                     new ContextMenuItem { Text="100", CommandName="100" },
                     new ContextMenuItem { Text="1000", CommandName="1000" },
-                } }
-        };
-        originalData = new List<TItem>(Data);
+                }
+            });
 
+        originalData = new List<TItem>(Data);
     }
 
     // grid events - start

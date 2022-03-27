@@ -14,10 +14,6 @@ html, body {
     font-family: 'DINPro', sans-serif;
 }
 
-.body-content {
-    padding: 1.25rem;
-}
-
 .mud-drawer:not(.mud-drawer-fixed) {
     position: fixed;
 }
@@ -38,5 +34,14 @@ html, body {
     .mud-drawer.mud-drawer-mini.mud-drawer-pos-left.mud-drawer--closed ~ div:not(.mud-main-content) {
         margin-left: 0;
     }
+}
+
+.flex-center-y {
+    display: flex;
+    align-items: center;
+}
+
+.font-italic{
+    font-style: italic;
 }
 

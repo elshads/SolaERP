@@ -1,58 +1,57 @@
 ﻿@typeparam TItem where TItem : IBaseModel, new()
 @typeparam TValue
 
-<div class="combo-wrapper">
-    <TelerikComboBox Data="@Data"
-                     ValueField="@UniqueField"
-                     TextField="@TextField"
-                     Value="@Value"
-                     ValueChanged="@ValueChangedHandler"
-                     ValueExpression="@( () => Value )"
-                     OnChange="@OnChangeHandler"
-                     Enabled="@Enabled"
-                     Width="@Width"
-                     Id="@Id"
-                     ScrollMode="@ScrollMode"
-                     PageSize="@PageSize"
-                     Placeholder="Select ..."
-                     ClearButton="@ClearButton"
-                     Filterable="true"
-                     FilterOperator="StringFilterOperator.Contains"
-                     TValue="TValue"
-                     TItem="TItem"
-                     OnRead="FilterCombo">
-        <HeaderTemplate>
-            @if (ShowHeader)
+
+<TelerikComboBox Data="@Data"
+                 ValueField="@UniqueField"
+                 TextField="@TextField"
+                 Value="@Value"
+                 ValueChanged="@ValueChangedHandler"
+                 ValueExpression="@( () => Value )"
+                 OnChange="@OnChangeHandler"
+                 Enabled="@Enabled"
+                 Width="@Width"
+                 Id="@Id"
+                 ScrollMode="@ScrollMode"
+                 PageSize="@PageSize"
+                 Placeholder="Select ..."
+                 ClearButton="@ClearButton"
+                 Filterable="true"
+                 FilterOperator="StringFilterOperator.Contains"
+                 TValue="TValue"
+                 TItem="TItem"
+                 OnRead="FilterCombo">
+    <ComboBoxSettings>
+        <ComboBoxPopupSettings Width="@PopupWidth" MinWidth="@PopupMinWidth" MaxWidth="@PopupMaxWidth" Height="@PopupHeight" MinHeight="@PopupMinHeight" MaxHeight="@PopupMaxHeight" />
+    </ComboBoxSettings>
+    <HeaderTemplate>
+        @if (ShowHeader)
+        {
+            var headerFields = HeaderNames == null ? SearchFields : HeaderNames;
+            <div class="combo-table combo-header">
+                @foreach (var item in headerFields)
+                {
+                    <div class="combo-column">@(item)</div>
+                }
+            </div>
+        }
+    </HeaderTemplate>
+    <ItemTemplate Context="context">
+        <div class="combo-table combo-items">
+            @foreach (var item in SearchFields)
             {
-                var headerFields = HeaderNames == null ? SearchFields : HeaderNames;
-                <table class="combo-table combo-header">
-                    <tr>
-                        @foreach (var item in headerFields)
-                        {
-                            <th class="combo-column">@(item)</th>
-                        }
-                    </tr>
-                </table>
+                <div class="combo-column">@(typeof(TItem).GetProperty(item).GetValue(context))</div>
             }
-        </HeaderTemplate>
-        <ItemTemplate Context="context">
-            <table class="combo-table combo-items">
-                <tr>
-                    @foreach (var item in SearchFields)
-                    {
-                        <td class="combo-column">@(typeof(TItem).GetProperty(item).GetValue(context))</td>
-                    }
-                </tr>
-            </table>
-        </ItemTemplate>
-        <FooterTemplate>
-            @if (ShowFooter)
-            {
-                <div class="combo-footer">Count: @Data.Count()</div>
-            }
-        </FooterTemplate>
-    </TelerikComboBox>
-</div>
+        </div>
+    </ItemTemplate>
+    <FooterTemplate>
+        @if (ShowFooter)
+        {
+            <div class="combo-footer">Count: @Data.Count()</div>
+        }
+    </FooterTemplate>
+</TelerikComboBox>
+
 
 
 @code {
@@ -67,7 +66,13 @@
     [Parameter] public EventCallback<TValue> OnChange { get; set; }
 
     [Parameter] public IEnumerable<string> HeaderNames { get; set; }
-    [Parameter] public string Width { get; set; } = "400px";
+    [Parameter] public string Width { get; set; } = "460px";
+    [Parameter] public string PopupWidth { get; set; }
+    [Parameter] public string PopupMinWidth { get; set; }
+    [Parameter] public string PopupMaxWidth { get; set; }
+    [Parameter] public string PopupHeight { get; set; } = "auto";
+    [Parameter] public string PopupMinHeight { get; set; } = "150px";
+    [Parameter] public string PopupMaxHeight { get; set; } = "400px";
     [Parameter] public bool ClearButton { get; set; } = false;
     [Parameter] public bool Enabled { get; set; } = true;
     [Parameter] public string Id { get; set; } = "";
@@ -84,14 +89,15 @@
     async Task ItemChangedHandler(TItem item)
     {
         Item = item;
-        await ItemChanged.InvokeAsync(item);
+        await ItemChanged.InvokeAsync(Item);
     }
 
     TValue Value;
     async Task ValueChangedHandler(TValue value)
     {
         Value = value;
-        var item = Data.FirstOrDefault(e => ((TValue)typeof(TItem).GetProperty(UniqueField).GetValue(e)).Equals(value));
+        var itemFromValue = Data.FirstOrDefault(e => ((TValue)typeof(TItem).GetProperty(UniqueField).GetValue(e)).Equals(value));
+        var item = itemFromValue == null ? new TItem() : itemFromValue;
         await ItemChangedHandler(item);
     }
 
@@ -118,27 +124,26 @@
 }
 
 <style>
-    .k-popup {
-        height:auto !important;
-        min-height: 150px !important;
-        max-height: 400px !important;
-    }
-
     .combo-table {
+        display: flex;
+        flex-wrap: nowrap;
         width: 100%;
     }
 
     .combo-header {
         background: var(--mud-palette-header-background);
-        padding: 2px 8px;
+        font-weight: 600;
     }
 
     .combo-items {
     }
 
     .combo-column {
-        width: 33%;
-        padding: 8px;
+        width: @($"{100 / SearchFields.Count()}%");
+        padding: 8px 4px;
+        margin-left: 4px;
+        margin-right: 4px;
+        overflow: hidden;
         border-left: 1px solid rgba(0,0,0,.08);
     }
 

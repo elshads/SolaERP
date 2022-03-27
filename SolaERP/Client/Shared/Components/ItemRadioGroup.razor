@@ -12,6 +12,7 @@
                    LabelPosition="@LabelPosition"
                    Enabled="@Enabled" 
                    Id="@Id" 
+                   Class="@Class"
                    TItem="TItem" 
                    TValue="TValue">
 </TelerikRadioGroup>
@@ -29,6 +30,7 @@
 
     [Parameter] public bool Enabled { get; set; } = true;
     [Parameter] public string Id { get; set; } = "";
+    [Parameter] public string Class { get; set; } = "";
     [Parameter] public RadioGroupLayout Layout { get; set; } = RadioGroupLayout.Horizontal;
     [Parameter] public RadioGroupLabelPosition LabelPosition { get; set; } = RadioGroupLabelPosition.After;
 
