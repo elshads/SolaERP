@@ -1,10 +1,12 @@
 ﻿@typeparam TItem where TItem : IBaseModel, new()
 
+@implements IDisposable
 
 <TelerikGrid @ref="@Ref"
              @key="@Key"
              Data="@Data"
              Height="@Height"
+             Width="@Width"
              Pageable="@Pageable"
              Sortable="true"
              Navigable="true"
@@ -16,10 +18,11 @@
              @bind-PageSize="@pageSize"
              FilterMode="@GridFilterMode.FilterMenu"
              SelectionMode="@GridSelectionMode.Multiple"
-             EditMode="GridEditMode.Inline"
+             EditMode="@GridEditMode"
              SelectedItems="@SelectedItems"
+             EnableLoaderContainer="true"
              SelectedItemsChanged="@((IEnumerable<TItem> selectedItems) => SelectedItemsChangedHandler(selectedItems))"
-             RowDraggable="@(RowDraggable && !ReadOnly && !MobileView)"
+             RowDraggable="@(RowDraggable && !ReadOnly && !AppState.MobileView)"
              OnRowDrop="@((GridRowDropEventArgs<TItem> args) => OnRowDropHandler(args))"
              OnRowClick="@OnRowClickHandler"
              OnRowDoubleClick="@OnRowDoubleClickHandler"
@@ -30,7 +33,7 @@
              OnUpdate="@OnUpdateHandler"
              OnDelete="@OnRowDeleteHandler">
     <GridSettings>
-        <GridPagerSettings PageSizes="@(new List<int?> { 1, 10, 20, 50, 100, 1000, null })" />
+        <GridPagerSettings PageSizes="@(new List<int?> { 1, 10, 20, 50, 100, 1000, null })" ButtonCount="5" InputType="PagerInputType.Buttons" />
     </GridSettings>
     <GridToolBar>
         @if (Title != null)
@@ -74,13 +77,13 @@
         {
             @if (CanExport)
             {
-                <GridCommandButton Command="CsvExport" Icon="csv" Enabled="@(!inEditMode)">@(!MobileView ? "Export to CSV" : "")</GridCommandButton>
+                <GridCommandButton Command="CsvExport" Icon="csv" Enabled="@(!inEditMode)">@(!AppState.MobileView ? "Export to CSV" : "")</GridCommandButton>
             }
-            @if (!MobileView && (CanEdit || CanDelete || CanMoveLeft || CanMoveRight || CanMoveUp || CanMoveDown))
+            @if (!AppState.MobileView && (CanEdit || CanDelete || CanMoveLeft || CanMoveRight || CanMoveUp || CanMoveDown))
             {
                 <GridCommandButton Icon="button" OnClick="@(() => showRowButtons = !showRowButtons)" Enabled="@(!inEditMode)">Row buttons</GridCommandButton>
             }
-            <GridCommandButton Icon="layout" OnClick="@(() => showGroup = !showGroup)" Enabled="@(!inEditMode)">@(!MobileView ? "Group" : "")</GridCommandButton>
+            <GridCommandButton Icon="layout" OnClick="@(() => showGroup = !showGroup)" Enabled="@(!inEditMode)">@(!AppState.MobileView ? "Group" : "")</GridCommandButton>
         }
         @if (ShowSearchBar)
         {
@@ -99,7 +102,7 @@
     <GridColumns>
         <GridCommandColumn Width="@(Convert.ToInt32(CanEdit) + Convert.ToInt32(CanDelete) + Convert.ToInt32(CanMoveLeft) + Convert.ToInt32(CanMoveRight) + Convert.ToInt32(CanMoveUp)  + Convert.ToInt32(CanMoveDown) > 1 ? "90px" : "55px")"
                            ShowColumnMenu="false" Reorderable="false"
-                           Visible="@(showRowButtons && !ReadOnly && !MobileView && (CanEdit || CanDelete || CanMoveLeft || CanMoveRight || CanMoveUp || CanMoveDown))">
+                           Visible="@(showRowButtons && !ReadOnly && !AppState.MobileView && (CanEdit || CanDelete || CanMoveLeft || CanMoveRight || CanMoveUp || CanMoveDown))">
             @if (CanEdit)
             {
                 <GridCommandButton Command="Edit" Icon="edit" ShowInEdit="false" Enabled="(!inEditMode)" />
@@ -127,7 +130,7 @@
                 <GridCommandButton Icon="chevron-down" ShowInEdit="false" Enabled="(!inEditMode)" OnClick="@((e) => MoveDownHandler(e))" />
             }
         </GridCommandColumn>
-        <GridCheckboxColumn ShowColumnMenu="false" VisibleInColumnChooser="false" Reorderable="false" Locked="true" Width="42px" Visible="@(!inEditMode && !ReadOnly && ShowCheckBoxColumn && showCheckBox)" />
+        <GridCheckboxColumn CheckBoxOnlySelection="@CheckBoxOnlySelection" ShowColumnMenu="false" VisibleInColumnChooser="false" Reorderable="false" Locked="true" Width="42px" Visible="@(!inEditMode && !ReadOnly && ShowCheckBoxColumn && showCheckBox)" />
         @ChildContent
     </GridColumns>
 </TelerikGrid>
@@ -139,11 +142,10 @@
     </TelerikContextMenu>
 }
 
-<TelerikMediaQuery Media="@Media" OnChange="@( (bool mobileView) => OnMobileViewChanged(mobileView) )"></TelerikMediaQuery>
-
 
 @code {
     // parameters - start
+    [CascadingParameter] public AppState AppState { get; set; }
     [CascadingParameter] public DialogFactory Dialogs { get; set; }
 
     [Parameter] public RenderFragment ChildContent { get; set; }
@@ -163,10 +165,10 @@
     [Parameter] public TItem SelectedItem { get; set; }
     [Parameter] public EventCallback<TItem> SelectedItemChanged { get; set; }
 
-    [Parameter] public bool MobileView { get; set; } = false;
-    [Parameter] public EventCallback<bool> MobileViewChanged { get; set; }
+    [Parameter] public GridEditMode GridEditMode { get; set; } = GridEditMode.Inline;
 
     [Parameter] public string Height { get; set; } = "calc(100vh - 160px)";
+    [Parameter] public string Width { get; set; }
     [Parameter] public string Media { get; set; } = "(max-width: 768px)";
     [Parameter] public IEnumerable<string> SearchFields { get; set; } = new List<string> { "RowIndex" };
 
@@ -193,6 +195,7 @@
     [Parameter] public EventCallback<GridCommandEventArgs> OnMoveDown { get; set; }
 
     [Parameter] public string Title { get; set; }
+    [Parameter] public bool CheckBoxOnlySelection { get; set; } = false;
     [Parameter] public bool RowDraggable { get; set; } = false;
     [Parameter] public bool ShowToolbar { get; set; } = true;
     [Parameter] public bool ShowCheckBoxColumn { get; set; } = true;
@@ -229,6 +232,7 @@
     List<ContextMenuItem> contextMenuItemList;
     IEnumerable<TItem> originalData = new List<TItem>();
     List<TItem> deletedItems = new();
+
     bool showCheckBox = true;
     bool showRowButtons = true;
     bool showDecimals = false;
@@ -241,9 +245,19 @@
 
     // -----------------------
 
+    protected override void OnInitialized()
+    {
+        AppState.OnMobileViewChanged += OnMobileViewChanged;
+    }
+
+    void IDisposable.Dispose()
+    {
+        AppState.OnMobileViewChanged -= OnMobileViewChanged;
+    }
+
     protected override void OnParametersSet()
     {
-        contextMenuItemList = new ();
+        contextMenuItemList = new();
 
         if (ShowContextMenuDetails) contextMenuItemList.Add(new ContextMenuItem { Text = "Go to Details", Icon = "hyperlink", CommandName = "GoToDetails" });
         if (CanEdit) contextMenuItemList.Add(new ContextMenuItem { Text = "Edit", Icon = "edit", CommandName = "BeginEdit" });
@@ -717,10 +731,9 @@
         return newItem;
     }
 
-    async Task OnMobileViewChanged(bool mobileView)
+    void OnMobileViewChanged(bool mobileView)
     {
-        MobileView = mobileView;
-        if (MobileView)
+        if (mobileView)
         {
             showCheckBox = false;
             showRowButtons = false;
@@ -730,8 +743,6 @@
             showCheckBox = true;
             showRowButtons = true;
         }
-
-        await MobileViewChanged.InvokeAsync(MobileView);
     }
 
     void OnSearchInput(ChangeEventArgs args)
@@ -788,5 +799,9 @@
 <style>
     .customsearch .k-input.k-focus {
         box-shadow: none;
+    }
+
+    .k-pager-info, .k-pager-sizes {
+        white-space: nowrap !important;
     }
 </style>

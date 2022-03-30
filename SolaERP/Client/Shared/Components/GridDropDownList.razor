@@ -3,6 +3,7 @@
 
 
 <TelerikDropDownList Data="@Data"
+                     @ref="@Ref"
                      ValueField="@ValueField"
                      TextField="@TextField"
                      Value="@Value"
@@ -55,6 +56,8 @@
     [Parameter] public IEnumerable<string> SearchFields { get; set; } = new List<string> { "RowIndex" };
     [Parameter] public string ValueField { get; set; }
     [Parameter] public string TextField { get; set; }
+
+    [Parameter] public TelerikDropDownList<TItem, TValue> Ref { get; set; }
 
     [Parameter] public TValue Value { get; set; }
     [Parameter] public EventCallback<TValue> ValueChanged { get; set; }

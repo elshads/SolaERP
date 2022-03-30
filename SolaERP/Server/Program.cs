@@ -41,7 +41,11 @@ builder.Services.AddScoped<AppUserService>();
 builder.Services.AddSingleton<MenuService>();
 builder.Services.AddSingleton<UserMenuAccessService>();
 builder.Services.AddSingleton<GroupService>();
+builder.Services.AddSingleton<BusinessUnitService>();
+builder.Services.AddSingleton<VendorService>();
+builder.Services.AddSingleton<PaymentDocumentService>();
 
+builder.WebHost.UseKestrel();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

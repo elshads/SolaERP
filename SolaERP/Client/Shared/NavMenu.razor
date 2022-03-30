@@ -1,4 +1,4 @@
-﻿<MudDrawer Class="drawer" @bind-Open="@Open" ClipMode="DrawerClipMode.Always" Variant="DrawerVariant.Mini" Anchor="Anchor.Start" Breakpoint="Breakpoint.Md" Elevation="2" Width="260px" MiniWidth="64px">
+﻿<MudDrawer Class="drawer" Open="@Open" OpenChanged="@OnOpenChangedHandler" ClipMode="DrawerClipMode.Always" Variant="DrawerVariant.Mini" Anchor="Anchor.Start" Breakpoint="Breakpoint.Md" Elevation="2" Width="260px" MiniWidth="64px">
     <MudNavMenu Bordered="true" Color=Color.Primary Margin="Margin.None">
         <MudNavLink Class="text-nowrap" Match="NavLinkMatch.All" Icon="@Icons.Filled.Home" Href="/">Home</MudNavLink>
         @if (MenuList != null && MenuList.Count() > 0)
@@ -39,12 +39,19 @@
 
 @code {
     [Parameter] public bool Open { get; set; } = false;
+    [Parameter] public EventCallback<bool> OpenChanged { get; set; }
     IEnumerable<Menu> MenuList = new List<Menu>();
 
     protected override async Task OnInitializedAsync()
     {
         var response = await Http.PostAsJsonAsync<AppUser>("Menu", SessionData.CurrentUser);
         MenuList = await response.Content.ReadFromJsonAsync<IEnumerable<Menu>>();
+    }
+
+    async Task OnOpenChangedHandler(bool open)
+    {
+        Open = open;
+        await OpenChanged.InvokeAsync(Open);
     }
 
     IEnumerable<Menu> Children(int parentId)

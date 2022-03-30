@@ -24,24 +24,22 @@ public class BusinessUnitService
         return result;
     }
 
-    public async Task<BusinessUnit> GetByIdAsync(int id)
+    public async Task<IEnumerable<BusinessUnit>> GetByUserIdAsync(int userId)
     {
-        var result = new BusinessUnit();
+        IEnumerable<BusinessUnit> result = new List<BusinessUnit>();
         try
         {
             using (var cn = new SqlConnection(SqlConfiguration.StaticConnectionString))
             {
-                var sql = $"SELECT * FROM VW_BusinessUnits_List WHERE BusinessUnitId = {id}";
-                var _result = await cn.QueryAsync<BusinessUnit>(sql);
-                if (_result != null)
-                {
-                    result = _result.FirstOrDefault();
-                }
+                var p = new DynamicParameters();
+                p.Add("@UserId", userId, DbType.Int32, ParameterDirection.Input);
+                var _result = await cn.QueryAsync<BusinessUnit>("dbo.SP_UserBusinessUnitsList", p, commandType: CommandType.StoredProcedure);
+                if (_result.Any()) result = _result;
             }
         }
         catch (Exception e)
         {
-            result.ReturnMessage = e.Message;
+            var message = e.Message;
         }
         return result;
     }

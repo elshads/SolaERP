@@ -3,6 +3,7 @@
 
 
 <TelerikDropDownList Data="@Data"
+                     @ref="@Ref"
                      ValueField="@UniqueField"
                      TextField="@TextField"
                      Value="@Value"
@@ -56,6 +57,8 @@
     [Parameter] public string UniqueField { get; set; }
     [Parameter] public string TextField { get; set; }
 
+    [Parameter] public TelerikDropDownList<TItem, TValue> Ref { get; set; } = new();
+
     [Parameter] public TItem Item { get; set; }
     [Parameter] public EventCallback<TItem> ItemChanged { get; set; }
 
@@ -78,6 +81,7 @@
 
     protected override void OnParametersSet()
     {
+        Ref.Rebind();
         Value = (TValue)(typeof(TItem).GetProperty(UniqueField).GetValue(Item));
     }
 

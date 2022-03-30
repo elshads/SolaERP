@@ -2,8 +2,8 @@
 @inherits LayoutComponentBase
 
 
-<AppBar @bind-Open="@openDrawer" />
-<NavMenu Open="@openDrawer" />
+<AppBar @bind-Open="@AppState.OpenDrawer" />
+<NavMenu @bind-Open="@AppState.OpenDrawer" />
 <ReadAccess>
     <MenuBar />
     <div class="body-content">
@@ -11,9 +11,15 @@
     </div>
 </ReadAccess>
 
+<TelerikMediaQuery Media="(max-width: 768px)" OnChange="@( (bool mobileView) => OnMobileViewChanged(mobileView) )"></TelerikMediaQuery>
 
 @code {
-    bool openDrawer = false;
+    [CascadingParameter] AppState AppState { get; set; }
+
+    void OnMobileViewChanged(bool mobileView)
+    {
+        AppState.MobileView = mobileView;
+    }
 }
 
 <style>

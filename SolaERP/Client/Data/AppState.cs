@@ -46,8 +46,12 @@ namespace SolaERP.Client.Data
         }
 
         bool loading;
+        bool openDrawer;
+        bool mobileView;
 
         public ReportDefinition Report { get; set; }
+        public bool MobileView { get { return mobileView; } set { mobileView = value; OnMobileViewChanged?.Invoke(mobileView); Refresh(); } }
+        public bool OpenDrawer { get { return openDrawer; } set { openDrawer = value; Refresh(); } }
         public bool Loading { get { return loading; } set { loading = value; Refresh(); } }
         public bool AddButtonVisible { get; set; }
         public bool AddButtonEnabled { get; set; }
@@ -60,6 +64,8 @@ namespace SolaERP.Client.Data
         public bool ReportButtonVisible { get; set; }
         public bool ReportButtonEnabled { get; set; }
 
+
+        public event Action<bool> OnMobileViewChanged;
 
         public event Action OnRefreshClick;
         public event Action OnAddClick;

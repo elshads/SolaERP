@@ -12,15 +12,14 @@
           CanExport="true"
           SearchFields="@(new List<string> { "GroupId", "GroupName", "Description" })"
           OnDelete="@((IEnumerable<Model> items) => DeleteHandler(items))"
-          @bind-SelectedItems="@selectedItems"
-          @bind-MobileView="@mobileView">
+          @bind-SelectedItems="@selectedItems">
     <GridColumn Field="@(nameof(Model.GroupId))" Title="Id" Width="70px" Editable="false" TextAlign="ColumnTextAlign.Right" Visible="false" />
-    <GridColumn Field="@(nameof(Model.GroupName))" Title="@(!mobileView ? "Name" : "Groups")" ShowColumnMenu="@(!mobileView ? true : false)" Filterable="@(!mobileView ? true : false)">
+    <GridColumn Field="@(nameof(Model.GroupName))" Title="@(!AppState.MobileView ? "Name" : "Groups")" ShowColumnMenu="@(!AppState.MobileView ? true : false)" Filterable="@(!AppState.MobileView ? true : false)">
         <Template>
             @{
                 var rowContext = context as Model;
             }
-            @if (mobileView)
+            @if (AppState.MobileView)
             {
                 <TelerikCard>
                     <CardHeader>
@@ -44,7 +43,7 @@
             }
         </Template>
     </GridColumn>
-    <GridColumn Field="@(nameof(Model.Description))" Title="Description" Visible="!mobileView" />
+    <GridColumn Field="@(nameof(Model.Description))" Title="Description" Visible="!AppState.MobileView" />
 </DataGrid>
 
 
@@ -63,7 +62,6 @@
     int gridPageSize = 20;
     bool gridReadOnly = false;
     bool editMode = false;
-    bool mobileView = false;
     // Grid specific variables - end
 
     // Page specific variables - start
