@@ -19,7 +19,7 @@ public class AttachmentController : ControllerBase
         var p = new DynamicParameters();
         p.Add("@SourceId", attachment.SourceId, DbType.Int32, ParameterDirection.Input);
         p.Add("@Reference", attachment.Reference, DbType.String, ParameterDirection.Input);
-        p.Add("@SourceType", attachment.SourceType, DbType.String, ParameterDirection.Input);
+        p.Add("@SourceType", attachment.SourceTypeName, DbType.String, ParameterDirection.Input);
 
         var result =  await _attachmentService.GetAllAsync(sql, p, CommandType.StoredProcedure);
         return result.ResultList;

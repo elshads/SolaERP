@@ -4,186 +4,107 @@
 @using Model = PaymentDocument
 
 
-<TelerikGridLayout RowSpacing="8px" ColumnSpacing="8px" VerticalAlign="GridLayoutVerticalAlign.Center">
+<PageTitle>Payment Document</PageTitle>
+
+<TelerikGridLayout RowSpacing="8px" ColumnSpacing="8px" VerticalAlign="GridLayoutVerticalAlign.Top">
     <GridLayoutColumns>
-        <GridLayoutColumn Width="115px" />
-        <GridLayoutColumn Width="325px" />
+        <GridLayoutColumn Width="120px" />
+        <GridLayoutColumn Width="300px" />
         <GridLayoutColumn />
     </GridLayoutColumns>
     <GridLayoutItems>
         <GridLayoutItem Row="1" Column="1">
-            <label for="bu_list">Business Unit:</label>
+            <label for="priority_radio">Priority</label>
+            <ItemRadioGroup Id="priority_radio"
+                            Data="@paymentDocumentPriorityList"
+                            Item="@selectedPaymentDocumentPriority"
+                            ItemChanged="@PaymentDocumentPriorityChanged"
+                            UniqueField="PaymentDocumentPriorityId"
+                            TextField="PaymentDocumentPriorityName"
+                            TItem="PaymentDocumentPriority"
+                            TValue="int"
+                            Layout="RadioGroupLayout.Vertical">
+            </ItemRadioGroup>
         </GridLayoutItem>
         <GridLayoutItem Row="1" Column="2">
-            <ItemDropDownList Id="bu_list"
-                              Data="@businessUnitList"
-                              Item="@selectedBusinessUnit"
-                              ItemChanged="@BusinessUnitChanged"
-                              UniqueField="BusinessUnitId"
-                              TextField="BusinessUnitCode"
-                              TValue="int"
-                              TItem="BusinessUnit"
-                              SearchFields="@(new List<string> { "BusinessUnitCode", "BusinessUnitName"})"
-                              Width="100%"
-                              PopupWidth="100%"
-                              PopupMaxWidth="500px" />
-        </GridLayoutItem>
-        <GridLayoutItem Row="@(!AppState.MobileView ? 1 : 2)" Column="@(!AppState.MobileView ? 3 : 2)">
-            <div class="font-italic">@(selectedBusinessUnit != null && selectedBusinessUnit.BusinessUnitName != null ? selectedBusinessUnit.BusinessUnitName : "")</div>
-        </GridLayoutItem>
-        <GridLayoutItem Row="@(!AppState.MobileView ? 2 : 3)" Column="1">
-            <label for="vendor_list">Vendor:</label>
-        </GridLayoutItem>
-        <GridLayoutItem Row="@(!AppState.MobileView ? 2 : 3)" Column="2">
-            <ItemComboBox Id="vendor_list"
-                          Data="@vendorList"
-                          Item="@selectedVendor"
-                          ItemChanged="@VendorChanged"
-                          UniqueField="VendorCode"
-                          TextField="VendorCode"
-                          TValue="string"
-                          TItem="Vendor"
-                          SearchFields="@(new List<string> { "VendorCode", "VendorName" })"
-                          Width="100%"
-                          PopupWidth="100%"
-                          PopupMaxWidth="500px" />
-        </GridLayoutItem>
-        <GridLayoutItem Row="@(!AppState.MobileView ? 2 : 4)" Column="@(!AppState.MobileView ? 3 : 2)">
-            <div class="font-italic">@(selectedVendor != null && selectedVendor.VendorName != null ? selectedVendor.VendorName : "")</div>
-        </GridLayoutItem>
-        <GridLayoutItem Row="@(!AppState.MobileView ? 3 : 5)" Column="1">
-            <label for="type_radio">Document Type:</label>
-        </GridLayoutItem>
-        <GridLayoutItem Row="@(!AppState.MobileView ? 3 : 5)" Column="2">
-            <ItemRadioGroup Id="type_radio"
-                            Data="@paymentTypeList"
-                            Item="@selectedPaymentType"
-                            ItemChanged="@PaymentTypeChanged"
-                            UniqueField="PaymentDocumentType"
-                            TextField="PaymentDocumentTypeName"
-                            TItem="PaymentType"
-                            TValue="int"
-                            Class="k-pl-1">
-            </ItemRadioGroup>
+            <div class="attachment-type">
+                <TelerikGrid Data="@attachmentTypeList"
+                             Height="205px"
+                             Sortable="false"
+                             Groupable="false"
+                             Resizable="false"
+                             Reorderable="false"
+                             SelectionMode="GridSelectionMode.None">
+                    <GridColumns>
+                        <GridColumn Field="@(nameof(AttachmentType.AttachmentTypeId))" Title="Files" Width="55px">
+                            <Template>
+                                <TelerikCheckBox @bind-Value="@((context as AttachmentType).HasItems)" Enabled="false"></TelerikCheckBox>
+                            </Template>
+                        </GridColumn>
+                        <GridColumn Field="@(nameof(AttachmentType.AttachmentTypeName))" Title="Type" Width="180px">
+                            <Template>
+                                @{
+                                    var rowContext = context as AttachmentType;
+                                    <LinkText OnClick="@(() => AttachmentTypeClick(rowContext))">@(rowContext.AttachmentTypeName)</LinkText>
+                                }
+                            </Template>
+                        </GridColumn>
+                    </GridColumns>
+                </TelerikGrid>
+            </div>
         </GridLayoutItem>
     </GridLayoutItems>
 </TelerikGridLayout>
 
-
-<div class="k-mt-4">
-    <TelerikGridLayout RowSpacing="8px" ColumnSpacing="8px">
-        <GridLayoutItems>
-            <GridLayoutItem Row="1" Column="1">
-                <DataGrid Title="Vendor Balance"
-                          @bind-Data="@vendorBalanceList"
-                          @bind-SelectedItems="@selectedVendorBalanceList"
-                          ShowContextMenu="false"
-                          ShowToolbar="false"
-                          Pageable="true"
-                          ShowCheckBoxColumn="false"
-                          OnRowClick="OnVendorBalanceRowClick"
-                          Width="@(AppState.MobileView ? "calc(100vw - 40px)" : AppState.OpenDrawer ? "calc((100vw - 288px) / 2)" : "calc((100vw - 112px) / 2)")"
-                          Height="@(!AppState.MobileView ? "calc((100vh - 310px) / 2)" : "auto")"
-                          SearchFields="@(new List<string> {"VendorCode", "VendorName", "Amount", "CurrencyCode"})">
-                    <GridColumn Field="@(nameof(Model.VendorCode))" Title="Vendor Code" Width="130px" />
-                    <GridColumn Field="@(nameof(Model.VendorName))" Title="Vendor Name" Width="150px" />
-                    <GridColumn Field="@(nameof(Model.Amount))" Title="Amount" DisplayFormat="{0:N3}" TextAlign="ColumnTextAlign.Right" Width="105px" />
-                    <GridColumn Field="@(nameof(Model.CurrencyCode))" Title="Currency" Width="105px" FilterMenuType="FilterMenuType.CheckBoxList" />
-                </DataGrid>
-            </GridLayoutItem>
-            <GridLayoutItem Row="@(!AppState.MobileView? 1 : 3)" Column="@(!AppState.MobileView? 2 : 1)">
-                <DataGrid Title="Order Balance"
-                          Data="@orderBalanceList.ToList()"
-                          ShowContextMenu="false"
-                          ShowToolbar="false"
-                          Pageable="true"
-                          Width="@(AppState.MobileView ? "calc(100vw - 40px)" : AppState.OpenDrawer ? "calc((100vw - 288px) / 2)" : "calc((100vw - 112px) / 2)")"
-                          Height="@(!AppState.MobileView ? "calc((100vh - 310px) / 2)" : "auto")"
-                          SearchFields="@(new List<string> {"PONum", "POAmount"})">
-                    <GridColumn Field="@(nameof(Model.PONum))" Title="PO Num" Width="110px" />
-                    <GridColumn Field="@(nameof(Model.POAmount))" Title="PO Amount" DisplayFormat="{0:N3}" TextAlign="ColumnTextAlign.Right" Width="120px" />
-                    <GridColumn Field="@(nameof(Model.PO_VAT))" Title="PO VAT" DisplayFormat="{0:N3}" TextAlign="ColumnTextAlign.Right" Width="100px" />
-                    <GridColumn Field="@(nameof(Model.AdvanceAmount))" Title="Advance Amount" DisplayFormat="{0:N3}" TextAlign="ColumnTextAlign.Right" Width="157px" />
-                    <GridColumn Field="@(nameof(Model.AdvanceVAT))" Title="Advance VAT" DisplayFormat="{0:N3}" TextAlign="ColumnTextAlign.Right" Width="133px" />
-                    <GridColumn Field="@(nameof(Model.PaidAmount))" Title="Paid Amount" DisplayFormat="{0:N3}" TextAlign="ColumnTextAlign.Right" Width="130px" />
-                    <GridColumn Field="@(nameof(Model.PaidVAT))" Title="Paid VAT" DisplayFormat="{0:N3}" TextAlign="ColumnTextAlign.Right" Width="110px" />
-                    <GridColumn Field="@(nameof(Model.AmountToPay))" Title="Amount To Pay" DisplayFormat="{0:N3}" TextAlign="ColumnTextAlign.Right" Width="145px" />
-                    <GridColumn Field="@(nameof(Model.VATToPay))" Title="VAT To Pay" DisplayFormat="{0:N3}" TextAlign="ColumnTextAlign.Right" Width="122px" />
-                    <GridColumn Field="@(nameof(Model.RemainingAmount))" Title="Remaining Amount" DisplayFormat="{0:N3}" TextAlign="ColumnTextAlign.Right" Width="135px" />
-                    <GridColumn Field="@(nameof(Model.RemainingVAT))" Title="Remaining VAT" DisplayFormat="{0:N3}" TextAlign="ColumnTextAlign.Right" Width="135px" />
-                </DataGrid>
-            </GridLayoutItem>
-            <GridLayoutItem Row="2" Column="1" ColumnSpan="@(!AppState.MobileView? 2 : 1)">
-                <DataGrid Title="Vendor's' Order/Advance"
-                          @bind-Data="@vendorDetailsList"
-                          ShowContextMenu="false"
-                          ShowToolbar="false"
-                          Pageable="true"
-                          @bind-SelectedItems="@orderBalanceList"
-                          CheckBoxOnlySelection="true"
-                          Width="@(AppState.MobileView ? "calc(100vw - 40px)" : AppState.OpenDrawer ? "calc(100vw - 280px)" : "calc(100vw - 104px)")"
-                          Height="@(!AppState.MobileView ? "calc((100vh - 310px) / 2)" : "auto")"
-                          SearchFields="@(new List<string> { "VendorCode", "VendorName", "PaymentDocumentTypeName", "PONum", "Voucher"})">
-                    <GridColumn Field="@(nameof(Model.VendorCode))" Title="Vendor Code" Width="130px" Visible="false" Editable="false" />
-                    <GridColumn Field="@(nameof(Model.VendorName))" Title="Vendor Name" Width="135px" Visible="false" Editable="false" />
-                    <GridColumn Field="@(nameof(Model.PaymentDocumentTypeName))" Title="Document Type" Width="150px" Visible="false" Editable="false" />
-                    <GridColumn Field="@(nameof(Model.PONum))" Title="PO Num" Width="110px" Locked="true" Editable="false" />
-                    <GridColumn Field="@(nameof(Model.Voucher))" Title="Voucher" Width="100px" Locked="true" Editable="false" />
-                    <GridColumn Field="@(nameof(Model.POAmount))" Title="PO Amount" DisplayFormat="{0:N3}" TextAlign="ColumnTextAlign.Right" Width="120px" Editable="false" />
-                    <GridColumn Field="@(nameof(Model.PO_VAT))" Title="PO VAT" DisplayFormat="{0:N3}" TextAlign="ColumnTextAlign.Right" Width="100px" Editable="false" />
-                    <GridColumn Field="@(nameof(Model.VoucherAmount))" Title="Voucher Amount" DisplayFormat="{0:N3}" TextAlign="ColumnTextAlign.Right" Width="154px" Editable="false" />
-                    <GridColumn Field="@(nameof(Model.VoucherVAT))" Title="Voucher VAT" DisplayFormat="{0:N3}" TextAlign="ColumnTextAlign.Right" Width="130px" Editable="false" />
-                    <GridColumn Field="@(nameof(Model.AdvanceAmount))" Title="Advance Amount" DisplayFormat="{0:N3}" TextAlign="ColumnTextAlign.Right" Width="157px" Editable="false" />
-                    <GridColumn Field="@(nameof(Model.AdvanceVAT))" Title="Advance VAT" DisplayFormat="{0:N3}" TextAlign="ColumnTextAlign.Right" Width="133px" Editable="false" />
-                    <GridColumn Field="@(nameof(Model.PaidAmount))" Title="Paid Amount" DisplayFormat="{0:N3}" TextAlign="ColumnTextAlign.Right" Width="130px" Editable="false" />
-                    <GridColumn Field="@(nameof(Model.PaidVAT))" Title="Paid VAT" DisplayFormat="{0:N3}" TextAlign="ColumnTextAlign.Right" Width="110px" Editable="false" />
-                    <GridColumn Field="@(nameof(Model.PaymentDocumentAmount))" Title="Paym. Doc. Amount" DisplayFormat="{0:N3}" TextAlign="ColumnTextAlign.Right" Width="177px" Editable="false" />
-                    <GridColumn Field="@(nameof(Model.PaymentDocumentVAT))" Title="Paym. Doc. VAT" DisplayFormat="{0:N3}" TextAlign="ColumnTextAlign.Right" Width="155px" Editable="false" />
-                    <GridColumn Field="@(nameof(Model.AmountToPay))" Title="Amount To Pay" DisplayFormat="{0:N3}" TextAlign="ColumnTextAlign.Right" Width="145px" Editable="true">
-                        <Template>
-                            @{
-                                <TelerikNumericTextBox Arrows="false" Format="N3" @bind-Value="@((context as Model).AmountToPay)" />
-                            }
-                        </Template>
-                    </GridColumn>
-                    <GridColumn Field="@(nameof(Model.VATToPay))" Title="VAT To Pay" DisplayFormat="{0:N3}" TextAlign="ColumnTextAlign.Right" Width="122px" Editable="true">
-                        <Template>
-                            @{
-                                <TelerikNumericTextBox Arrows="false" Format="N3" @bind-Value="@((context as Model).VATToPay)" />
-                            }
-                        </Template>
-                    </GridColumn>
-                    <GridColumn Field="@(nameof(Model.TotalToPay))" Title="Total To Pay" DisplayFormat="{0:N3}" TextAlign="ColumnTextAlign.Right" Width="130px" Editable="false" />
-                    <GridColumn Field="@(nameof(Model.IsVAT))" Title="Is VAT" Width="95px" />
-                </DataGrid>
-            </GridLayoutItem>
-        </GridLayoutItems>
-    </TelerikGridLayout>
-</div>
-
+<TelerikDialog Visible="@showAttachmentType"
+               VisibleChanged="@ShowAttachmentTypeChanged"
+               Title="@($"Attachments - {selectedAttachmentType?.AttachmentTypeName}")"
+               CloseOnOverlayClick="false"
+               ShowCloseButton="true">
+    <DialogContent>
+        <div>@(selectedAttachmentType.AttachmentTypeName)</div>
+        <div>Data Grid here: Add | Delete | Download</div>
+        <TelerikGrid Data="@attachmentTypeList"
+                     Height="205px"
+                     Sortable="false"
+                     Groupable="false"
+                     Resizable="false"
+                     Reorderable="false"
+                     SelectionMode="GridSelectionMode.None">
+            <GridColumns>
+                <GridColumn Field="@(nameof(AttachmentType.AttachmentTypeId))" Title="Files" Width="55px">
+                    <Template>
+                        <TelerikCheckBox @bind-Value="@((context as AttachmentType).HasItems)" Enabled="false"></TelerikCheckBox>
+                    </Template>
+                </GridColumn>
+                <GridColumn Field="@(nameof(AttachmentType.AttachmentTypeName))" Title="Type" Width="180px">
+                    <Template>
+                        @{
+                            var rowContext = context as AttachmentType;
+                            <LinkText OnClick="@(() => AttachmentTypeClick(rowContext))">@(rowContext.AttachmentTypeName)</LinkText>
+                        }
+                    </Template>
+                </GridColumn>
+            </GridColumns>
+        </TelerikGrid>
+    </DialogContent>
+    <DialogButtons>
+        <TelerikButton OnClick="@(() => ShowAttachmentTypeClosed())">Close</TelerikButton>
+    </DialogButtons>
+</TelerikDialog>
 
 @code {
 
     [CascadingParameter] AppState AppState { get; set; }
 
-    List<Model> vendorBalanceList = new();
-    IEnumerable<Model> selectedVendorBalanceList = new List<Model>();
-    List<Model> vendorDetailsList = new();
-    IEnumerable<Model> orderBalanceList = new List<Model>();
+    IEnumerable<PaymentDocumentPriority> paymentDocumentPriorityList = PaymentDocumentPriority.PaymentDocumentPriorityList;
+    PaymentDocumentPriority selectedPaymentDocumentPriority = PaymentDocumentPriority.PaymentDocumentPriorityList.FirstOrDefault(e => e.PaymentDocumentPriorityId == 2);
 
+    List<AttachmentType> attachmentTypeList = AttachmentType.AttachmentTypeList.ToList();
+    AttachmentType selectedAttachmentType = new();
+    bool showAttachmentType = false;
 
-    Model selectedVendorBalance = new();
-    Model selectedVendorDetail = new();
-    Model selectedOrderBalance = new();
-
-    IEnumerable<BusinessUnit> businessUnitList = new List<BusinessUnit>();
-    IEnumerable<Vendor> vendorList = new List<Vendor>();
-    BusinessUnit selectedBusinessUnit = new();
-    Vendor selectedVendor = new();
-
-
-    IEnumerable<PaymentType> paymentTypeList = PaymentType.PaymentTypeList;
-    PaymentType selectedPaymentType = PaymentType.PaymentTypeList.FirstOrDefault();
+    List<Attachment> attachmentList = new List<Attachment>() { new Attachment { FileName = "FileName1" }, new Attachment { FileName = "FileName2" }, new Attachment { FileName = "FileName3" }, new Attachment { FileName = "FileName4" }, new Attachment { FileName = "FileName5" }, new Attachment { FileName = "FileName6" }, };
 
     protected override async Task OnInitializedAsync()
     {
@@ -194,8 +115,7 @@
     void OnAppStateInitialized()
     {
         AppState.SetDefaults();
-        AppState.Report = new() { ReportId = 1, ReportName = NavigationManager.ToBaseRelativePath(NavigationManager.Uri) };
-        AppState.ReportButtonVisible = true;
+
         AppState.OnReloadClick += ReloadClick;
     }
 
@@ -208,82 +128,46 @@
     {
         AppState.Loading = true;
 
-        await GetBusinessUnitList();
-        await GetVendorList();
-        await GetVendorBalance();
+        //
 
         AppState.Loading = false;
     }
 
     async void ReloadClick()
     {
-        await LoadData();
+        //await LoadData();
     }
 
-    async Task GetBusinessUnitList()
+    void PaymentDocumentPriorityChanged(PaymentDocumentPriority paymentDocumentPriority)
     {
-        businessUnitList = await Http.GetFromJsonAsync<IEnumerable<BusinessUnit>>("BusinessUnit");
-        selectedBusinessUnit = businessUnitList.Any() ? businessUnitList.FirstOrDefault() : new();
+        selectedPaymentDocumentPriority = paymentDocumentPriority;
     }
 
-    async Task GetVendorList()
+    void AttachmentTypeClick(AttachmentType attachmentType)
     {
-        vendorList = await Http.GetFromJsonAsync<IEnumerable<Vendor>>($"Vendor?buid={selectedBusinessUnit.BusinessUnitId}");
-        selectedVendor = vendorList.Any() ? vendorList.FirstOrDefault() : new();
+        selectedAttachmentType = attachmentType;
+        showAttachmentType = true;
     }
 
-    async Task GetVendorBalance()
+    void ShowAttachmentTypeChanged(bool visible)
     {
-        var _vendorBalanceList = await Http.GetFromJsonAsync<IEnumerable<Model>>($"PaymentDocument/GetVendorBalance?buid={selectedBusinessUnit.BusinessUnitId}&vendor_code={selectedVendor.VendorCode}");
-        vendorBalanceList = _vendorBalanceList.ToList();
+        showAttachmentType = visible;
+        if (!visible)
+        {
+            selectedAttachmentType = new();
+        }
     }
 
-    async Task GetVendorDetails()
+    void ShowAttachmentTypeClosed()
     {
-        //buid, vendor_code, curr_code, paym_type
-        var _vendorDetailsList = await Http.GetFromJsonAsync<IEnumerable<Model>>($"PaymentDocument/GetVendorDetails?buid={selectedBusinessUnit.BusinessUnitId}&vendor_code={selectedVendorBalance.VendorCode}&curr_code={selectedVendorBalance.CurrencyCode}&paym_type={selectedPaymentType.PaymentDocumentType}");
-        vendorDetailsList = _vendorDetailsList.ToList();
+        selectedAttachmentType = new();
+        showAttachmentType = false;
     }
 
-    async Task BusinessUnitChanged(BusinessUnit businessUnit)
-    {
-        selectedBusinessUnit = businessUnit;
-        orderBalanceList = new List<Model>();
-        vendorDetailsList = new();
-        selectedVendorBalanceList = new List<Model>();
-        await GetVendorList();
-        await GetVendorBalance();
-    }
-
-    async Task VendorChanged(Vendor vendor)
-    {
-        selectedVendor = vendor;
-        orderBalanceList = new List<Model>();
-        vendorDetailsList = new();
-        selectedVendorBalanceList = new List<Model>();
-        await GetVendorBalance();
-    }
-
-    void PaymentTypeChanged(PaymentType paymentType)
-    {
-        selectedPaymentType = paymentType;
-        orderBalanceList = new List<Model>();
-        vendorDetailsList = new();
-        selectedVendorBalanceList = new List<Model>();
-    }
-
-    async Task OnVendorBalanceRowClick(GridRowClickEventArgs args)
-    {
-        selectedVendorBalance = (Model)args.Item;
-        orderBalanceList = new List<Model>();
-        await GetVendorDetails();
-    }
 }
 
-
 <style>
-    .paymentcard--top-label {
-        width: 110px;
+    .attachment-type .k-grid th, .attachment-type .k-grid td {
+        padding: 4px 12px;
     }
-
 </style>

@@ -29,7 +29,7 @@
                 <div>Loading...</div>
             </NotAuthorized>
         </AuthorizeView>
-        <TelerikLoaderContainer Visible="@(appState != null ? appState.Loading : false)" />
+        <TelerikLoaderContainer Visible="@(appState != null ? appState.Loading : false)" LoaderType="LoaderType.InfiniteSpinner" />
     </CascadingValue>
 </TelerikRootComponent>
 
