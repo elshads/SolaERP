@@ -16,7 +16,7 @@ namespace SolaERP.Shared.Model
             new AttachmentType() { AttachmentTypeId=1, AttachmentTypeName="Contract", HasItems=false },
             new AttachmentType() { AttachmentTypeId=2, AttachmentTypeName="E-Invoice", HasItems=false },
             new AttachmentType() { AttachmentTypeId=3, AttachmentTypeName="Delivery Notes", HasItems=false },
-            new AttachmentType() { AttachmentTypeId=4, AttachmentTypeName="Vendor Invoice", HasItems=true },
+            new AttachmentType() { AttachmentTypeId=4, AttachmentTypeName="Vendor Invoice", HasItems=false },
             new AttachmentType() { AttachmentTypeId=5, AttachmentTypeName="Final Payment", HasItems=false },
             new AttachmentType() { AttachmentTypeId=6, AttachmentTypeName="Others", HasItems=false },
         };

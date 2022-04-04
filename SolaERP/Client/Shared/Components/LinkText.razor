@@ -19,7 +19,14 @@ else
 
     async Task ClickHandler(MouseEventArgs args)
     {
-        await OnClick.InvokeAsync(args);
+        try
+        {
+            await OnClick.InvokeAsync(args);
+        }
+        catch (Exception e)
+        {
+            var message = e.Message;
+        }
     }
 }
 

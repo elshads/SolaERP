@@ -28,7 +28,7 @@
 
     void IDisposable.Dispose()
     {
-        AppState.OnAddClick -= ReloadClick;
+        AppState.OnReloadClick -= ReloadClick;
     }
 
     void SetQueryVariables()

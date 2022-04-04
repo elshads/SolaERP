@@ -31,5 +31,7 @@ builder.Services.AddMudServices(config =>
 });
 builder.Services.AddScoped<SessionData>();
 builder.Services.AddTransient<PageData>();
+builder.Services.AddSingleton<SettingService>();
+builder.Services.AddSingleton<PaymentDocumentMainService>();
 
 await builder.Build().RunAsync();

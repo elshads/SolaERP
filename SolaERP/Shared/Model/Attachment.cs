@@ -9,6 +9,6 @@ public class Attachment : BaseModel
     public int SourceTypeId { get; set; }
     public string? SourceTypeName { get; set; }
     public string? Reference { get; set; }
-    public string? EnxtensionType { get; set; }
+    public string? ExtensionType { get; set; }
 
 }

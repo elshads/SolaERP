@@ -49,3 +49,7 @@ html, body {
     text-align: right;
 }
 
+.k-upload .k-upload-files {
+    display: none;
+}
+

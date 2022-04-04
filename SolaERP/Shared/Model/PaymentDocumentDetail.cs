@@ -1,17 +1,19 @@
 ﻿
 namespace SolaERP.Shared.Model
 {
-    public class PaymentDocument : BaseModel
+    public class PaymentDocumentDetail : BaseModel
     {
+        public int BusinessUnitId { get; set; }
         public string BusinessUnitCode { get; set; }
         public string VendorCode { get; set; }
         public string VendorName { get; set; }
-        public int PaymentDocumentType { get; set; }
+        public int PaymentDocumentTypeId { get; set; }
         public string PaymentDocumentTypeName { get; set; }
         public string PONum { get; set; }
         public string Voucher { get; set; }
         public string CurrencyCode { get; set; }
         public decimal Amount { get; set; }
+        public decimal VAT { get; set; }
         public decimal POAmount { get; set; }
         public decimal PO_VAT { get; set; }
         public decimal VoucherAmount { get; set; }
@@ -26,8 +28,8 @@ namespace SolaERP.Shared.Model
         public decimal PaidPaymentDocumentVAT { get; set; }
         public decimal AmountToPay { get; set; }
         public decimal VATToPay { get; set; }
-        public decimal RemainingAmount => POAmount - (AdvanceAmount - PaidAmount - PaymentDocumentAmount - AmountToPay);
-        public decimal RemainingVAT => (PO_VAT - AdvanceVAT - PaidVAT - PaymentDocumentVAT - VATToPay);
+        public decimal RemainingAmount { get; set; }
+        public decimal RemainingVAT { get; set; }
         public decimal TotalToPay { get; set; }
         public decimal IsVAT { get; set; }
     }

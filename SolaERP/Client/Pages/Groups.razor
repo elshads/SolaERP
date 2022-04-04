@@ -95,14 +95,13 @@
 
     void IDisposable.Dispose()
     {
-        AppState.OnAddClick -= ReloadClick;
+        AppState.OnReloadClick -= ReloadClick;
     }
 
     async Task LoadData()
     {
         AppState.Loading = true;
         var _modelList = await Http.GetFromJsonAsync<IEnumerable<Model>>("Group/GetAll");
-        //var _modelList = new List<Model>() { new Model { GroupId = 1, GroupName = "Group 1", Description = "GroupA" }, new Model { GroupId = 2, GroupName = "Group 2", Description = "GroupB" }, new Model { GroupId = 3, GroupName = "Group 3", Description = "GroupA" } };
         modelList = _modelList.ToList();
         AppState.Loading = false;
     }

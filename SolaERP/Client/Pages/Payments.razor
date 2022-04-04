@@ -1,49 +1,41 @@
 ﻿@page "/payments"
 @implements IDisposable
-@using Model = Group
+@using Model = PaymentDocumentMain
 
 
 <PageTitle>Payment Documents</PageTitle>
 
 
+<div class="k-pb-4">
+    <label for="bu_list">Business Unit:</label>
+    <ItemDropDownList Id="bu_list"
+                      Data="@businessUnitList"
+                      Item="@selectedBusinessUnit"
+                      ItemChanged="@BusinessUnitChanged"
+                      UniqueField="BusinessUnitId"
+                      TextField="BusinessUnitCode"
+                      TValue="int"
+                      TItem="BusinessUnit"
+                      SearchFields="@(new List<string> { "BusinessUnitCode", "BusinessUnitName"})"
+                      Width="300px"
+                      PopupWidth="100%"
+                      PopupMaxWidth="500px" />
+</div>
+
 <DataGrid Data="@modelList"
           CanDelete="true"
-          CanAdd="true"
           CanExport="true"
-          SearchFields="@(new List<string> { "GroupId", "GroupName", "Description" })"
+          Height="calc(100vh - 218px)"
+          SearchFields="@(new List<string> { "VendorCode", "VendorName", "Reference" })"
           OnDelete="@((IEnumerable<Model> items) => DeleteHandler(items))"
           @bind-SelectedItems="@selectedItems">
-    <GridColumn Field="@(nameof(Model.GroupId))" Title="Id" Width="70px" Editable="false" TextAlign="ColumnTextAlign.Right" Visible="false" />
-    <GridColumn Field="@(nameof(Model.GroupName))" Title="@(!AppState.MobileView ? "Name" : "Groups")" ShowColumnMenu="@(!AppState.MobileView ? true : false)" Filterable="@(!AppState.MobileView ? true : false)">
-        <Template>
-            @{
-                var rowContext = context as Model;
-            }
-            @if (AppState.MobileView)
-            {
-                <TelerikCard>
-                    <CardHeader>
-                        <CardTitle>
-                            @(rowContext.GroupName)
-                        </CardTitle>
-                        <CardSubTitle>
-                            @(rowContext.Description)
-                        </CardSubTitle>
-                    </CardHeader>
-                    <CardActions>
-                        <TelerikButton OnClick="@(() => GoToDetails(rowContext.GroupId))">Details</TelerikButton>
-                    </CardActions>
-                </TelerikCard>
-            }
-            else
-            {
-                <LinkText OnClick="@(() => GoToDetails(rowContext.GroupId))">
-                    @rowContext.GroupName
-                </LinkText>
-            }
-        </Template>
-    </GridColumn>
-    <GridColumn Field="@(nameof(Model.Description))" Title="Description" Visible="!AppState.MobileView" />
+    <GridColumn Field="@(nameof(Model.PaymentDocumentMainId))" Title="Id" Width="70px" Editable="false" TextAlign="ColumnTextAlign.Right" Visible="false" />
+    <GridColumn Field="@(nameof(Model.VendorCode))" Title="Vendor Code" />
+    <GridColumn Field="@(nameof(Model.VendorName))" Title="Vendor Name" />
+    <GridColumn Field="@(nameof(Model.Reference))" Title="Reference" />
+    <GridColumn Field="@(nameof(Model.StatusName))" Title="Status" />
+    <GridColumn Field="@(nameof(Model.PaymentDocumentTypeName))" Title="Type" />
+    <GridColumn Field="@(nameof(Model.PaymentDocumentPriorityName))" Title="Priority" />
 </DataGrid>
 
 
@@ -65,6 +57,8 @@
     // Grid specific variables - end
 
     // Page specific variables - start
+    IEnumerable<BusinessUnit> businessUnitList = new List<BusinessUnit>();
+    BusinessUnit selectedBusinessUnit = new();
     // Page specific variables - end
 
     int activeTabIndex = 0;
@@ -88,22 +82,22 @@
     void OnAppStateInitialized()
     {
         AppState.SetDefaults();
-        AppState.Report = new() { ReportId = 1, ReportName = NavigationManager.ToBaseRelativePath(NavigationManager.Uri) };
-        AppState.ReportButtonVisible = true;
+        AppState.AddButtonVisible = true;
+        AppState.OnAddClick += AddClick;
         AppState.OnReloadClick += ReloadClick;
     }
 
     void IDisposable.Dispose()
     {
-        AppState.OnAddClick -= ReloadClick;
+        AppState.OnAddClick -= AddClick;
+        AppState.OnReloadClick -= ReloadClick;
     }
 
     async Task LoadData()
     {
         AppState.Loading = true;
-        var _modelList = await Http.GetFromJsonAsync<IEnumerable<Model>>("Group/GetAll");
-        //var _modelList = new List<Model>() { new Model { GroupId = 1, GroupName = "Group 1", Description = "GroupA" }, new Model { GroupId = 2, GroupName = "Group 2", Description = "GroupB" }, new Model { GroupId = 3, GroupName = "Group 3", Description = "GroupA" } };
-        modelList = _modelList.ToList();
+        await GetBusinessUnitList();
+        //await GetPaymentDocumentList();
         AppState.Loading = false;
     }
 
@@ -112,9 +106,21 @@
         await LoadData();
     }
 
+    async Task GetBusinessUnitList()
+    {
+        businessUnitList = await Http.GetFromJsonAsync<IEnumerable<BusinessUnit>>("BusinessUnit");
+        selectedBusinessUnit = businessUnitList.Any() ? businessUnitList.FirstOrDefault() : new();
+    }
+
+    async Task GetPaymentDocumentList()
+    {
+        var _modelList = await Http.GetFromJsonAsync<IEnumerable<Model>>("PaymentDocument/GetAll");
+        modelList = _modelList.ToList();
+    }
+
     void GoToDetails(int id)
     {
-        NavigationManager.NavigateTo($"/groups/card?{id}");
+        NavigationManager.NavigateTo($"/payments/card?{id}");
     }
 
     void OnRowClickHandler(GridRowClickEventArgs args)
@@ -125,12 +131,19 @@
     void OnRowDoubleClickHandler(GridRowClickEventArgs args)
     {
         var argsItem = args.Item as Model;
-        GoToDetails(argsItem.GroupId);
+        GoToDetails(argsItem.PaymentDocumentMainId);
     }
 
-    void CreateHandler(GridCommandEventArgs args)
+    void AddClick()
     {
-        GoToDetails(0);
+        AppState.Loading = true;
+        NavigationManager.NavigateTo($"/payments/generate?bu={selectedBusinessUnit.BusinessUnitId}");
+    }
+
+    async Task BusinessUnitChanged(BusinessUnit businessUnit)
+    {
+        selectedBusinessUnit = businessUnit;
+        await GetPaymentDocumentList();
     }
 
 }

@@ -23,6 +23,7 @@ namespace SolaERP.Shared.Model
         public bool ChangePassword { get; set; }
         public int StatusId { get; set; }
         public string Theme { get; set; }
+        public string? SyteLineUserCode { get; set; }
         public DateTime ExpirationDate { get; set; }
         public int Sessions { get; set; }
         public DateTime LastActivity { get; set; }

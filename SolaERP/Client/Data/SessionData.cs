@@ -13,5 +13,8 @@ namespace SolaERP.Client.Data
         public List<UserMenuAccess>? CurrentUserMenuAccessList { get; set; }
 
         public AuthenticationState AuthenticationState { get; set; }
+
+        public PaymentDocumentMain PaymentDocumentMain { get; set; }
+        public List<PaymentDocumentDetail> PaymentDocumentSummaryList { get; set; } = new();
     }
 }
