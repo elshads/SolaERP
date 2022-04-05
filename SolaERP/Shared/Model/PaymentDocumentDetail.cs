@@ -3,15 +3,16 @@ namespace SolaERP.Shared.Model
 {
     public class PaymentDocumentDetail : BaseModel
     {
+        public int PaymentDocumentDetailId { get; set; }
         public int BusinessUnitId { get; set; }
-        public string BusinessUnitCode { get; set; }
-        public string VendorCode { get; set; }
-        public string VendorName { get; set; }
+        public string? BusinessUnitCode { get; set; }
+        public string? VendorCode { get; set; }
+        public string? VendorName { get; set; }
         public int PaymentDocumentTypeId { get; set; }
-        public string PaymentDocumentTypeName { get; set; }
-        public string PONum { get; set; }
-        public string Voucher { get; set; }
-        public string CurrencyCode { get; set; }
+        public string? PaymentDocumentTypeName { get; set; }
+        public string? PONum { get; set; }
+        public int Voucher { get; set; }
+        public string? CurrencyCode { get; set; }
         public decimal Amount { get; set; }
         public decimal VAT { get; set; }
         public decimal POAmount { get; set; }

@@ -6,6 +6,7 @@ public class Attachment : BaseModel
     public byte[]? FileData { get; set; }
     public int SourceId { get; set; }
     public int AttachmentTypeId { get; set; }
+    public int AttachmentSubTypeId { get; set; }
     public int SourceTypeId { get; set; }
     public string? SourceTypeName { get; set; }
     public string? Reference { get; set; }

@@ -9,6 +9,7 @@ namespace SolaERP.Shared.Data
     public class SqlResult
     {
         public int InsertedResult { get; set; }
+        public int InsertedResultCount { get; set; }
         public int UpdatedResult { get; set; }
         public int DeletedResult { get; set; }
         public string? InsertedResultMessage { get; set; }
