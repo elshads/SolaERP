@@ -12,6 +12,9 @@
     <ToolBarButton Icon="@AppState.CustomButton5Icon" Enabled="@AppState.CustomButton5Enabled" Visible="@AppState.CustomButton5Visible" OnClick="@CustomButton5Click">@(AppState.CustomButton5Title)</ToolBarButton>
     <ToolBarButton Icon="@AppState.CustomButton6Icon" Enabled="@AppState.CustomButton6Enabled" Visible="@AppState.CustomButton6Visible" OnClick="@CustomButton6Click">@(AppState.CustomButton6Title)</ToolBarButton>
     <ToolBarSeparator Visible="@(AppState.CustomButton4Visible || AppState.CustomButton5Visible || AppState.CustomButton6Visible)"/>
+    @*<ToolBarButton Icon="approve" Enabled="@AppState.ApproveButtonEnabled" Visible="@AppState.ApproveButtonVisible" OnClick="@ApproveClick">Approve</ToolBarButton>
+    <ToolBarButton Icon="reject" Enabled="@AppState.RejectButtonEnabled" Visible="@AppState.RejectButtonVisible" OnClick="@RejectClick">Reject</ToolBarButton>
+    <ToolBarSeparator Visible="@(AppState.ApproveButtonVisible || AppState.RejectButtonVisible)"/>*@
     <ToolBarButton Icon="reload" Enabled="@AppState.ReloadButtonEnabled" Visible="@AppState.ReloadButtonVisible" OnClick="@ReloadClick">Reload</ToolBarButton>
     <ToolBarSeparator Visible="@(AppState.ReloadButtonVisible)"/>
     <ToolBarButton Icon="printer" Enabled="@AppState.ReportButtonEnabled" Visible="@AppState.ReportButtonVisible" OnClick="@ReportClick">Report</ToolBarButton>

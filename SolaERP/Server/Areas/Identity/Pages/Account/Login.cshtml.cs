@@ -86,6 +86,8 @@ namespace SolaERP.Server.Areas.Identity.Pages.Account
 
         public async Task OnGetAsync(string returnUrl = null)
         {
+            if(_signInManager.IsSignedIn(User)) Response.Redirect("/", true);
+
             if (!string.IsNullOrEmpty(ErrorMessage))
             {
                 ModelState.AddModelError(string.Empty, ErrorMessage);
@@ -100,6 +102,7 @@ namespace SolaERP.Server.Areas.Identity.Pages.Account
 
             ReturnUrl = returnUrl;
         }
+
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {

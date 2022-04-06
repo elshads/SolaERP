@@ -5,13 +5,13 @@ namespace SolaERP.Client.Data
     public class AppState
     {
         ISnackbar Snackbar { get; set; }
-        SessionData _sessionData;
-        PageData _pageData;
-        public AppState(ISnackbar snackbar, SessionData sessionData, PageData pageData)
+        //SessionData _sessionData;
+        //PageData _pageData;
+        public AppState(ISnackbar snackbar)
         {
             Snackbar = snackbar;
-            _sessionData = sessionData;
-            _pageData = pageData;
+            //_sessionData = sessionData;
+            //_pageData = pageData;
             SetDefaults();
         }
 
@@ -73,7 +73,7 @@ namespace SolaERP.Client.Data
             });
         }
 
-        bool loading;
+        bool loading = false;
         bool openDrawer;
         bool mobileView;
 

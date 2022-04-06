@@ -2,6 +2,91 @@
 {
     public class PaymentDocumentService
     {
+        public async Task<IEnumerable<PaymentDocumentMain>> GetAll(int userId, int businessUnitId, int tabindex)
+        {
+            IEnumerable<PaymentDocumentMain> result = new List<PaymentDocumentMain>();
+            try
+            {
+                var procedure = "";
+                switch (tabindex)
+                {
+                    case 0:
+                        procedure = "dbo.SP_PaymentDocumentWFA";
+                        break;
+                    case 1:
+                        procedure = "dbo.SP_PaymentDocumentDrafts";
+                        break;
+                    case 2:
+                        procedure = "dbo.SP_PaymentDocumentAll";
+                        break;
+                    case 3:
+                        procedure = "dbo.SP_PaymentDocumentApproved";
+                        break;
+                    case 4:
+                        procedure = "dbo.SP_PaymentDocumentBank";
+                        break;
+                    default:
+                        procedure = "dbo.SP_PaymentDocumentAll";
+                        break;
+                }
+
+                using (var cn = new SqlConnection(SqlConfiguration.StaticConnectionString))
+                {
+                    var p = new DynamicParameters();
+                    p.Add("@UserId", userId, DbType.Int32, ParameterDirection.Input);
+                    p.Add("@BusinessUnitId", businessUnitId, DbType.Int32, ParameterDirection.Input);
+                    var _result = await cn.QueryAsync<PaymentDocumentMain>(procedure, p, commandType: CommandType.StoredProcedure);
+                    if (_result.Any()) result = _result;
+                }
+            }
+            catch (Exception e)
+            {
+                var message = e.Message;
+            }
+            return result;
+        }
+
+        public async Task<PaymentDocumentMain> GetById(int modelId)
+        {
+            PaymentDocumentMain result = new();
+            try
+            {
+                using (var cn = new SqlConnection(SqlConfiguration.StaticConnectionString))
+                {
+                    var p = new DynamicParameters();
+                    p.Add("@PaymentDocumentMainId", modelId, DbType.Int32, ParameterDirection.Input);
+                    var _result = await cn.QueryAsync<PaymentDocumentMain>("dbo.SP_PaymentDocumentMainLoad", p, commandType: CommandType.StoredProcedure);
+                    if (_result.Any()) result = _result.FirstOrDefault();
+                }
+                if (result.PaymentDocumentMainId > 0)
+                {
+                    using (var cn = new SqlConnection(SqlConfiguration.StaticConnectionString))
+                    {
+                        var p = new DynamicParameters();
+                        p.Add("@PaymentDocumentMainId", modelId, DbType.Int32, ParameterDirection.Input);
+                        var _result = await cn.QueryAsync<PaymentDocumentDetail>("dbo.SP_PaymentDocumentDetailsLoad", p, commandType: CommandType.StoredProcedure);
+                        if (_result.Any()) result.PaymentDocumentDetailList = _result.ToList();
+                    }
+
+                    using (var cn = new SqlConnection(SqlConfiguration.StaticConnectionString))
+                    {
+                        var p = new DynamicParameters();
+                        p.Add("@SourceId", modelId, DbType.Int32, ParameterDirection.Input);
+                        p.Add("@SourceType", "PYMDC", DbType.String, ParameterDirection.Input);
+                        p.Add("@Reference", null, DbType.String, ParameterDirection.Input);
+                        var _result = await cn.QueryAsync<Attachment>("dbo.SP_AttachmentList_Load", p, commandType: CommandType.StoredProcedure);
+                        if (_result.Any()) result.AttachmentList = _result.ToList();
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                result.ReturnMessage = e.Message;
+            }
+            return result;
+        }
+
+
         public async Task<IEnumerable<PaymentDocumentDetail>> GetVendorBalance(int businessUnitId, string vendorCode)
         {
             IEnumerable<PaymentDocumentDetail> result = new List<PaymentDocumentDetail>();
@@ -65,10 +150,10 @@
                     p.Add("@BusinessUnitId", paymentDocumentMain.BusinessUnitId, DbType.Int32, ParameterDirection.Input);
                     p.Add("@PaymentDocumentPriorityId", paymentDocumentMain.PaymentDocumentPriorityId, DbType.Int32, ParameterDirection.Input);
                     p.Add("@UserId", currentUserId, DbType.Int32, ParameterDirection.Input);
-                    //p.Add("@ReturnId", dbType: DbType.Int32, direction: ParameterDirection.Output);
+                    p.Add("@NewPaymentDocumentMainId", dbType: DbType.Int32, direction: ParameterDirection.Output);
 
                     result.InsertedResult = await cn.ExecuteAsync("dbo.SP_PaymentDocumentMain_IUD", p, commandType: CommandType.StoredProcedure);
-                    result.ReturnId = p.Get<int>("@ReturnId");
+                    result.ReturnId = p.Get<int>("@NewPaymentDocumentMainId");
                 }
 
 
@@ -80,11 +165,11 @@
                         {
                             var p = new DynamicParameters();
                             p.Add("@PaymentDocumentDetailId", item.PaymentDocumentDetailId, DbType.Int32, ParameterDirection.Input);
-                            p.Add("@PaymentDocumentMainId", paymentDocumentMain.PaymentDocumentMainId, DbType.Int32, ParameterDirection.Input);
+                            p.Add("@PaymentDocumentMainId", (paymentDocumentMain.PaymentDocumentMainId > 0 ? paymentDocumentMain.PaymentDocumentMainId : result.ReturnId), DbType.Int32, ParameterDirection.Input);
                             p.Add("@OrderNumber", item.PONum, DbType.String, ParameterDirection.Input);
                             p.Add("@Voucher", item.Voucher, DbType.Int32, ParameterDirection.Input);
-                            p.Add("@Amount", item.Amount, DbType.Decimal, ParameterDirection.Input);
-                            p.Add("@VAT", item.VAT, DbType.Decimal, ParameterDirection.Input);
+                            p.Add("@Amount", item.AmountToPay, DbType.Decimal, ParameterDirection.Input);
+                            p.Add("@VAT", item.VATToPay, DbType.Decimal, ParameterDirection.Input);
                             p.Add("@POAmount", item.POAmount, DbType.Decimal, ParameterDirection.Input);
                             p.Add("@PO_VAT", item.PO_VAT, DbType.Decimal, ParameterDirection.Input);
                             p.Add("@VoucherAmount", item.VoucherAmount, DbType.Decimal, ParameterDirection.Input);
@@ -95,10 +180,8 @@
                             p.Add("@PaymentDocumentVat", item.PaymentDocumentVAT, DbType.Decimal, ParameterDirection.Input);
                             p.Add("@AdvanceAmount", item.AdvanceAmount, DbType.Decimal, ParameterDirection.Input);
                             p.Add("@AdvanceVAT", item.AdvanceVAT, DbType.Decimal, ParameterDirection.Input);
-                            //p.Add("@ReturnId", dbType: DbType.Int32, direction: ParameterDirection.Output);
 
-                            var details = await cn.ExecuteAsync("dbo.SP_PaymentDocumentDetails_IUD", p, commandType: CommandType.StoredProcedure);
-                            //result.InsertedResultCount = p.Get<int>("@ReturnId");
+                            await cn.ExecuteAsync("dbo.SP_PaymentDocumentDetails_IUD", p, commandType: CommandType.StoredProcedure);
                         }
                     }
                 }
@@ -108,7 +191,21 @@
                 {
                     foreach (var item in paymentDocumentMain.AttachmentList)
                     {
+                        using (var cn = new SqlConnection(SqlConfiguration.StaticConnectionString))
+                        {
+                            var p = new DynamicParameters();
+                            p.Add("@AttachmentId", item.AttachmentId, DbType.Int32, ParameterDirection.Input);
+                            p.Add("@FileName", item.FileName, DbType.String, ParameterDirection.Input);
+                            p.Add("@FileData", item.FileData, DbType.Binary, ParameterDirection.Input);
+                            p.Add("@SourceId", (paymentDocumentMain.PaymentDocumentMainId > 0 ? paymentDocumentMain.PaymentDocumentMainId : result.ReturnId), DbType.Int32, ParameterDirection.Input);
+                            p.Add("@SourceType", "PYMDC", DbType.String, ParameterDirection.Input);
+                            p.Add("@Reference", item.Reference, DbType.String, ParameterDirection.Input);
+                            p.Add("@ExtensionType", item.ExtensionType, DbType.String, ParameterDirection.Input);
+                            p.Add("@AttachmentTypeId", item.AttachmentTypeId, DbType.Int32, ParameterDirection.Input);
+                            p.Add("@AttachmentSubTypeId", item.AttachmentSubTypeId, DbType.Int32, ParameterDirection.Input);
 
+                            await cn.ExecuteAsync("dbo.SP_Attachments_IUD", p, commandType: CommandType.StoredProcedure);
+                        }
                     }
                 }
             }

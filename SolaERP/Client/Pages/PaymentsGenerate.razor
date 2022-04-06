@@ -398,7 +398,6 @@
                     PaymentDocumentDetailList = new List<Model>(selectedVendorDetailsList),
                 };
             SessionData.PaymentDocumentMain = PaymentDocumentMainService.GetInstanceClone(paymentDocumentMain);
-            SessionData.PaymentDocumentSummaryList = new List<Model>(orderBalanceList);
             NavigationManager.NavigateTo("/payments/card?id=0");
         }
     }

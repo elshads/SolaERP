@@ -26,6 +26,18 @@ public class PaymentDocumentController : ControllerBase
         return await _paymentDocumentService.GetVendorDetails(buid, vendor_code, curr_code, paym_type);
     }
 
+    [HttpGet("GetAll")]
+    public async Task<IEnumerable<PaymentDocumentMain>> GetAll(int bu, int tabindex)
+    {
+        return await _paymentDocumentService.GetAll(_appUserService.GetCurrentUserId(), bu, tabindex);
+    }
+
+    [HttpGet("GetById")]
+    public async Task<PaymentDocumentMain> GetById(int id)
+    {
+        return await _paymentDocumentService.GetById(id);
+    }
+
     [HttpPost("Save")]
     public async Task<SqlResult> Save([FromBody] PaymentDocumentMain paymentDocumentMain)
     {

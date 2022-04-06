@@ -4,6 +4,19 @@
 
 <PageTitle>Page Template</PageTitle>
 
+<TelerikTabStrip @bind-ActiveTabIndex="@activeTabIndex">
+    <TabStripTab Title="Users">
+        <HeaderTemplate>
+            <MudIcon Icon="@Icons.Filled.AccountCircle" />
+            <span class="k-pl-2">
+                <div>Users</div>
+            </span>
+        </HeaderTemplate>
+        <Content>
+            <div>Content</div>
+        </Content>
+    </TabStripTab>
+</TelerikTabStrip>
 
 @code {
     int activeTabIndex = 0;

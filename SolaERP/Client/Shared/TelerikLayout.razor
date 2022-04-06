@@ -2,12 +2,19 @@
 @implements IDisposable
 @inject AuthenticationStateProvider AuthenticationStateProvider
 
-<HeadContent>
-    <link rel="stylesheet" href="@($"/css/kendo/{SessionData.CurrentUser?.Theme}.css")">
-</HeadContent>
 
+<AuthorizeView>
+    <Authorized>
+        <HeadContent>
+            <link rel="stylesheet" href="@($"/css/kendo/{SessionData.CurrentUser?.Theme}.css")">
+        </HeadContent>
+        <MudThemeProvider IsDarkMode="@(SessionData.CurrentUser?.Theme == "dark")" />
+    </Authorized>
+    <NotAuthorized>
+        <MudThemeProvider />
+    </NotAuthorized>
+</AuthorizeView>
 
-<MudThemeProvider IsDarkMode="@(SessionData.CurrentUser?.Theme == "dark")" />
 <MudSnackbarProvider />
 <MudDialogProvider FullWidth="false"
                    MaxWidth="MaxWidth.Large"
@@ -29,7 +36,7 @@
                 <div>Loading...</div>
             </NotAuthorized>
         </AuthorizeView>
-        <TelerikLoaderContainer Visible="@(appState != null ? appState.Loading : false)" LoaderType="LoaderType.InfiniteSpinner" />
+        <TelerikLoaderContainer Visible="@(appState.Loading)" LoaderType="LoaderType.InfiniteSpinner" />
     </CascadingValue>
 </TelerikRootComponent>
 
@@ -38,12 +45,25 @@
 
     protected override async Task OnInitializedAsync()
     {
-        appState = new AppState(Snackbar, SessionData, PageData);
-        appState.Loading = true;
-        SessionData.CurrentUser = await Http.GetFromJsonAsync<AppUser>("AppUser");
+        appState = new AppState(Snackbar);
         appState.OnRefreshClick += Refresh;
+        appState.Loading = true;
+        try
+        {
+            var currentUser = await Http.GetFromJsonAsync<AppUser>("AppUser");
+            SessionData.CurrentUser = currentUser != null ? currentUser : new();
+        }
+        catch (Exception e)
+        {
+            var message = e.Message;
+        }
         //SessionData.CurrentUserMenuAccessList = await Http.GetFromJsonAsync<List<UserMenuAccess>>("UserMenuAccess");
         appState.Loading = false;
+    }
+
+    void IDisposable.Dispose()
+    {
+        appState.OnRefreshClick -= Refresh;
     }
 
     async void Refresh()
@@ -53,17 +73,12 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        SessionData.AuthenticationState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        var isAuthenticated = SessionData.AuthenticationState.User.Identity.IsAuthenticated;
+        var authenticationState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var isAuthenticated = authenticationState.User.Identity.IsAuthenticated;
         if (firstRender && !isAuthenticated)
         {
-            NavigationManager.NavigateTo("/authentication/login");
+            NavigationManager.NavigateTo("Identity/Account/Login", true);
         }
-    }
-
-    void IDisposable.Dispose()
-    {
-        appState.OnRefreshClick -= Refresh;
     }
 }
 
@@ -72,7 +87,7 @@
         width: 6em;
     }
 
-    .k-toolbar .k-button{
+    .k-toolbar .k-button {
         min-height: 30px;
     }
 </style>

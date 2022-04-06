@@ -14,8 +14,8 @@
     </GridLayoutColumns>
     <GridLayoutItems>
         <GridLayoutItem Row="1" Column="1">
-            <label class="k-input-label pb-1" for="destionation_radio">Payment:</label>
-            <ItemRadioGroup Id="destionation_radio"
+            <label class="k-input-label pb-1" for="attachment-type">Payment:</label>
+            <ItemRadioGroup Id="attachment-type"
                             Data="@attachmentTypeList"
                             Item="@selectedAttachmentType"
                             ItemChanged="@AttachmentTypeChanged"
@@ -27,7 +27,7 @@
             </ItemRadioGroup>
         </GridLayoutItem>
         <GridLayoutItem Row="1" Column="2">
-            <div class="attachment-type">
+            <div class="attachment-subtype">
                 <TelerikGrid Data="@attachmentSubTypeList"
                              Height="205px"
                              Width="260px"
@@ -210,7 +210,7 @@
             <GridColumns>
                 <GridColumn Field="@(nameof(Attachment.FileName))" Title="Files" Width="@(AppState.MobileView ? "360px" : "auto")" />
                 <GridCommandColumn ShowColumnMenu="false" Reorderable="false" Visible="true" Width="90px">
-                    <GridCommandButton Icon="download" ShowInEdit="false" Enabled="@(!fileSelectLoading)" Title="Download" />
+                    <GridCommandButton Icon="download" ShowInEdit="false" Enabled="@(!fileSelectLoading)" Title="Download" OnClick="@(() => DownloadAttachment(context as Attachment))" />
                     <GridCommandButton Command="Delete" Icon="delete" ShowInEdit="false" Enabled="@(!fileSelectLoading)" Title="Delete" />
                 </GridCommandColumn>
             </GridColumns>
@@ -249,8 +249,6 @@
     bool showAttachmentSubType = false;
     bool fileSelectLoading = false;
 
-    //double currentFilePosition = 0;
-    //double currentFileSize = 0;
     (double Size, string Name) currentFile = new();
 
     protected override async Task OnInitializedAsync()
@@ -289,10 +287,8 @@
     {
         AppState.Loading = true;
 
-        paymentDocumentMain = SessionData.PaymentDocumentMain != null && modelId == 0 ? SessionData.PaymentDocumentMain : modelId > 0 ? new() /*fetch from DB*/ : new();
-        poSummaryList = SessionData.PaymentDocumentSummaryList;
+        await GetPaymentDocument(modelId);
         SessionData.PaymentDocumentMain = new();
-        SessionData.PaymentDocumentSummaryList = new();
         await GetApproveStageList();
 
         AppState.Loading = false;
@@ -301,6 +297,42 @@
     async void ReloadClick()
     {
         //await LoadData();
+    }
+
+    async Task GetPaymentDocument(int _modelId)
+    {
+        if (_modelId > 0)
+        {
+            try
+            {
+                paymentDocumentMain = await Http.GetFromJsonAsync<PaymentDocumentMain>($"PaymentDocument/GetById?id={_modelId}");
+            }
+            catch (Exception e)
+            {
+                AppState.ShowAlert(e.Message, Severity.Error);
+            }
+        }
+        paymentDocumentMain = SessionData.PaymentDocumentMain != null && SessionData.PaymentDocumentMain.PaymentDocumentDetailList.Any() ? SessionData.PaymentDocumentMain : modelId > 0 ? paymentDocumentMain : new();
+        selectedPaymentDocumentPriority = paymentDocumentMain.PaymentDocumentMainId > 0 ? PaymentDocumentPriority.PaymentDocumentPriorityList.FirstOrDefault(e => e.PaymentDocumentPriorityId == paymentDocumentMain.PaymentDocumentPriorityId) : PaymentDocumentPriority.PaymentDocumentPriorityList.FirstOrDefault(e => e.PaymentDocumentPriorityId == 2);
+        var attachmentTypeId = paymentDocumentMain.AttachmentList.Any() ? paymentDocumentMain.AttachmentList.FirstOrDefault().AttachmentTypeId : 0;
+        selectedAttachmentType = paymentDocumentMain.PaymentDocumentMainId > 0 && attachmentTypeId > 0 ? AttachmentType.AttachmentTypeList.FirstOrDefault(e => e.AttachmentTypeId == attachmentTypeId) : AttachmentType.AttachmentTypeList.FirstOrDefault();
+        if (paymentDocumentMain.PaymentDocumentDetailList.Any())
+        {
+            poSummaryList = paymentDocumentMain.PaymentDocumentDetailList.OrderBy(e => e.PONum).GroupBy(g => g.PONum).Select(s => new Model
+                {
+                    PONum = s.Key,
+                    POAmount = s.FirstOrDefault().POAmount,
+                    PO_VAT = s.FirstOrDefault().PO_VAT,
+                    AdvanceAmount = s.FirstOrDefault().AdvanceAmount,
+                    AdvanceVAT = s.FirstOrDefault().AdvanceVAT,
+                    PaidPaymentDocumentAmount = s.Sum(e => e.PaidAmount + e.PaymentDocumentAmount),
+                    PaidPaymentDocumentVAT = s.Sum(e => e.PaidVAT + e.PaymentDocumentVAT),
+                    AmountToPay = s.Sum(e => e.AmountToPay),
+                    VATToPay = s.Sum(e => e.VATToPay),
+                    RemainingAmount = s.Sum(e => e.POAmount - e.AdvanceAmount - e.PaidAmount - e.PaymentDocumentAmount - e.AmountToPay),
+                    RemainingVAT = s.Sum(e => e.PO_VAT - e.AdvanceVAT - e.PaidVAT - e.PaymentDocumentVAT - e.VATToPay),
+                }).ToList();
+        }
     }
 
     async Task GetApproveStageList()
@@ -318,6 +350,7 @@
     void AttachmentTypeChanged(AttachmentType attachmentType)
     {
         selectedAttachmentType = attachmentType;
+        paymentDocumentMain.AttachmentList.ForEach(e => e.AttachmentTypeId = selectedAttachmentType.AttachmentTypeId);
         attachmentSubTypeList = AttachmentSubType.AttachmentSubTypeList.Where(e => selectedAttachmentType.AttachmentSubTypeList.Select(s => s.AttachmentSubTypeId).Contains(e.AttachmentSubTypeId)).ToList();
     }
 
@@ -366,7 +399,16 @@
                 await using MemoryStream ms = new();
                 await file.Stream.CopyToAsync(ms);
                 var fileData = ms.ToArray();
-                var attachment = new Attachment { AttachmentSubTypeId = selectedAttachmentSubType.AttachmentSubTypeId, ExtensionType = file.Extension, FileName = file.Name, FileData = fileData };
+                var attachment = new Attachment
+                    {
+                        AttachmentId = 0,
+                        AttachmentTypeId = selectedAttachmentType.AttachmentTypeId,
+                        AttachmentSubTypeId = selectedAttachmentSubType.AttachmentSubTypeId,
+                        Reference = paymentDocumentMain.Reference,
+                        ExtensionType = file.Extension,
+                        FileName = file.Name,
+                        FileData = fileData
+                    };
                 paymentDocumentMain.AttachmentList.Add(attachment);
             }
             else if (file.InvalidExtension && file.InvalidMaxFileSize)
@@ -400,21 +442,49 @@
 
     async void Save()
     {
-        var response = await Http.PostAsJsonAsync<PaymentDocumentMain>("PaymentDocument/Save", paymentDocumentMain);
-        var result = await response.Content.ReadFromJsonAsync<SqlResult>();
-        if (result.InsertedResult > 0)
+        AppState.Loading = true;
+
+        var validated = Validate();
+
+        if (validated)
         {
-            AppState.ShowAlert("Done", Severity.Success);
+            var response = await Http.PostAsJsonAsync<PaymentDocumentMain>("PaymentDocument/Save", paymentDocumentMain);
+            var result = await response.Content.ReadFromJsonAsync<SqlResult>();
+            if (result.InsertedResultMessage == null)
+            {
+                var id = result.ReturnId > 0 ? result.ReturnId : modelId;
+                NavigationManager.NavigateTo($"/payments/card?id={id}");
+                await GetPaymentDocument(id);
+                AppState.ShowAlert("Successfully saved", Severity.Success);
+            }
+            else
+            {
+                AppState.ShowAlert(result.InsertedResultMessage, Severity.Error);
+            }
         }
-        else
+        AppState.Loading = false;
+    }
+
+    bool Validate()
+    {
+        if (string.IsNullOrEmpty(paymentDocumentMain.Reference))
         {
-            AppState.ShowAlert(result.InsertedResultMessage, Severity.Error);
+            AppState.ShowAlert("Enter document Reference", Severity.Error);
+            return false;
         }
+        return true;
+    }
+
+    async Task DownloadAttachment(Attachment attachment)
+    {
+
+        var file = attachment.AttachmentId > 0 ? await Http.GetFromJsonAsync<Attachment>($"Attachment/GetByIdAsync?id={attachment.AttachmentId}") : attachment;
+        await JSRuntime.InvokeVoidAsync("downloadFile", file.FileName, file.FileData);
     }
 }
 
 <style>
-    .attachment-type .k-grid th, .attachment-type .k-grid td {
+    .attachment-subtype .k-grid th, .attachment-subtype .k-grid td {
         padding: 4px 12px;
     }
 </style>

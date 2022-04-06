@@ -22,21 +22,105 @@
                       PopupMaxWidth="500px" />
 </div>
 
-<DataGrid Data="@modelList"
-          CanDelete="true"
-          CanExport="true"
-          Height="calc(100vh - 218px)"
-          SearchFields="@(new List<string> { "VendorCode", "VendorName", "Reference" })"
-          OnDelete="@((IEnumerable<Model> items) => DeleteHandler(items))"
-          @bind-SelectedItems="@selectedItems">
-    <GridColumn Field="@(nameof(Model.PaymentDocumentMainId))" Title="Id" Width="70px" Editable="false" TextAlign="ColumnTextAlign.Right" Visible="false" />
-    <GridColumn Field="@(nameof(Model.VendorCode))" Title="Vendor Code" />
-    <GridColumn Field="@(nameof(Model.VendorName))" Title="Vendor Name" />
-    <GridColumn Field="@(nameof(Model.Reference))" Title="Reference" />
-    <GridColumn Field="@(nameof(Model.StatusName))" Title="Status" />
-    <GridColumn Field="@(nameof(Model.PaymentDocumentTypeName))" Title="Type" />
-    <GridColumn Field="@(nameof(Model.PaymentDocumentPriorityName))" Title="Priority" />
-</DataGrid>
+<TelerikTabStrip ActiveTabIndex="@activeTabIndex" ActiveTabIndexChanged="@ActiveTabIndexChanged">
+    <TabStripTab Title="Waiting for Approval">
+        <Content>
+            <DataGrid Data="@modelList"
+                      CanExport="true"
+                      Height="calc(100vh - 285px)"
+                      SearchFields="@(new List<string> { "VendorCode", "VendorName", "Reference", "StatusName", "CurrencyCode","Comment" })"
+                      @bind-SelectedItems="@selectedItems">
+                <GridColumn Field="@(nameof(Model.PaymentDocumentMainId))" Title="Id" Width="70px" Editable="false" TextAlign="ColumnTextAlign.Right" Visible="false" />
+                <GridColumn Field="@(nameof(Model.VendorCode))" Title="Vendor Code" Width="130px" />
+                <GridColumn Field="@(nameof(Model.VendorName))" Title="Vendor Name" Width="300px" />
+                <GridColumn Field="@(nameof(Model.Reference))" Title="Reference" Width="240px" />
+                <GridColumn Field="@(nameof(Model.StatusName))" Title="Status" Width="110px" />
+                <GridColumn Field="@(nameof(Model.Amount))" Title="Amount" DisplayFormat="{0:N3}" TextAlign="ColumnTextAlign.Right" Width="200px" />
+                <GridColumn Field="@(nameof(Model.VAT))" Title="VAT" DisplayFormat="{0:N3}" TextAlign="ColumnTextAlign.Right" Width="200px" />
+                <GridColumn Field="@(nameof(Model.CurrencyCode))" Title="Currency" Width="110px" />
+                <GridColumn Field="@(nameof(Model.Comment))" Title="Comment" Width="400px" />
+            </DataGrid>
+        </Content>
+    </TabStripTab>
+    <TabStripTab Title="Draft">
+        <Content>
+            <DataGrid Data="@modelList"
+                      CanDelete="true"
+                      CanExport="true"
+                      Height="calc(100vh - 285px)"
+                      SearchFields="@(new List<string> { "VendorCode", "VendorName", "Reference", "StatusName", "CurrencyCode","Comment" })"
+                      OnDelete="@((IEnumerable<Model> items) => DeleteHandler(items))"
+                      @bind-SelectedItems="@selectedItems">
+                <GridColumn Field="@(nameof(Model.PaymentDocumentMainId))" Title="Id" Width="70px" Editable="false" TextAlign="ColumnTextAlign.Right" Visible="false" />
+                <GridColumn Field="@(nameof(Model.VendorCode))" Title="Vendor Code" Width="130px" />
+                <GridColumn Field="@(nameof(Model.VendorName))" Title="Vendor Name" Width="300px" />
+                <GridColumn Field="@(nameof(Model.Reference))" Title="Reference" Width="240px" />
+                <GridColumn Field="@(nameof(Model.StatusName))" Title="Status" Width="110px" />
+                <GridColumn Field="@(nameof(Model.Amount))" Title="Amount" DisplayFormat="{0:N3}" TextAlign="ColumnTextAlign.Right" Width="200px" />
+                <GridColumn Field="@(nameof(Model.VAT))" Title="VAT" DisplayFormat="{0:N3}" TextAlign="ColumnTextAlign.Right" Width="200px" />
+                <GridColumn Field="@(nameof(Model.CurrencyCode))" Title="Currency" Width="110px" />
+                <GridColumn Field="@(nameof(Model.Comment))" Title="Comment" Width="400px" />
+            </DataGrid>
+        </Content>
+    </TabStripTab>
+    <TabStripTab Title="All">
+        <Content>
+            <DataGrid Data="@modelList"
+                      CanExport="true"
+                      Height="calc(100vh - 285px)"
+                      SearchFields="@(new List<string> { "VendorCode", "VendorName", "Reference", "StatusName", "CurrencyCode","Comment" })"
+                      @bind-SelectedItems="@selectedItems">
+                <GridColumn Field="@(nameof(Model.PaymentDocumentMainId))" Title="Id" Width="70px" Editable="false" TextAlign="ColumnTextAlign.Right" Visible="false" />
+                <GridColumn Field="@(nameof(Model.VendorCode))" Title="Vendor Code" Width="130px" />
+                <GridColumn Field="@(nameof(Model.VendorName))" Title="Vendor Name" Width="300px" />
+                <GridColumn Field="@(nameof(Model.Reference))" Title="Reference" Width="240px" />
+                <GridColumn Field="@(nameof(Model.StatusName))" Title="Status" Width="110px" />
+                <GridColumn Field="@(nameof(Model.Amount))" Title="Amount" DisplayFormat="{0:N3}" TextAlign="ColumnTextAlign.Right" Width="200px" />
+                <GridColumn Field="@(nameof(Model.VAT))" Title="VAT" DisplayFormat="{0:N3}" TextAlign="ColumnTextAlign.Right" Width="200px" />
+                <GridColumn Field="@(nameof(Model.CurrencyCode))" Title="Currency" Width="110px" />
+                <GridColumn Field="@(nameof(Model.Comment))" Title="Comment" Width="400px" />
+            </DataGrid>
+        </Content>
+    </TabStripTab>
+    <TabStripTab Title="Approved">
+        <Content>
+            <DataGrid Data="@modelList"
+                      CanExport="true"
+                      Height="calc(100vh - 285px)"
+                      SearchFields="@(new List<string> { "VendorCode", "VendorName", "Reference", "StatusName", "CurrencyCode","Comment" })"
+                      @bind-SelectedItems="@selectedItems">
+                <GridColumn Field="@(nameof(Model.PaymentDocumentMainId))" Title="Id" Width="70px" Editable="false" TextAlign="ColumnTextAlign.Right" Visible="false" />
+                <GridColumn Field="@(nameof(Model.VendorCode))" Title="Vendor Code" Width="130px" />
+                <GridColumn Field="@(nameof(Model.VendorName))" Title="Vendor Name" Width="300px" />
+                <GridColumn Field="@(nameof(Model.Reference))" Title="Reference" Width="240px" />
+                <GridColumn Field="@(nameof(Model.StatusName))" Title="Status" Width="110px" />
+                <GridColumn Field="@(nameof(Model.Amount))" Title="Amount" DisplayFormat="{0:N3}" TextAlign="ColumnTextAlign.Right" Width="200px" />
+                <GridColumn Field="@(nameof(Model.VAT))" Title="VAT" DisplayFormat="{0:N3}" TextAlign="ColumnTextAlign.Right" Width="200px" />
+                <GridColumn Field="@(nameof(Model.CurrencyCode))" Title="Currency" Width="110px" />
+                <GridColumn Field="@(nameof(Model.Comment))" Title="Comment" Width="400px" />
+            </DataGrid>
+        </Content>
+    </TabStripTab>
+    <TabStripTab Title="Bank">
+        <Content>
+            <DataGrid Data="@modelList"
+                      CanExport="true"
+                      Height="calc(100vh - 285px)"
+                      SearchFields="@(new List<string> { "VendorCode", "VendorName", "Reference", "StatusName", "CurrencyCode","Comment" })"
+                      @bind-SelectedItems="@selectedItems">
+                <GridColumn Field="@(nameof(Model.PaymentDocumentMainId))" Title="Id" Width="70px" Editable="false" TextAlign="ColumnTextAlign.Right" Visible="false" />
+                <GridColumn Field="@(nameof(Model.VendorCode))" Title="Vendor Code" Width="130px" />
+                <GridColumn Field="@(nameof(Model.VendorName))" Title="Vendor Name" Width="300px" />
+                <GridColumn Field="@(nameof(Model.Reference))" Title="Reference" Width="240px" />
+                <GridColumn Field="@(nameof(Model.StatusName))" Title="Status" Width="110px" />
+                <GridColumn Field="@(nameof(Model.Amount))" Title="Amount" DisplayFormat="{0:N3}" TextAlign="ColumnTextAlign.Right" Width="200px" />
+                <GridColumn Field="@(nameof(Model.VAT))" Title="VAT" DisplayFormat="{0:N3}" TextAlign="ColumnTextAlign.Right" Width="200px" />
+                <GridColumn Field="@(nameof(Model.CurrencyCode))" Title="Currency" Width="110px" />
+                <GridColumn Field="@(nameof(Model.Comment))" Title="Comment" Width="400px" />
+            </DataGrid>
+        </Content>
+    </TabStripTab>
+</TelerikTabStrip>
 
 
 @code {
@@ -97,7 +181,7 @@
     {
         AppState.Loading = true;
         await GetBusinessUnitList();
-        //await GetPaymentDocumentList();
+        await GetPaymentDocumentList();
         AppState.Loading = false;
     }
 
@@ -114,7 +198,7 @@
 
     async Task GetPaymentDocumentList()
     {
-        var _modelList = await Http.GetFromJsonAsync<IEnumerable<Model>>("PaymentDocument/GetAll");
+        var _modelList = await Http.GetFromJsonAsync<IEnumerable<Model>>($"PaymentDocument/GetAll?bu={selectedBusinessUnit.BusinessUnitId}&tabindex={activeTabIndex}");
         modelList = _modelList.ToList();
     }
 
@@ -142,8 +226,18 @@
 
     async Task BusinessUnitChanged(BusinessUnit businessUnit)
     {
+        AppState.Loading = true;
         selectedBusinessUnit = businessUnit;
         await GetPaymentDocumentList();
+        AppState.Loading = false;
+    }
+
+    async Task ActiveTabIndexChanged(int tabIndex)
+    {
+        AppState.Loading = true;
+        activeTabIndex = tabIndex;
+        await GetPaymentDocumentList();
+        AppState.Loading = false;
     }
 
 }

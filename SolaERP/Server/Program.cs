@@ -45,6 +45,7 @@ builder.Services.AddSingleton<BusinessUnitService>();
 builder.Services.AddSingleton<VendorService>();
 builder.Services.AddSingleton<PaymentDocumentService>();
 builder.Services.AddSingleton<ApproveStageService>();
+builder.Services.AddSingleton<AttachmentService>();
 
 builder.WebHost.UseKestrel();
 var app = builder.Build();
