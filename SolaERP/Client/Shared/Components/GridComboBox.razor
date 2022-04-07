@@ -13,6 +13,7 @@
                  Enabled="@Enabled"
                  Width="@Width"
                  Id="@Id"
+                 Class="@Class"
                  ScrollMode="@ScrollMode"
                  PageSize="@PageSize"
                  Placeholder="Select ..."
@@ -28,7 +29,7 @@
     <HeaderTemplate>
         @if (ShowHeader)
         {
-            var headerFields = HeaderNames == null ? SearchFields : HeaderNames;
+            var headerFields = HeaderNames != null ? HeaderNames : ColumnNames != null ? ColumnNames : SearchFields;
             <div class="combo-table combo-header">
                 @foreach (var item in headerFields)
                 {
@@ -38,12 +39,15 @@
         }
     </HeaderTemplate>
     <ItemTemplate Context="context">
-        <div class="combo-table combo-items">
-            @foreach (var item in SearchFields)
-            {
-                <div class="combo-column">@(typeof(TItem).GetProperty(item).GetValue(context))</div>
-            }
-        </div>
+        @{
+            var columns = ColumnNames != null ? ColumnNames : SearchFields;
+            <div class="combo-table combo-items">
+                @foreach (var item in columns)
+                {
+                    <div class="combo-column">@(typeof(TItem).GetProperty(item).GetValue(context))</div>
+                }
+            </div>
+        }
     </ItemTemplate>
     <FooterTemplate>
         @if (ShowFooter)
@@ -58,6 +62,7 @@
 @code {
     [Parameter] public IEnumerable<TItem> Data { get; set; } = new List<TItem>();
     [Parameter] public IEnumerable<string> SearchFields { get; set; } = new List<string> { "RowIndex" };
+    [Parameter] public IEnumerable<string> ColumnNames { get; set; }
     [Parameter] public string ValueField { get; set; }
     [Parameter] public string TextField { get; set; }
 
@@ -79,6 +84,7 @@
     [Parameter] public bool ClearButton { get; set; } = false;
     [Parameter] public bool Enabled { get; set; } = true;
     [Parameter] public string Id { get; set; } = "";
+    [Parameter] public string Class { get; set; } = "";
     [Parameter] public bool ShowHeader { get; set; } = true;
     [Parameter] public bool ShowFooter { get; set; } = true;
     [Parameter] public DropDownScrollMode ScrollMode { get; set; } = DropDownScrollMode.Scrollable;
@@ -129,7 +135,7 @@
     }
 
     .combo-column {
-        width: @($"{100 / SearchFields.Count()}%");
+        width: @($"{100 / (ColumnNames != null ? ColumnNames.Count() : SearchFields.Count())}%");
         padding: 8px 4px;
         margin-left: 4px;
         margin-right: 4px;

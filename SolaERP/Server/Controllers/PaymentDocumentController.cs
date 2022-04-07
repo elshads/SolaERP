@@ -43,4 +43,16 @@ public class PaymentDocumentController : ControllerBase
     {
         return await _paymentDocumentService.Save(paymentDocumentMain, _appUserService.GetCurrentUserId());
     }
+
+    [HttpPost("Approve")]
+    public async Task<SqlResult> Approve([FromBody] IEnumerable<ApproveData> approveDataList)
+    {
+        return await _paymentDocumentService.Approve(approveDataList, _appUserService.GetCurrentUserId());
+    }
+
+    [HttpPost("ChangeApproveStatus")]
+    public async Task<SqlResult> ChangeApproveStatus([FromBody] IEnumerable<ApproveData> statusDataList)
+    {
+        return await _paymentDocumentService.ChangeApproveStatus(statusDataList, _appUserService.GetCurrentUserId());
+    }
 }

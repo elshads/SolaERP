@@ -215,5 +215,57 @@
             }
             return result;
         }
+
+        public async Task<SqlResult> Approve(IEnumerable<ApproveData> approveDataList, int currentUserId)
+        {
+            SqlResult result = new();
+            try
+            {
+                foreach (var item in approveDataList)
+                {
+                    using (var cn = new SqlConnection(SqlConfiguration.StaticConnectionString))
+                    {
+                        var p = new DynamicParameters();
+                        p.Add("@PaymentDocumentMainId", item.ModelId, DbType.Int32, ParameterDirection.Input);
+                        p.Add("@ApproveStatusId", item.ApproveStatusId, DbType.Int32, ParameterDirection.Input);
+                        p.Add("@Comment", item.Comment, DbType.String, ParameterDirection.Input);
+                        p.Add("@Sequence", item.Sequence, DbType.Int32, ParameterDirection.Input);
+                        p.Add("@UserId", currentUserId, DbType.Int32, ParameterDirection.Input);
+
+                        result.InsertedResult = await cn.ExecuteAsync("dbo.SP_PaymentDocumentsApprove", p, commandType: CommandType.StoredProcedure);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                result.InsertedResultMessage = e.Message;
+            }
+            return result;
+        }
+
+        public async Task<SqlResult> ChangeApproveStatus(IEnumerable<ApproveData> statusDataList, int currentUserId)
+        {
+            SqlResult result = new();
+            try
+            {
+                foreach (var item in statusDataList)
+                {
+                    using (var cn = new SqlConnection(SqlConfiguration.StaticConnectionString))
+                    {
+                        var p = new DynamicParameters();
+                        p.Add("@PaymentDocumentMainId", item.ModelId, DbType.Int32, ParameterDirection.Input);
+                        p.Add("@Status", item.ApproveStatusId, DbType.Int32, ParameterDirection.Input);
+                        p.Add("@UserId", currentUserId, DbType.Int32, ParameterDirection.Input);
+
+                        result.InsertedResult = await cn.ExecuteAsync("dbo.SP_PaymentDocumentsChangeStatus", p, commandType: CommandType.StoredProcedure);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                result.InsertedResultMessage = e.Message;
+            }
+            return result;
+        }
     }
 }

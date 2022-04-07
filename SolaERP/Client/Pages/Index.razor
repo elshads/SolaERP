@@ -1,4 +1,5 @@
 ﻿@page "/"
+@implements IDisposable
 @using Model = BaseModel
 
 <PageTitle>Index</PageTitle>
@@ -6,6 +7,23 @@
 <h3>Dashboard</h3>
 
 @code{
+    [CascadingParameter] public AppState AppState { get; set; }
 
+    protected override void OnInitialized()
+    {
+        OnAppStateInitialized();
+    }
+
+    void OnAppStateInitialized()
+    {
+        AppState.SetDefaults();
+        AppState.ApproveButtonVisible = true;
+        AppState.RejectButtonVisible = true;
+    }
+
+    void IDisposable.Dispose()
+    {
+        
+    }
 
 }

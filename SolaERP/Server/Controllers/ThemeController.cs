@@ -10,6 +10,7 @@ public class ThemeController : ControllerBase
     {
         _currentUserId = appUserService.GetCurrentUserId();
     }
+
     [HttpPut]
     public async Task<SqlResult> UpdateUserTheme([FromBody] string theme)
     {

@@ -5,13 +5,9 @@ namespace SolaERP.Client.Data
     public class AppState
     {
         ISnackbar Snackbar { get; set; }
-        //SessionData _sessionData;
-        //PageData _pageData;
         public AppState(ISnackbar snackbar)
         {
             Snackbar = snackbar;
-            //_sessionData = sessionData;
-            //_pageData = pageData;
             SetDefaults();
         }
 
@@ -27,6 +23,10 @@ namespace SolaERP.Client.Data
             ReloadButtonEnabled = true;
             ReportButtonVisible = false;
             ReportButtonEnabled = true;
+            ApproveButtonVisible = false;
+            ApproveButtonEnabled = true;
+            RejectButtonVisible = false;
+            RejectButtonEnabled = true;
 
 
             CustomButton1Visible = false;
@@ -41,6 +41,12 @@ namespace SolaERP.Client.Data
             CustomButton5Enabled = true;
             CustomButton6Visible = false;
             CustomButton6Enabled = true;
+            CustomButton7Visible = false;
+            CustomButton7Enabled = true;
+            CustomButton8Visible = false;
+            CustomButton8Enabled = true;
+            CustomButton9Visible = false;
+            CustomButton9Enabled = true;
 
             CustomButton1Title = "CustomButton1";
             CustomButton2Title = "CustomButton2";
@@ -48,13 +54,19 @@ namespace SolaERP.Client.Data
             CustomButton4Title = "CustomButton4";
             CustomButton5Title = "CustomButton5";
             CustomButton6Title = "CustomButton6";
+            CustomButton7Title = "CustomButton7";
+            CustomButton8Title = "CustomButton8";
+            CustomButton9Title = "CustomButton9";
 
-            CustomButton1Icon = "hand";
-            CustomButton2Icon = "hand";
-            CustomButton3Icon = "hand";
-            CustomButton4Icon = "hand";
-            CustomButton5Icon = "hand";
-            CustomButton6Icon = "hand";
+            CustomButton1Icon = "";
+            CustomButton2Icon = "";
+            CustomButton3Icon = "";
+            CustomButton4Icon = "";
+            CustomButton5Icon = "";
+            CustomButton6Icon = "";
+            CustomButton7Icon = "";
+            CustomButton8Icon = "";
+            CustomButton9Icon = "";
 
 
             Report = null;
@@ -91,6 +103,10 @@ namespace SolaERP.Client.Data
         public bool ReloadButtonEnabled { get; set; }
         public bool ReportButtonVisible { get; set; }
         public bool ReportButtonEnabled { get; set; }
+        public bool ApproveButtonVisible { get; set; }
+        public bool ApproveButtonEnabled { get; set; }
+        public bool RejectButtonVisible { get; set; }
+        public bool RejectButtonEnabled { get; set; }
 
 
         public bool CustomButton1Visible { get; set; }
@@ -105,6 +121,12 @@ namespace SolaERP.Client.Data
         public bool CustomButton5Enabled { get; set; }
         public bool CustomButton6Visible { get; set; }
         public bool CustomButton6Enabled { get; set; }
+        public bool CustomButton7Visible { get; set; }
+        public bool CustomButton7Enabled { get; set; }
+        public bool CustomButton8Visible { get; set; }
+        public bool CustomButton8Enabled { get; set; }
+        public bool CustomButton9Visible { get; set; }
+        public bool CustomButton9Enabled { get; set; }
 
         public string CustomButton1Title { get; set; }
         public string CustomButton2Title { get; set; }
@@ -112,6 +134,9 @@ namespace SolaERP.Client.Data
         public string CustomButton4Title { get; set; }
         public string CustomButton5Title { get; set; }
         public string CustomButton6Title { get; set; }
+        public string CustomButton7Title { get; set; }
+        public string CustomButton8Title { get; set; }
+        public string CustomButton9Title { get; set; }
 
         public string CustomButton1Icon { get; set; }
         public string CustomButton2Icon { get; set; }
@@ -119,6 +144,9 @@ namespace SolaERP.Client.Data
         public string CustomButton4Icon { get; set; }
         public string CustomButton5Icon { get; set; }
         public string CustomButton6Icon { get; set; }
+        public string CustomButton7Icon { get; set; }
+        public string CustomButton8Icon { get; set; }
+        public string CustomButton9Icon { get; set; }
 
 
         public event Action<bool> OnMobileViewChanged;
@@ -129,6 +157,8 @@ namespace SolaERP.Client.Data
         public event Action OnSaveClick;
         public event Action OnReloadClick;
         public event Action OnReportClick;
+        public event Action OnApproveClick;
+        public event Action OnRejectClick;
 
         public event Action OnCustomButton1Click;
         public event Action OnCustomButton2Click;
@@ -136,6 +166,9 @@ namespace SolaERP.Client.Data
         public event Action OnCustomButton4Click;
         public event Action OnCustomButton5Click;
         public event Action OnCustomButton6Click;
+        public event Action OnCustomButton7Click;
+        public event Action OnCustomButton8Click;
+        public event Action OnCustomButton9Click;
 
         public void Refresh()
         {
@@ -165,6 +198,16 @@ namespace SolaERP.Client.Data
         public void ReportClick()
         {
             OnReportClick?.Invoke();
+        }
+
+        public void ApproveClick()
+        {
+            OnApproveClick?.Invoke();
+        }
+
+        public void RejectClick()
+        {
+            OnRejectClick?.Invoke();
         }
 
 
@@ -198,5 +241,19 @@ namespace SolaERP.Client.Data
             OnCustomButton6Click?.Invoke();
         }
 
+        public void CustomButton7Click()
+        {
+            OnCustomButton7Click?.Invoke();
+        }
+
+        public void CustomButton8Click()
+        {
+            OnCustomButton8Click?.Invoke();
+        }
+
+        public void CustomButton9Click()
+        {
+            OnCustomButton9Click?.Invoke();
+        }
     }
 }

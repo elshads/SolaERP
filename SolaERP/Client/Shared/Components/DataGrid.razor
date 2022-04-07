@@ -239,7 +239,7 @@
     bool showGroup = false;
     int pageSize = 20;
     bool inEditMode = false;
-    string searchString;
+    string? searchString;
 
     // local variables - end
 
@@ -755,7 +755,7 @@
         }
         else
         {
-            Data = originalData.ToList();
+            Data = originalData?.ToList();
         }
     }
 

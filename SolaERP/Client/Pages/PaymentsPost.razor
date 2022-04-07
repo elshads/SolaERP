@@ -1,0 +1,158 @@
+﻿@page "/payments/post"
+
+
+@using Model = PaymentDocumentPostMain
+
+<PageTitle>Payment Document Post</PageTitle>
+
+
+<TelerikGridLayout RowSpacing="16px" ColumnSpacing="32px">
+    <GridLayoutItems>
+        <GridLayoutItem Row="1" Column="1">
+
+            <div class="flex-center-y flex-nowrap k-mb-2">
+                <span class="k-mr-2 label-width">Business Unit:</span>
+                <div class="item-width k-input k-input-md k-rounded-md input-padding">@(paymentDocumentPostMain.BusinessUnitCode)</div>
+            </div>
+
+            <div class="flex-center-y flex-nowrap k-mb-2">
+                <span class="k-mr-2 label-width">Vendor Code:</span>
+                <div class="item-width k-input k-input-md k-rounded-md input-padding">@(paymentDocumentPostMain.VendorCode)</div>
+            </div>
+
+            <div class="flex-center-y flex-nowrap k-mb-2">
+                <span class="k-mr-2 label-width">Vendor Name:</span>
+                <div class="item-width k-input k-input-md k-rounded-md input-padding">@(paymentDocumentPostMain.VendorName)</div>
+            </div>
+
+            <div class="flex-center-y flex-nowrap k-mb-2">
+                <span class="k-mr-2 label-width">Reference:</span>
+                <div class="item-width k-input k-input-md k-rounded-md input-padding">@(paymentDocumentPostMain.Reference)</div>
+            </div>
+
+            @{
+                var priority = paymentDocumentPostMain.PaymentDocumentPriorityId;
+                <div class="flex-center-y flex-nowrap k-mb-2">
+                    <span class="k-mr-2 label-width">Priority:</span>
+                    <div class="item-width flex-center-y">
+                        <MudIcon Icon="@(priority == 1 ? Icons.Filled.ArrowUpward : priority == 2 || priority == 0 ? Icons.Filled.Minimize : Icons.Filled.ArrowDownward)" Color="@(priority == 1 ? Color.Success : priority == 2 || priority == 0 ? Color.Warning : Color.Error)" />
+                        <span class="k-px-1">@(priority == 1 ? "High" : priority == 2 ? "Normal" : priority == 3 ? "Low" : "")</span>
+                    </div>
+                </div>
+            }
+
+            <div class="flex-center-y flex-nowrap k-mb-2">
+                <span class="k-mr-2 label-width">Comment:</span>
+                <div class="item-width k-input k-input-md k-rounded-md input-padding">@(paymentDocumentPostMain.Comment)</div>
+            </div>
+
+        </GridLayoutItem>
+
+        <GridLayoutItem Row="@(!AppState.MobileView ? 1 : 2)" Column="@(!AppState.MobileView ? 2 : 1)">
+
+            <div class="flex-center-y flex-nowrap k-mb-2">
+                <span class="k-mr-2 label-width">Payment Date:</span>
+                <TelerikDatePicker Class="item-width" Format="yyyy-MM-dd" @bind-Value="@paymentDocumentPostMain.PaymentDate" Enabled="true" />
+            </div>
+
+            <div class="flex-center-y flex-nowrap k-mb-2">
+                <span class="k-mr-2 label-width">Bank Code:</span>
+                <GridComboBox Value="@paymentDocumentPostMain.BankCode"
+                              Data="@bankList"
+                              TextField="BankCode"
+                              ValueField="BankCode"
+                              SearchFields="@(new List<string> {"BankCode", "BankName"})"
+                              HeaderNames="@(new List<string> {"Bank Code", "Bank Name", "Currency Code", "Account"})"
+                              ColumnNames="@(new List<string> {"BankCode", "BankName", "CurrencyCode", "Account"})"
+                              PopupMinWidth="460px" />
+            </div>
+
+            <div class="flex-center-y flex-nowrap k-mb-2">
+                <span class="k-mr-2 label-width">VAT Bank:</span>
+                <GridComboBox Value="@paymentDocumentPostMain.VATBankCode"
+                              Data="@bankList"
+                              TextField="BankCode"
+                              ValueField="BankCode"
+                              SearchFields="@(new List<string> {"BankCode", "BankName"})"
+                              HeaderNames="@(new List<string> {"Bank Code", "Bank Name", "Currency Code", "Account"})"
+                              ColumnNames="@(new List<string> {"BankCode", "BankName", "CurrencyCode", "Account"})"
+                              PopupMinWidth="460px" />
+            </div>
+
+            <div class="flex-center-y flex-nowrap k-mb-2">
+                <span class="k-mr-2 label-width">Expense Code:</span>
+                <GridComboBox Value="@paymentDocumentPostMain.ExpenseCode"
+                              Data="@expenseAnalysisList"
+                              TextField="AnalysisCode"
+                              ValueField="AnalysisCode"
+                              SearchFields="@(new List<string> {"AnalysisCode", "AnalysisName"})"
+                              HeaderNames="@(new List<string> {"AnalysisCode", "AnalysisName"})"
+                              PopupMinWidth="460px" />
+            </div>
+
+            <div class="flex-center-y flex-nowrap k-mb-2">
+                <span class="k-mr-2 label-width">Group Project:</span>
+                <GridComboBox Value="@paymentDocumentPostMain.GroupProject"
+                              Data="@groupProjectAnalysisList"
+                              TextField="AnalysisCode"
+                              ValueField="AnalysisCode"
+                              SearchFields="@(new List<string> {"AnalysisCode", "AnalysisName"})"
+                              HeaderNames="@(new List<string> {"AnalysisCode", "AnalysisName"})"
+                              PopupMinWidth="460px" />
+            </div>
+
+            <div class="flex-center-y flex-nowrap k-mb-2">
+                <span class="k-mr-2 label-width">Project:</span>
+                <GridComboBox Value="@paymentDocumentPostMain.Project"
+                              Data="@projectAnalysisList"
+                              TextField="AnalysisCode"
+                              ValueField="AnalysisCode"
+                              SearchFields="@(new List<string> {"AnalysisCode", "AnalysisName"})"
+                              HeaderNames="@(new List<string> {"AnalysisCode", "AnalysisName"})"
+                              PopupMinWidth="460px" />
+            </div>
+
+            <div class="flex-center-y flex-nowrap k-mb-2">
+                <span class="k-mr-2 label-width">Bank Charge:</span>
+                <TelerikNumericTextBox @bind-Value="@paymentDocumentPostMain.BankCharge" Arrows="false" Format="N3" Enabled="true" />
+            </div>
+
+        </GridLayoutItem>
+    </GridLayoutItems>
+</TelerikGridLayout>
+
+@code {
+    [CascadingParameter] public AppState AppState { get; set; }
+
+    IEnumerable<Bank> bankList = new List<Bank>() { new Bank { BankCode = "AZP", BankName = "Azerbaijan Z Bank", CurrencyCode = "AZN", Account = null }, new Bank { BankCode = "GBP", BankName = "British Bank", CurrencyCode = "GBP", Account = "10345" } };
+    IEnumerable<Analysis> expenseAnalysisList = new List<Analysis>() { new Analysis { AnalysisCode = "EXP1", AnalysisName = "Expense 1" }, new Analysis { AnalysisCode = "EXP2", AnalysisName = "Expense 2" } };
+    IEnumerable<Analysis> groupProjectAnalysisList = new List<Analysis>() { new Analysis { AnalysisCode = "GP1", AnalysisName = "Group P 1" }, new Analysis { AnalysisCode = "GP2", AnalysisName = "Group P 2" } };
+    IEnumerable<Analysis> projectAnalysisList = new List<Analysis>() { new Analysis { AnalysisCode = "PROJ1", AnalysisName = "Project 1" }, new Analysis { AnalysisCode = "PROJ", AnalysisName = "Project 2" } };
+
+    [Parameter]
+    public PaymentDocumentPostMain paymentDocumentPostMain { get; set; } = new()
+        {
+            BusinessUnitCode = "SOCARSTP",
+            VendorCode = "V00005",
+            VendorName = "Some Company Ltd.",
+            Reference = "REF044549",
+            PaymentDocumentPriorityId = 1,
+            Comment = "Some commentary here",
+        };
+
+}
+
+<style>
+    .label-width {
+        width: 100px;
+        white-space: nowrap;
+    }
+
+    .item-width {
+        width: 350px;
+    }
+
+    .k-form .k-form-field {
+        margin-top: 0.4em;
+    }
+</style>

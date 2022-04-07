@@ -19,7 +19,10 @@ public class PaymentDocumentMain : BaseModel
     public decimal VAT { get; set; }
     public int StatusId { get; set; }
     public string? StatusName { get; set; }
+    public int PaymentStatusId { get; set; }
+    public string? PaymentStatusName { get; set; }
     public int ApproveStatusId { get; set; }
+    public int Sequence { get; set; }
 
     public List<Attachment>? AttachmentList { get; set; } = new();
     public List<PaymentDocumentDetail>? PaymentDocumentDetailList { get; set; } = new();

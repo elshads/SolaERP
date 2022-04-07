@@ -41,12 +41,20 @@ html, body {
     align-items: center;
 }
 
+.flex-nowrap{
+    flex-wrap: nowrap;
+}
+
 .font-italic{
     font-style: italic;
 }
 
 .text-right, .text-right .k-input-inner {
     text-align: right;
+}
+
+.input-padding{
+    padding: 4px 8px !important;
 }
 
 .k-upload .k-upload-files {

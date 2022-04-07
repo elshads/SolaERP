@@ -32,18 +32,14 @@
     {
         SessionData.CurrentUser.Theme = SessionData.CurrentUser?.Theme == "light" ? "dark" : "light";
         var response = await Http.PutAsJsonAsync<string>("Theme", SessionData.CurrentUser.Theme);
-        var content = await response.Content.ReadFromJsonAsync<SqlResult>();
-        if (content.UpdatedResult > 0)
+        var result = await response.Content.ReadFromJsonAsync<SqlResult>();
+        if (result.UpdatedResultMessage == null)
         {
             AppState.ShowAlert($"{SessionData.CurrentUser.Theme} theme is on", Severity.Success);
         }
-        else if (content.UpdatedResultMessage != null)
-        {
-            AppState.ShowAlert(content.UpdatedResultMessage, Severity.Error);
-        }
         else
         {
-            AppState.ShowAlert($"Missing data", Severity.Warning);
+            AppState.ShowAlert(result.UpdatedResultMessage, Severity.Error);
         }
         AppState.Refresh();
     }
