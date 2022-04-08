@@ -86,6 +86,36 @@
             return result;
         }
 
+        public async Task<PaymentDocumentPostMain> GetPost(int id)
+        {
+            PaymentDocumentPostMain result = new();
+            try
+            {
+                using (var cn = new SqlConnection(SqlConfiguration.StaticConnectionString))
+                {
+                    var p = new DynamicParameters();
+                    p.Add("@PaymentDocumentMainId", id, DbType.Int32, ParameterDirection.Input);
+                    var _result = await cn.QueryAsync<PaymentDocumentPostMain>("dbo.SP_PaymentDocumentMainLoad", p, commandType: CommandType.StoredProcedure);
+                    if (_result.Any()) result = _result.FirstOrDefault();
+                }
+                if (result.PaymentDocumentMainId > 0)
+                {
+                    using (var cn = new SqlConnection(SqlConfiguration.StaticConnectionString))
+                    {
+                        var p = new DynamicParameters();
+                        p.Add("@PaymentDocumentMainId", id, DbType.Int32, ParameterDirection.Input);
+                        var _result = await cn.QueryAsync<PaymentDocumentPostDetail>("dbo.SP_PaymentDocumentDetailsLoad", p, commandType: CommandType.StoredProcedure);
+                        if (_result.Any()) result.PaymentDocumentPostDetailList = _result.ToList();
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                result.ReturnMessage = e.Message;
+            }
+            return result;
+        }
+
 
         public async Task<IEnumerable<PaymentDocumentDetail>> GetVendorBalance(int businessUnitId, string vendorCode)
         {

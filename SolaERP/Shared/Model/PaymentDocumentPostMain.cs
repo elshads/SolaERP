@@ -3,6 +3,7 @@ namespace SolaERP.Shared.Model
 {
     public class PaymentDocumentPostMain : BaseModel
     {
+        public int PaymentDocumentMainId { get; set; }
         public string? BusinessUnitCode { get; set; }
         public string? VendorCode { get; set; }
         public string? VendorName { get; set; }

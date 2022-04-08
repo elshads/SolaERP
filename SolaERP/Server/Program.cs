@@ -46,6 +46,8 @@ builder.Services.AddSingleton<VendorService>();
 builder.Services.AddSingleton<PaymentDocumentService>();
 builder.Services.AddSingleton<ApproveStageService>();
 builder.Services.AddSingleton<AttachmentService>();
+builder.Services.AddSingleton<BankService>();
+builder.Services.AddSingleton<AnalysisService>();
 
 builder.WebHost.UseKestrel();
 var app = builder.Build();

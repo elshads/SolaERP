@@ -1,41 +1,44 @@
 ﻿@page "/payments/post"
-
-
+@implements IDisposable
 @using Model = PaymentDocumentPostMain
 
 <PageTitle>Payment Document Post</PageTitle>
 
 
 <TelerikGridLayout RowSpacing="16px" ColumnSpacing="32px">
+    <GridLayoutColumns>
+        <GridLayoutColumn Width="460px" />
+        <GridLayoutColumn />
+    </GridLayoutColumns>
     <GridLayoutItems>
         <GridLayoutItem Row="1" Column="1">
 
             <div class="flex-center-y flex-nowrap k-mb-2">
                 <span class="k-mr-2 label-width">Business Unit:</span>
-                <div class="item-width k-input k-input-md k-rounded-md input-padding">@(paymentDocumentPostMain.BusinessUnitCode)</div>
+                <div class="input-height item-width k-input k-input-md k-rounded-md input-padding">@(paymentDocumentPostMain.BusinessUnitCode)</div>
             </div>
 
             <div class="flex-center-y flex-nowrap k-mb-2">
                 <span class="k-mr-2 label-width">Vendor Code:</span>
-                <div class="item-width k-input k-input-md k-rounded-md input-padding">@(paymentDocumentPostMain.VendorCode)</div>
+                <div class="input-height item-width k-input k-input-md k-rounded-md input-padding">@(paymentDocumentPostMain.VendorCode)</div>
             </div>
 
             <div class="flex-center-y flex-nowrap k-mb-2">
                 <span class="k-mr-2 label-width">Vendor Name:</span>
-                <div class="item-width k-input k-input-md k-rounded-md input-padding">@(paymentDocumentPostMain.VendorName)</div>
+                <div class="input-height item-width k-input k-input-md k-rounded-md input-padding">@(paymentDocumentPostMain.VendorName)</div>
             </div>
 
             <div class="flex-center-y flex-nowrap k-mb-2">
                 <span class="k-mr-2 label-width">Reference:</span>
-                <div class="item-width k-input k-input-md k-rounded-md input-padding">@(paymentDocumentPostMain.Reference)</div>
+                <div class="input-height item-width k-input k-input-md k-rounded-md input-padding">@(paymentDocumentPostMain.Reference)</div>
             </div>
 
             @{
                 var priority = paymentDocumentPostMain.PaymentDocumentPriorityId;
                 <div class="flex-center-y flex-nowrap k-mb-2">
                     <span class="k-mr-2 label-width">Priority:</span>
-                    <div class="item-width flex-center-y">
-                        <MudIcon Icon="@(priority == 1 ? Icons.Filled.ArrowUpward : priority == 2 || priority == 0 ? Icons.Filled.Minimize : Icons.Filled.ArrowDownward)" Color="@(priority == 1 ? Color.Success : priority == 2 || priority == 0 ? Color.Warning : Color.Error)" />
+                    <div class="input-height item-width flex-center-y">
+                        <MudIcon Icon="@(priority == 1 ? Icons.Filled.North : priority == 2 || priority == 0 ? Icons.Filled.East : Icons.Filled.South)" Color="@(priority == 1 ? Color.Success : priority == 2 || priority == 0 ? Color.Warning : Color.Error)" />
                         <span class="k-px-1">@(priority == 1 ? "High" : priority == 2 ? "Normal" : priority == 3 ? "Low" : "")</span>
                     </div>
                 </div>
@@ -43,7 +46,7 @@
 
             <div class="flex-center-y flex-nowrap k-mb-2">
                 <span class="k-mr-2 label-width">Comment:</span>
-                <div class="item-width k-input k-input-md k-rounded-md input-padding">@(paymentDocumentPostMain.Comment)</div>
+                <div class="input-height item-width k-input k-input-md k-rounded-md input-padding">@(paymentDocumentPostMain.Comment)</div>
             </div>
 
         </GridLayoutItem>
@@ -52,94 +55,285 @@
 
             <div class="flex-center-y flex-nowrap k-mb-2">
                 <span class="k-mr-2 label-width">Payment Date:</span>
-                <TelerikDatePicker Class="item-width" Format="yyyy-MM-dd" @bind-Value="@paymentDocumentPostMain.PaymentDate" Enabled="true" />
+                <div class="item-width">
+                    <TelerikDatePicker Format="yyyy-MM-dd" @bind-Value="@paymentDocumentPostMain.PaymentDate" Enabled="true" />
+                </div>
             </div>
 
             <div class="flex-center-y flex-nowrap k-mb-2">
                 <span class="k-mr-2 label-width">Bank Code:</span>
-                <GridComboBox Value="@paymentDocumentPostMain.BankCode"
-                              Data="@bankList"
-                              TextField="BankCode"
-                              ValueField="BankCode"
-                              SearchFields="@(new List<string> {"BankCode", "BankName"})"
-                              HeaderNames="@(new List<string> {"Bank Code", "Bank Name", "Currency Code", "Account"})"
-                              ColumnNames="@(new List<string> {"BankCode", "BankName", "CurrencyCode", "Account"})"
-                              PopupMinWidth="460px" />
+                <div class="item-width">
+                    <GridComboBox @bind-Value="@paymentDocumentPostMain.BankCode"
+                                  Data="@bankList"
+                                  TextField="BankCode"
+                                  ValueField="BankCode"
+                                  SearchFields="@(new List<string> {"BankCode", "BankName"})"
+                                  HeaderNames="@(new List<string> {"Bank Code", "Bank Name", "Currency Code", "Account"})"
+                                  ColumnNames="@(new List<string> {"BankCode", "BankName", "CurrencyCode", "Account"})"
+                                  PopupWidth="100%"
+                                  PopupMaxWidth="600px" />
+                </div>
             </div>
 
             <div class="flex-center-y flex-nowrap k-mb-2">
                 <span class="k-mr-2 label-width">VAT Bank:</span>
-                <GridComboBox Value="@paymentDocumentPostMain.VATBankCode"
-                              Data="@bankList"
-                              TextField="BankCode"
-                              ValueField="BankCode"
-                              SearchFields="@(new List<string> {"BankCode", "BankName"})"
-                              HeaderNames="@(new List<string> {"Bank Code", "Bank Name", "Currency Code", "Account"})"
-                              ColumnNames="@(new List<string> {"BankCode", "BankName", "CurrencyCode", "Account"})"
-                              PopupMinWidth="460px" />
+                <div class="item-width">
+                    <GridComboBox @bind-Value="@paymentDocumentPostMain.VATBankCode"
+                                  Data="@bankList"
+                                  TextField="BankCode"
+                                  ValueField="BankCode"
+                                  SearchFields="@(new List<string> {"BankCode", "BankName"})"
+                                  HeaderNames="@(new List<string> {"Bank Code", "Bank Name", "Currency Code", "Account"})"
+                                  ColumnNames="@(new List<string> {"BankCode", "BankName", "CurrencyCode", "Account"})"
+                                  PopupWidth="100%"
+                                  PopupMaxWidth="600px" />
+                </div>
             </div>
 
             <div class="flex-center-y flex-nowrap k-mb-2">
                 <span class="k-mr-2 label-width">Expense Code:</span>
-                <GridComboBox Value="@paymentDocumentPostMain.ExpenseCode"
-                              Data="@expenseAnalysisList"
-                              TextField="AnalysisCode"
-                              ValueField="AnalysisCode"
-                              SearchFields="@(new List<string> {"AnalysisCode", "AnalysisName"})"
-                              HeaderNames="@(new List<string> {"AnalysisCode", "AnalysisName"})"
-                              PopupMinWidth="460px" />
+                <div class="item-width">
+                    <GridComboBox @bind-Value="@paymentDocumentPostMain.ExpenseCode"
+                                  Data="@expenseAnalysisList"
+                                  TextField="AnalysisCode"
+                                  ValueField="AnalysisCode"
+                                  SearchFields="@(new List<string> {"AnalysisCode"})"
+                                  ShowHeader="false" />
+                </div>
             </div>
 
             <div class="flex-center-y flex-nowrap k-mb-2">
                 <span class="k-mr-2 label-width">Group Project:</span>
-                <GridComboBox Value="@paymentDocumentPostMain.GroupProject"
-                              Data="@groupProjectAnalysisList"
-                              TextField="AnalysisCode"
-                              ValueField="AnalysisCode"
-                              SearchFields="@(new List<string> {"AnalysisCode", "AnalysisName"})"
-                              HeaderNames="@(new List<string> {"AnalysisCode", "AnalysisName"})"
-                              PopupMinWidth="460px" />
+                <div class="item-width">
+                    <GridComboBox @bind-Value="@paymentDocumentPostMain.GroupProject"
+                                  Data="@groupProjectAnalysisList"
+                                  TextField="AnalysisCode"
+                                  ValueField="AnalysisCode"
+                                  SearchFields="@(new List<string> {"AnalysisCode"})"
+                                  ShowHeader="false" />
+                </div>
             </div>
 
             <div class="flex-center-y flex-nowrap k-mb-2">
                 <span class="k-mr-2 label-width">Project:</span>
-                <GridComboBox Value="@paymentDocumentPostMain.Project"
-                              Data="@projectAnalysisList"
-                              TextField="AnalysisCode"
-                              ValueField="AnalysisCode"
-                              SearchFields="@(new List<string> {"AnalysisCode", "AnalysisName"})"
-                              HeaderNames="@(new List<string> {"AnalysisCode", "AnalysisName"})"
-                              PopupMinWidth="460px" />
+                <div class="item-width">
+                    <GridComboBox @bind-Value="@paymentDocumentPostMain.Project"
+                                  Data="@projectAnalysisList"
+                                  TextField="AnalysisCode"
+                                  ValueField="AnalysisCode"
+                                  SearchFields="@(new List<string> {"AnalysisCode"})"
+                                  ShowHeader="false" />
+                </div>
             </div>
 
             <div class="flex-center-y flex-nowrap k-mb-2">
                 <span class="k-mr-2 label-width">Bank Charge:</span>
-                <TelerikNumericTextBox @bind-Value="@paymentDocumentPostMain.BankCharge" Arrows="false" Format="N3" Enabled="true" />
+                <div class="item-width">
+                    <TelerikNumericTextBox @bind-Value="@paymentDocumentPostMain.BankCharge" Arrows="false" Format="N3" Enabled="true" />
+                </div>
             </div>
 
         </GridLayoutItem>
     </GridLayoutItems>
 </TelerikGridLayout>
 
+
+<div>
+    <DataGrid @bind-Data="@paymentDocumentPostMain.PaymentDocumentPostDetailList"
+              ShowContextMenu="false"
+              ShowToolbar="false"
+              Pageable="true"
+              ShowCheckBoxColumn="false"
+              @bind-SelectedItems="@selectedPaymentDocumentPostDetailList"
+              Height="calc(100vh - 440px)"
+              ShowSearchBar="false">
+        <GridColumn Field="@(nameof(PaymentDocumentPostDetail.PaymentDocumentDetailId))" Title="Id" Width="80px" Editable="false" Locked="true" Visible="false" />
+        <GridColumn Field="@(nameof(PaymentDocumentPostDetail.PONum))" Title="PO Num" Width="110px" Editable="false" Locked="true" />
+        <GridColumn Field="@(nameof(PaymentDocumentPostDetail.Voucher))" Title="Voucher" Width="100px" Editable="false" />
+        <GridColumn Field="@(nameof(PaymentDocumentPostDetail.BankAmount))" Title="Bank Amount" DisplayFormat="{0:N3}" TextAlign="ColumnTextAlign.Right" Width="140px">
+            <Template>
+                @{
+                    selectedPaymentDocumentPostDetail = context as PaymentDocumentPostDetail;
+                    <TelerikNumericTextBox Arrows="false" Format="N3" Class="text-right" Value="@(selectedPaymentDocumentPostDetail.BankAmount)" ValueChanged="@((decimal value) => BankAmountChanged(value))" />
+                }
+            </Template>
+        </GridColumn>
+        <GridColumn Field="@(nameof(PaymentDocumentPostDetail.VendorAmount))" Title="Vendor Amount" DisplayFormat="{0:N3}" TextAlign="ColumnTextAlign.Right" Width="140px">
+            <Template>
+                @{
+                    selectedPaymentDocumentPostDetail = context as PaymentDocumentPostDetail;
+                    <TelerikNumericTextBox Arrows="false" Format="N3" Class="text-right" Value="@(selectedPaymentDocumentPostDetail.VendorAmount)" ValueChanged="@((decimal value) => VendorAmountChanged(value))" />
+                }
+            </Template>
+        </GridColumn>
+        <GridColumn Field="@(nameof(PaymentDocumentPostDetail.BankRate))" Title="Bank Rate" DisplayFormat="{0:N3}" TextAlign="ColumnTextAlign.Right" Width="140px">
+            <Template>
+                @{
+                    selectedPaymentDocumentPostDetail = context as PaymentDocumentPostDetail;
+                    <TelerikNumericTextBox Arrows="false" Format="N3" Class="text-right" Value="@(selectedPaymentDocumentPostDetail.BankRate)" ValueChanged="@((decimal value) => BankRateChanged(value))" />
+                }
+            </Template>
+        </GridColumn>
+        <GridColumn Field="@(nameof(PaymentDocumentPostDetail.VendorRate))" Title="Vendor Rate" DisplayFormat="{0:N3}" TextAlign="ColumnTextAlign.Right" Width="140px">
+            <Template>
+                @{
+                    selectedPaymentDocumentPostDetail = context as PaymentDocumentPostDetail;
+                    <TelerikNumericTextBox Arrows="false" Format="N3" Class="text-right" Value="@(selectedPaymentDocumentPostDetail.VendorRate)" ValueChanged="@((decimal value) => VendorRateChanged(value))" />
+                }
+            </Template>
+        </GridColumn>
+        <GridColumn Field="@(nameof(PaymentDocumentPostDetail.VAT))" Title="VAT" DisplayFormat="{0:N3}" TextAlign="ColumnTextAlign.Right" Width="100px">
+            <Template>
+                @{
+                    selectedPaymentDocumentPostDetail = context as PaymentDocumentPostDetail;
+                    <TelerikNumericTextBox Arrows="false" Format="N3" Class="text-right" Value="@(selectedPaymentDocumentPostDetail.VAT)" ValueChanged="@((decimal value) => VATChanged(value))" />
+                }
+            </Template>
+        </GridColumn>
+        <GridColumn Field="@(nameof(PaymentDocumentPostDetail.VATBankAmount))" Title="Vendor Rate" DisplayFormat="{0:N3}" TextAlign="ColumnTextAlign.Right" Width="140px">
+            <Template>
+                @{
+                    selectedPaymentDocumentPostDetail = context as PaymentDocumentPostDetail;
+                    <TelerikNumericTextBox Arrows="false" Format="N3" Class="text-right" Value="@(selectedPaymentDocumentPostDetail.VATBankAmount)" ValueChanged="@((decimal value) => VATBankAmountChanged(value))" />
+                }
+            </Template>
+        </GridColumn>
+
+        <GridColumn Field="@(nameof(PaymentDocumentPostDetail.AmountToPay))" Title="Amount To Pay" DisplayFormat="{0:N3}" TextAlign="ColumnTextAlign.Right" Width="145px" Editable="false" Visible="false" />
+        <GridColumn Field="@(nameof(PaymentDocumentPostDetail.VATToPay))" Title="VAT To Pay" DisplayFormat="{0:N3}" TextAlign="ColumnTextAlign.Right" Width="122px" Editable="false" Visible="false" />
+        <GridColumn Field="@(nameof(PaymentDocumentPostDetail.PaidAmount))" Title="Paid Amount" DisplayFormat="{0:N3}" TextAlign="ColumnTextAlign.Right" Width="130px" Editable="false" Visible="false" />
+        <GridColumn Field="@(nameof(PaymentDocumentPostDetail.PaidVAT))" Title="Paid VAT" DisplayFormat="{0:N3}" TextAlign="ColumnTextAlign.Right" Width="110px" Editable="false" Visible="false" />
+        <GridColumn Field="@(nameof(PaymentDocumentPostDetail.POAmount))" Title="PO Amount" DisplayFormat="{0:N3}" TextAlign="ColumnTextAlign.Right" Width="120px" Editable="false" Visible="false" />
+        <GridColumn Field="@(nameof(PaymentDocumentPostDetail.PO_VAT))" Title="PO VAT" DisplayFormat="{0:N3}" TextAlign="ColumnTextAlign.Right" Width="100px" Editable="false" Visible="false" />
+        <GridColumn Field="@(nameof(PaymentDocumentPostDetail.VoucherAmount))" Title="Voucher Amount" DisplayFormat="{0:N3}" TextAlign="ColumnTextAlign.Right" Width="154px" Editable="false" Visible="false" />
+        <GridColumn Field="@(nameof(PaymentDocumentPostDetail.VoucherVAT))" Title="Voucher VAT" DisplayFormat="{0:N3}" TextAlign="ColumnTextAlign.Right" Width="130px" Editable="false" Visible="false" />
+        <GridColumn Field="@(nameof(PaymentDocumentPostDetail.AdvanceAmount))" Title="Advance Amount" DisplayFormat="{0:N3}" TextAlign="ColumnTextAlign.Right" Width="157px" Editable="false" Visible="false" />
+        <GridColumn Field="@(nameof(PaymentDocumentPostDetail.AdvanceVAT))" Title="Advance VAT" DisplayFormat="{0:N3}" TextAlign="ColumnTextAlign.Right" Width="133px" Editable="false" Visible="false" />
+        <GridColumn Field="@(nameof(PaymentDocumentPostDetail.PaymentDocumentAmount))" Title="Paym. Doc. Amount" DisplayFormat="{0:N3}" TextAlign="ColumnTextAlign.Right" Width="177px" Editable="false" Visible="false" />
+        <GridColumn Field="@(nameof(PaymentDocumentPostDetail.PaymentDocumentVAT))" Title="Paym. Doc. VAT" DisplayFormat="{0:N3}" TextAlign="ColumnTextAlign.Right" Width="155px" Editable="false" Visible="false" />
+        <GridColumn Field="@(nameof(PaymentDocumentPostDetail.TotalToPay))" Title="Total To Pay" DisplayFormat="{0:N3}" TextAlign="ColumnTextAlign.Right" Width="130px" Editable="false" Visible="false" />
+        <GridColumn Field="@(nameof(PaymentDocumentPostDetail.IsVAT))" Title="VAT" TextAlign="ColumnTextAlign.Right" Width="75px" Editable="false" Visible="false">
+            <Template>
+                @{
+                    var vat = (context as PaymentDocumentPostDetail).IsVAT;
+                    <div>@(vat > 0 ? (vat + "%") : "")</div>
+                }
+            </Template>
+        </GridColumn>
+    </DataGrid>
+</div>
+
+
 @code {
     [CascadingParameter] public AppState AppState { get; set; }
+    [CascadingParameter] public DialogFactory Dialogs { get; set; }
 
-    IEnumerable<Bank> bankList = new List<Bank>() { new Bank { BankCode = "AZP", BankName = "Azerbaijan Z Bank", CurrencyCode = "AZN", Account = null }, new Bank { BankCode = "GBP", BankName = "British Bank", CurrencyCode = "GBP", Account = "10345" } };
-    IEnumerable<Analysis> expenseAnalysisList = new List<Analysis>() { new Analysis { AnalysisCode = "EXP1", AnalysisName = "Expense 1" }, new Analysis { AnalysisCode = "EXP2", AnalysisName = "Expense 2" } };
-    IEnumerable<Analysis> groupProjectAnalysisList = new List<Analysis>() { new Analysis { AnalysisCode = "GP1", AnalysisName = "Group P 1" }, new Analysis { AnalysisCode = "GP2", AnalysisName = "Group P 2" } };
-    IEnumerable<Analysis> projectAnalysisList = new List<Analysis>() { new Analysis { AnalysisCode = "PROJ1", AnalysisName = "Project 1" }, new Analysis { AnalysisCode = "PROJ", AnalysisName = "Project 2" } };
+    IEnumerable<Bank> bankList = new List<Bank>();
+    IEnumerable<Analysis> expenseAnalysisList = new List<Analysis>();
+    IEnumerable<Analysis> groupProjectAnalysisList = new List<Analysis>();
+    IEnumerable<Analysis> projectAnalysisList = new List<Analysis>();
 
-    [Parameter]
-    public PaymentDocumentPostMain paymentDocumentPostMain { get; set; } = new()
+    PaymentDocumentPostMain paymentDocumentPostMain = new();
+    IEnumerable<PaymentDocumentPostDetail> selectedPaymentDocumentPostDetailList = new List<PaymentDocumentPostDetail>();
+    PaymentDocumentPostDetail selectedPaymentDocumentPostDetail = new();
+
+    int modelId = 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        SetQueryVariables();
+        OnAppStateInitialized();
+        await LoadData();
+    }
+
+    void OnAppStateInitialized()
+    {
+        AppState.SetDefaults();
+        AppState.CustomButton1Visible = true;
+        AppState.CustomButton1Title = "Post";
+        AppState.OnCustomButton1Click += Post;
+    }
+
+    void IDisposable.Dispose()
+    {
+    //
+    }
+
+    void SetQueryVariables()
+    {
+        var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
+
+        modelId = 0;
+        if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("id", out var _id))
         {
-            BusinessUnitCode = "SOCARSTP",
-            VendorCode = "V00005",
-            VendorName = "Some Company Ltd.",
-            Reference = "REF044549",
-            PaymentDocumentPriorityId = 1,
-            Comment = "Some commentary here",
-        };
+            modelId = Convert.ToInt32(_id);
+        }
+    }
 
+    async Task LoadData()
+    {
+        AppState.Loading = true;
+
+        paymentDocumentPostMain = await Http.GetFromJsonAsync<PaymentDocumentPostMain>($"PaymentDocument/GetPost?id={modelId}");
+        bankList = await Http.GetFromJsonAsync<IEnumerable<Bank>>($"Bank/GetAll");
+        expenseAnalysisList = await Http.GetFromJsonAsync<IEnumerable<Analysis>>($"Analysis/GetExpense");
+        groupProjectAnalysisList = await Http.GetFromJsonAsync<IEnumerable<Analysis>>($"Analysis/GetGroupProject");
+        projectAnalysisList = await Http.GetFromJsonAsync<IEnumerable<Analysis>>($"Analysis/GetProject");
+
+        AppState.Loading = false;
+    }
+
+    void BankAmountChanged(decimal value)
+    {
+        selectedPaymentDocumentPostDetail.BankAmount = value;
+    }
+
+    void VendorAmountChanged(decimal value)
+    {
+        selectedPaymentDocumentPostDetail.VendorAmount = value;
+    }
+
+    void BankRateChanged(decimal value)
+    {
+        selectedPaymentDocumentPostDetail.BankRate = value;
+    }
+
+    void VendorRateChanged(decimal value)
+    {
+        selectedPaymentDocumentPostDetail.VendorRate = value;
+    }
+
+    void VATChanged(decimal value)
+    {
+        selectedPaymentDocumentPostDetail.VAT = value;
+    }
+
+    void VATBankAmountChanged(decimal value)
+    {
+        selectedPaymentDocumentPostDetail.VATBankAmount = value;
+    }
+
+    async void Post()
+    {
+        AppState.Loading = true;
+        var validated = Validate();
+        if (validated)
+        {
+            // send to SyteLine
+            AppState.ShowAlert("Posted", Severity.Success);
+        }
+        else
+        {
+            AppState.ShowAlert("Validation error", Severity.Error);
+        }
+
+        AppState.Loading = false;
+    }
+
+    bool Validate()
+    {
+        return true;
+    }
 }
 
 <style>
@@ -150,6 +344,10 @@
 
     .item-width {
         width: 350px;
+    }
+
+    .input-height {
+        min-height: 30px;
     }
 
     .k-form .k-form-field {

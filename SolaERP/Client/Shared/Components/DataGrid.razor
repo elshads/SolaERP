@@ -42,7 +42,7 @@
         }
         @if (!ReadOnly)
         {
-            @if (ShowToolbar)
+            @if (ShowToolbar && ShowCheckBoxColumn)
             {
                 <GridCommandButton Icon="checkbox-checked" OnClick="@(() => showCheckBox = !showCheckBox)" />
             }

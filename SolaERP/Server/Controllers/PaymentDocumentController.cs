@@ -38,6 +38,12 @@ public class PaymentDocumentController : ControllerBase
         return await _paymentDocumentService.GetById(id);
     }
 
+    [HttpGet("GetPost")]
+    public async Task<PaymentDocumentPostMain> GetPost(int id)
+    {
+        return await _paymentDocumentService.GetPost(id);
+    }
+
     [HttpPost("Save")]
     public async Task<SqlResult> Save([FromBody] PaymentDocumentMain paymentDocumentMain)
     {
