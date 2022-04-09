@@ -116,6 +116,42 @@
             return result;
         }
 
+        public async Task<SqlResult> PostDocument(PaymentDocumentPostMain model, int userId)
+        {
+            SqlResult result = new();
+            try
+            {
+                foreach (var item in model.PaymentDocumentPostDetailList)
+                {
+                    using (var cn = new SqlConnection(SqlConfiguration.StaticConnectionString))
+                    {
+                        var p = new DynamicParameters();
+                        p.Add("@PaymentDocumentDetailId", item.PaymentDocumentDetailId, DbType.Int32, ParameterDirection.Input);
+                        p.Add("@Date", model.PaymentDate, DbType.DateTime, ParameterDirection.Input);
+                        p.Add("@BankCode", model.BankCode, DbType.String, ParameterDirection.Input);
+                        p.Add("@BankAmount", item.BankAmount, DbType.Decimal, ParameterDirection.Input);
+                        p.Add("@VendorAmount", item.VendorAmount, DbType.Decimal, ParameterDirection.Input);
+                        p.Add("@BankRate", item.BankRate, DbType.Decimal, ParameterDirection.Input);
+                        p.Add("@VendorRate", item.VendorRate, DbType.Decimal, ParameterDirection.Input);
+                        p.Add("@VAT", item.VAT, DbType.Decimal, ParameterDirection.Input);
+                        p.Add("@VATBankAmount", item.VATBankAmount, DbType.Decimal, ParameterDirection.Input);
+                        p.Add("@VATBank", model.VATBankCode, DbType.String, ParameterDirection.Input);
+                        p.Add("@BankCharge", model.BankCharge, DbType.Decimal, ParameterDirection.Input);
+                        p.Add("@UserId", userId, DbType.Int32, ParameterDirection.Input);
+                        p.Add("@ExpenseCode", model.ExpenseCode, DbType.String, ParameterDirection.Input);
+                        p.Add("@GroupProject", model.GroupProject, DbType.String, ParameterDirection.Input);
+                        p.Add("@Project", model.Project, DbType.String, ParameterDirection.Input);
+                        await cn.QueryAsync("dbo.SP_PaymentDocumentPost", p, commandType: CommandType.StoredProcedure);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                result.InsertedResultMessage = e.Message;
+            }
+            return result;
+        }
+
 
         public async Task<IEnumerable<PaymentDocumentDetail>> GetVendorBalance(int businessUnitId, string vendorCode)
         {

@@ -44,6 +44,12 @@ public class PaymentDocumentController : ControllerBase
         return await _paymentDocumentService.GetPost(id);
     }
 
+    [HttpPost("PostDocument")]
+    public async Task<SqlResult> PostDocument([FromBody] PaymentDocumentPostMain paymentDocumentPostMain)
+    {
+        return await _paymentDocumentService.PostDocument(paymentDocumentPostMain, _appUserService.GetCurrentUserId());
+    }
+
     [HttpPost("Save")]
     public async Task<SqlResult> Save([FromBody] PaymentDocumentMain paymentDocumentMain)
     {

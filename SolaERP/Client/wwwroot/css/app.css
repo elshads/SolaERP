@@ -61,3 +61,8 @@ html, body {
     display: none;
 }
 
+.invalid-form {
+    outline: 1px solid #d51923;
+    border-radius: 2px;
+}
+
