@@ -1,13 +1,16 @@
 ﻿namespace SolaERP.Server.ModelService;
 
-public class AttachmentService : BaseService<Attachment>
+public class AttachmentService
 {
+    string? _connectionString;
+    public AttachmentService(SqlDataAccess sqlDataAccess) => _connectionString = sqlDataAccess.ConnectionString;
+
     public async Task<Attachment> GetByIdAsync(int id)
     {
         Attachment result = new();
         try
         {
-            using (var cn = new SqlConnection(SqlConfiguration.StaticConnectionString))
+            using (var cn = new SqlConnection(_connectionString))
             {
                 var p = new DynamicParameters();
                 p.Add("@AttachmentId", id, DbType.Int32, ParameterDirection.Input);

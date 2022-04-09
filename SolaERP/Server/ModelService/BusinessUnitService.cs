@@ -2,12 +2,15 @@
 
 public class BusinessUnitService
 {
+    string? _connectionString;
+    public BusinessUnitService(SqlDataAccess sqlDataAccess) => _connectionString = sqlDataAccess.ConnectionString;
+
     public async Task<IEnumerable<BusinessUnit>> GetAllAsync()
     {
         IEnumerable<BusinessUnit> result = new List<BusinessUnit>();
         try
         {
-            using (var cn = new SqlConnection(SqlConfiguration.StaticConnectionString))
+            using (var cn = new SqlConnection(_connectionString))
             {
                 var sql = $"SELECT * FROM VW_BusinessUnits_List";
                 var _result = await cn.QueryAsync<BusinessUnit>(sql);
@@ -29,7 +32,7 @@ public class BusinessUnitService
         IEnumerable<BusinessUnit> result = new List<BusinessUnit>();
         try
         {
-            using (var cn = new SqlConnection(SqlConfiguration.StaticConnectionString))
+            using (var cn = new SqlConnection(_connectionString))
             {
                 var p = new DynamicParameters();
                 p.Add("@UserId", userId, DbType.Int32, ParameterDirection.Input);

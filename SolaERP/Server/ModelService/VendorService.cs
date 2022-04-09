@@ -2,12 +2,15 @@
 {
     public class VendorService
     {
+        string? _connectionString;
+        public VendorService(SqlDataAccess sqlDataAccess) => _connectionString = sqlDataAccess.ConnectionString;
+
         public async Task<IEnumerable<Vendor>> GetAllAsync(int businessUnitId)
         {
             IEnumerable<Vendor> result = new List<Vendor>();
             try
             {
-                using (var cn = new SqlConnection(SqlConfiguration.StaticConnectionString))
+                using (var cn = new SqlConnection(_connectionString))
                 {
                     var p = new DynamicParameters();
                     p.Add("@BusinessUnitId", businessUnitId, DbType.Int32, ParameterDirection.Input);

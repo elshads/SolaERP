@@ -2,13 +2,16 @@
 
 public class UserMenuAccessService
 {
+    string? _connectionString;
+    public UserMenuAccessService(SqlDataAccess sqlDataAccess) => _connectionString = sqlDataAccess.ConnectionString;
+
     public async Task<List<UserMenuAccess>> GetByIdAsync(int _userId)
     {
         List<UserMenuAccess>? result = new();
 
         try
         {
-            using (var cn = new SqlConnection(SqlConfiguration.StaticConnectionString))
+            using (var cn = new SqlConnection(_connectionString))
             {
                 var sql = $"dbo.SP_UserMenuAccess";
                 var values = new { UserId = _userId };

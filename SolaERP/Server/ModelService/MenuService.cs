@@ -3,12 +3,15 @@ namespace SolaERP.Server.ModelService;
 
 public class MenuService
 {
+    string? _connectionString;
+    public MenuService(SqlDataAccess sqlDataAccess) => _connectionString = sqlDataAccess.ConnectionString;
+
     public async Task<IEnumerable<Menu>> GetAllAsync()
     {
         IEnumerable<Menu> result = new List<Menu>();
         try
         {
-            using (var cn = new SqlConnection(SqlConfiguration.StaticConnectionString))
+            using (var cn = new SqlConnection(_connectionString))
             {
                 var sql = $"SELECT * FROM VW_Menus_list";
                 var _result = await cn.QueryAsync<Menu>(sql);
@@ -30,7 +33,7 @@ public class MenuService
         var result = new Menu();
         try
         {
-            using (var cn = new SqlConnection(SqlConfiguration.StaticConnectionString))
+            using (var cn = new SqlConnection(_connectionString))
             {
                 var sql = $"SELECT * FROM VW_Menus_list WHERE MenuId = {id}";
                 var _result = await cn.QueryAsync<Menu>(sql);
@@ -52,7 +55,7 @@ public class MenuService
         IEnumerable<Menu> result = new List<Menu>();
         try
         {
-            using (var cn = new SqlConnection(SqlConfiguration.StaticConnectionString))
+            using (var cn = new SqlConnection(_connectionString))
             {
                 var sql = $"SELECT * FROM VW_Menus_list";
                 var _result = await cn.QueryAsync<Menu>(sql);

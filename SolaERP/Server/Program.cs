@@ -2,16 +2,17 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
+using SolaERP.Server.DbAccess;
 
 var builder = WebApplication.CreateBuilder(args);
 
 
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-var sqlConfiguration = new SqlConfiguration(connectionString);
-builder.Services.AddSingleton(sqlConfiguration);
+builder.Services.AddSingleton<SqlDataAccess>(_ => new SqlDataAccess(connectionString));
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(connectionString));
+
 
 builder.Services.AddIdentity<AppUser, AppRole>(options =>
 {
@@ -38,6 +39,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
 builder.Services.AddScoped<AppUserService>();
+builder.Services.AddScoped<ThemeService>();
 builder.Services.AddSingleton<MenuService>();
 builder.Services.AddSingleton<UserMenuAccessService>();
 builder.Services.AddSingleton<GroupService>();

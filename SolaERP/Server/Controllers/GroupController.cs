@@ -16,10 +16,7 @@ namespace SolaERP.Server.Controllers
         [HttpGet("GetAll")]
         public async Task<IEnumerable<Group>> GetAllAsync()
         {
-            var sql = "dbo.SP_GroupMain_Load";
-            var p = new DynamicParameters();
-            var groupList = await _groupService.GetAllAsync(sql, p, CommandType.StoredProcedure);
-            return groupList.ResultList;
+            return await _groupService.GetAllAsync();
         }
     }
 }

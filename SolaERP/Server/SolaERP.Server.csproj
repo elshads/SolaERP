@@ -36,6 +36,7 @@
 		<Using Include="SolaERP.Shared.Data" />
 		<Using Include="SolaERP.Server.ModelService" />
 		<Using Include="SolaERP.Server.Data" />
+		<Using Include="SolaERP.Server.DbAccess" />
 		<Using Include="Dapper" />
 		<Using Include="Microsoft.Data.SqlClient" />
 	</ItemGroup>

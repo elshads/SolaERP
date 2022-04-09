@@ -6,27 +6,16 @@
 public class ThemeController : ControllerBase
 {
     int _currentUserId;
-    public ThemeController(AppUserService appUserService)
+    ThemeService _themeService;
+    public ThemeController(AppUserService appUserService, ThemeService themeService)
     {
         _currentUserId = appUserService.GetCurrentUserId();
+        _themeService = themeService;
     }
 
     [HttpPut]
     public async Task<SqlResult> UpdateUserTheme([FromBody] string theme)
     {
-        var result = new SqlResult();
-        try
-        {
-            using (var cn = new SqlConnection(SqlConfiguration.StaticConnectionString))
-            {
-                var sql = "UPDATE Config.AppUser SET Theme = @Theme WHERE Id = @Id";
-                result.UpdatedResult = await cn.ExecuteAsync(sql, new { Theme = theme, Id = _currentUserId });
-            }
-        }
-        catch (Exception ex)
-        {
-            result.UpdatedResultMessage = ex.Message;
-        }
-        return result;
+        return await _themeService.UpdateUserTheme(theme, _currentUserId);
     }
 }

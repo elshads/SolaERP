@@ -8,10 +8,12 @@ namespace SolaERP.Server.ModelService
         private readonly UserManager<AppUser> _userManager;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public AppUserService(UserManager<AppUser> userManager, IHttpContextAccessor httpContextAccessor)
+        string? _connectionString;
+        public AppUserService(UserManager<AppUser> userManager, IHttpContextAccessor httpContextAccessor, SqlDataAccess sqlDataAccess)
         {
             _userManager = userManager;
             _httpContextAccessor = httpContextAccessor;
+            _connectionString = sqlDataAccess.ConnectionString;
         }
 
         public async Task <AppUser> GetCurrentUserAsync()
@@ -50,7 +52,7 @@ namespace SolaERP.Server.ModelService
             IEnumerable<AppUser> result = new List<AppUser>();
             try
             {
-                using (var cn = new SqlConnection(SqlConfiguration.StaticConnectionString))
+                using (var cn = new SqlConnection(_connectionString))
                 {
                     var sql = $"SELECT * FROM Config.AppUser";
                     var _result = await cn.QueryAsync<AppUser>(sql);
@@ -72,7 +74,7 @@ namespace SolaERP.Server.ModelService
             var result = new AppUser();
             try
             {
-                using (var cn = new SqlConnection(SqlConfiguration.StaticConnectionString))
+                using (var cn = new SqlConnection(_connectionString))
                 {
                     var sql = $"SELECT * FROM Config.AppUser WHERE Id = {id}";
                     var _result = await cn.QueryAsync<AppUser>(sql);

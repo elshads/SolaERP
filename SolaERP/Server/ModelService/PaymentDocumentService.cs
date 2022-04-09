@@ -2,6 +2,9 @@
 {
     public class PaymentDocumentService
     {
+        string? _connectionString;
+        public PaymentDocumentService(SqlDataAccess sqlDataAccess) => _connectionString = sqlDataAccess.ConnectionString;
+
         public async Task<IEnumerable<PaymentDocumentMain>> GetAll(int userId, int businessUnitId, int tabindex)
         {
             IEnumerable<PaymentDocumentMain> result = new List<PaymentDocumentMain>();
@@ -30,7 +33,7 @@
                         break;
                 }
 
-                using (var cn = new SqlConnection(SqlConfiguration.StaticConnectionString))
+                using (var cn = new SqlConnection(_connectionString))
                 {
                     var p = new DynamicParameters();
                     p.Add("@UserId", userId, DbType.Int32, ParameterDirection.Input);
@@ -51,7 +54,7 @@
             PaymentDocumentMain result = new();
             try
             {
-                using (var cn = new SqlConnection(SqlConfiguration.StaticConnectionString))
+                using (var cn = new SqlConnection(_connectionString))
                 {
                     var p = new DynamicParameters();
                     p.Add("@PaymentDocumentMainId", modelId, DbType.Int32, ParameterDirection.Input);
@@ -60,7 +63,7 @@
                 }
                 if (result.PaymentDocumentMainId > 0)
                 {
-                    using (var cn = new SqlConnection(SqlConfiguration.StaticConnectionString))
+                    using (var cn = new SqlConnection(_connectionString))
                     {
                         var p = new DynamicParameters();
                         p.Add("@PaymentDocumentMainId", modelId, DbType.Int32, ParameterDirection.Input);
@@ -68,7 +71,7 @@
                         if (_result.Any()) result.PaymentDocumentDetailList = _result.ToList();
                     }
 
-                    using (var cn = new SqlConnection(SqlConfiguration.StaticConnectionString))
+                    using (var cn = new SqlConnection(_connectionString))
                     {
                         var p = new DynamicParameters();
                         p.Add("@SourceId", modelId, DbType.Int32, ParameterDirection.Input);
@@ -91,7 +94,7 @@
             PaymentDocumentPostMain result = new();
             try
             {
-                using (var cn = new SqlConnection(SqlConfiguration.StaticConnectionString))
+                using (var cn = new SqlConnection(_connectionString))
                 {
                     var p = new DynamicParameters();
                     p.Add("@PaymentDocumentMainId", id, DbType.Int32, ParameterDirection.Input);
@@ -100,7 +103,7 @@
                 }
                 if (result.PaymentDocumentMainId > 0)
                 {
-                    using (var cn = new SqlConnection(SqlConfiguration.StaticConnectionString))
+                    using (var cn = new SqlConnection(_connectionString))
                     {
                         var p = new DynamicParameters();
                         p.Add("@PaymentDocumentMainId", id, DbType.Int32, ParameterDirection.Input);
@@ -123,7 +126,7 @@
             {
                 foreach (var item in model.PaymentDocumentPostDetailList)
                 {
-                    using (var cn = new SqlConnection(SqlConfiguration.StaticConnectionString))
+                    using (var cn = new SqlConnection(_connectionString))
                     {
                         var p = new DynamicParameters();
                         p.Add("@PaymentDocumentDetailId", item.PaymentDocumentDetailId, DbType.Int32, ParameterDirection.Input);
@@ -158,7 +161,7 @@
             IEnumerable<PaymentDocumentDetail> result = new List<PaymentDocumentDetail>();
             try
             {
-                using (var cn = new SqlConnection(SqlConfiguration.StaticConnectionString))
+                using (var cn = new SqlConnection(_connectionString))
                 {
                     var p = new DynamicParameters();
                     p.Add("@BusinessUnitId", businessUnitId, DbType.Int32, ParameterDirection.Input);
@@ -179,7 +182,7 @@
             IEnumerable<PaymentDocumentDetail> result = new List<PaymentDocumentDetail>();
             try
             {
-                using (var cn = new SqlConnection(SqlConfiguration.StaticConnectionString))
+                using (var cn = new SqlConnection(_connectionString))
                 {
                     var p = new DynamicParameters();
                     p.Add("@BusinessUnitId", businessUnitId, DbType.Int32, ParameterDirection.Input);
@@ -202,7 +205,7 @@
             SqlResult result = new();
             try
             {
-                using (var cn = new SqlConnection(SqlConfiguration.StaticConnectionString))
+                using (var cn = new SqlConnection(_connectionString))
                 {
                     var p = new DynamicParameters();
                     p.Add("@PaymentDocumentMainId", paymentDocumentMain.PaymentDocumentMainId, DbType.Int32, ParameterDirection.Input);
@@ -227,7 +230,7 @@
                 {
                     foreach (var item in paymentDocumentMain.PaymentDocumentDetailList)
                     {
-                        using (var cn = new SqlConnection(SqlConfiguration.StaticConnectionString))
+                        using (var cn = new SqlConnection(_connectionString))
                         {
                             var p = new DynamicParameters();
                             p.Add("@PaymentDocumentDetailId", item.PaymentDocumentDetailId, DbType.Int32, ParameterDirection.Input);
@@ -257,7 +260,7 @@
                 {
                     foreach (var item in paymentDocumentMain.AttachmentList)
                     {
-                        using (var cn = new SqlConnection(SqlConfiguration.StaticConnectionString))
+                        using (var cn = new SqlConnection(_connectionString))
                         {
                             var p = new DynamicParameters();
                             p.Add("@AttachmentId", item.AttachmentId, DbType.Int32, ParameterDirection.Input);
@@ -289,7 +292,7 @@
             {
                 foreach (var item in approveDataList)
                 {
-                    using (var cn = new SqlConnection(SqlConfiguration.StaticConnectionString))
+                    using (var cn = new SqlConnection(_connectionString))
                     {
                         var p = new DynamicParameters();
                         p.Add("@PaymentDocumentMainId", item.ModelId, DbType.Int32, ParameterDirection.Input);
@@ -316,7 +319,7 @@
             {
                 foreach (var item in statusDataList)
                 {
-                    using (var cn = new SqlConnection(SqlConfiguration.StaticConnectionString))
+                    using (var cn = new SqlConnection(_connectionString))
                     {
                         var p = new DynamicParameters();
                         p.Add("@PaymentDocumentMainId", item.ModelId, DbType.Int32, ParameterDirection.Input);
